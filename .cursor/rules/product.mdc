@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 编码规范
+
+在编写代码时应该尽可能遵守以下原则：
+
+1. 模块原则
+2. 组合原则

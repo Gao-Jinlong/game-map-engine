@@ -1,0 +1,17 @@
+{
+  "name": "game-map-engine",
+  "private": true,
+  "version": "1.0.0",
+  "description": "基于 Three.js 的游戏地图引擎",
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "build": "pnpm --filter --parallel build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["three.js", "game", "map", "engine"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "~5.7.3"
+  }
+}

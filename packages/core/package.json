@@ -1,0 +1,22 @@
+{
+  "name": "@game-map-engine/core",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsup",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "three": "^0.161.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.161.2",
+    "tsup": "^8.0.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}
