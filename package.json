@@ -5,7 +5,7 @@
   "description": "基于 Three.js 的游戏地图引擎",
   "scripts": {
     "dev": "pnpm run --parallel dev",
-    "build": "pnpm --filter --parallel build",
+    "build": "pnpm run --parallel build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["three.js", "game", "map", "engine"],

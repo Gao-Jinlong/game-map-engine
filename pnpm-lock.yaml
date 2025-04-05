@@ -32,6 +32,10 @@ importers:
         version: 5.4.17
 
   packages/examples:
+    dependencies:
+      three:
+        specifier: ^0.161.0
+        version: 0.161.0
     devDependencies:
       '@game-map-engine/core':
         specifier: workspace:*
