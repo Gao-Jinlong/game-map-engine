@@ -10,6 +10,7 @@ export class MapEngine {
   private objects: THREE.Object3D[] = [];
 
   constructor(container: HTMLElement) {
+    console.log('MapEngine constructor');
     // 创建场景
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x87ceeb);

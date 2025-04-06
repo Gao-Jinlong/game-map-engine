@@ -40,6 +40,9 @@ importers:
       '@game-map-engine/core':
         specifier: workspace:*
         version: link:../core
+      '@types/three':
+        specifier: ^0.161.2
+        version: 0.161.2
       typescript:
         specifier: ~5.7.3
         version: 5.7.3
