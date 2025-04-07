@@ -56,6 +56,9 @@ importers:
 
   packages/examples:
     dependencies:
+      '@javelin/ecs':
+        specifier: 1.0.0-alpha.13
+        version: 1.0.0-alpha.13
       three:
         specifier: ^0.161.0
         version: 0.161.0
@@ -366,6 +369,15 @@ packages:
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
+
+  '@javelin/core@1.0.0-alpha.12':
+    resolution: {integrity: sha512-U3KgZjpMNwO6SF1cVcn4XedpE+AE17aaoNr1S6W973qF7MBrfhRaeoEMjiPM5U2g9VxBJMr4rD9XzZRtyZPaYA==}
+
+  '@javelin/ecs@1.0.0-alpha.13':
+    resolution: {integrity: sha512-TzBOEtDtb8SEsH1Kpjp3fkmLN81/XTXm4N0S3eWBn05bPYCkqr9iHTREIZT2KPz4URaaMnIqzWSE+slXNegeZA==}
+
+  '@javelin/isomorphic-utils@1.0.0-alpha.12':
+    resolution: {integrity: sha512-TBz3kD75v3QOdibJWCShVjexhhor1e+p4lHprQM+wq27HneDKz1e1JjZd8dY4N916fwgCaMgV/p1FYTtfw+Tng==}
 
   '@jridgewell/gen-mapping@0.3.8':
     resolution: {integrity: sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA==}
@@ -1082,6 +1094,15 @@ snapshots:
       strip-ansi-cjs: strip-ansi@6.0.1
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
+
+  '@javelin/core@1.0.0-alpha.12': {}
+
+  '@javelin/ecs@1.0.0-alpha.13':
+    dependencies:
+      '@javelin/core': 1.0.0-alpha.12
+      '@javelin/isomorphic-utils': 1.0.0-alpha.12
+
+  '@javelin/isomorphic-utils@1.0.0-alpha.12': {}
 
   '@jridgewell/gen-mapping@0.3.8':
     dependencies:

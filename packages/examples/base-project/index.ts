@@ -22,4 +22,4 @@ mapEngine.addObject(cube);
 // 开始动画循环
 mapEngine.animate();
 
-console.log("main");
+console.log("base project");

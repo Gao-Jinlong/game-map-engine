@@ -16,6 +16,7 @@
     "vite": "^6.1.1"
   },
   "dependencies": {
+    "@javelin/ecs": "1.0.0-alpha.13",
     "three": "^0.161.0"
   }
 }
