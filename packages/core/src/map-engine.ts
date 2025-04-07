@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 export class MapEngine {
   private scene: THREE.Scene;
@@ -10,7 +10,7 @@ export class MapEngine {
   private objects: THREE.Object3D[] = [];
 
   constructor(container: HTMLElement) {
-    console.log('MapEngine constructor');
+    console.log("MapEngine constructor");
     // 创建场景
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x87ceeb);
@@ -42,7 +42,7 @@ export class MapEngine {
     this.createGround();
 
     // 处理窗口大小变化
-    window.addEventListener('resize', this.handleResize.bind(this));
+    window.addEventListener("resize", this.handleResize.bind(this));
   }
 
   private setupLights() {
@@ -60,7 +60,7 @@ export class MapEngine {
     const groundMaterial = new THREE.MeshStandardMaterial({
       color: 0x3a5f0b,
       roughness: 0.8,
-      metalness: 0.2
+      metalness: 0.2,
     });
     this.ground = new THREE.Mesh(groundGeometry, groundMaterial);
     this.ground.rotation.x = -Math.PI / 2;
@@ -99,6 +99,6 @@ export class MapEngine {
   public dispose() {
     this.renderer.dispose();
     this.controls.dispose();
-    window.removeEventListener('resize', this.handleResize.bind(this));
+    window.removeEventListener("resize", this.handleResize.bind(this));
   }
-} 
+}

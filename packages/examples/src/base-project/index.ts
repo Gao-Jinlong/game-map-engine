@@ -1,10 +1,11 @@
-import { MapEngine } from '@game-map-engine/core';
-import * as THREE from 'three';
+import { MapEngine } from "@game-map-engine/core";
+import * as THREE from "three";
+import "./style.css";
 
 // 创建容器
-const container = document.createElement('div');
-container.style.width = '100%';
-container.style.height = '100%';
+const container = document.createElement("div");
+container.style.width = "100%";
+container.style.height = "100%";
 document.body.appendChild(container);
 
 // 初始化地图引擎
@@ -19,4 +20,6 @@ cube.castShadow = true;
 mapEngine.addObject(cube);
 
 // 开始动画循环
-mapEngine.animate(); 
+mapEngine.animate();
+
+console.log("main");

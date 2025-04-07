@@ -1,1 +1,1 @@
-export * from './src/MapEngine';
+export * from "./src/map-engine";

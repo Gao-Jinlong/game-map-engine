@@ -1,14 +1,13 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
-    lib: {
-      entry: './lib/main.ts',
-      name: 'Counter',
-      fileName: 'counter',
-    },
+    outDir: "./dist",
+  },
+  optimizeDeps: {
+    exclude: ["@game-map-engine/*"],
   },
   server: {
     port: 3000,
   },
-})
+});
