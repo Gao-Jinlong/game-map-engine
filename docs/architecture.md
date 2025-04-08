@@ -1,6 +1,144 @@
 # 架构图
 
-## 系统架构图
+## 架构设计
+
+```mermaid
+classDiagram
+    class IMapContext {
+      引擎接口
+
+      eventManager: IEventManager
+      componentManager: IComponentManager
+      renderer: IRenderer
+      camera: ICamera
+      scene: IScene
+    }
+    class Map {
+      管理调度各个子系统
+
+      init(context: IMapContext)
+      update()
+      render()
+      destroy()
+    }
+    Map ..|> IMapContext
+    Map ..> IComponentManager
+    Map ..> IEventManager
+    Map ..> IRenderer
+    Map ..> ICamera
+    Map ..> IScene
+
+    class IComponentManager {
+      组件管理器，管理各个组件
+
+      register(Component: IComponent) 注册组件
+      unregister(Component: IComponent) 注销组件
+      getComponent(Component: IComponent) 获取组件
+    }
+
+    class IComponent {
+      组件接口，各个子组件需要实现这个接口
+
+      init()
+      update()
+      render()
+      destroy()
+    }
+
+    class IEventManager {
+      事件系统，管理引擎的生命周期 hook
+
+      init(context: IMapContext)
+      on(event: string, callback: Function) 注册事件
+      off(event: string, callback: Function) 注销事件
+      emit(event: string, data: any) 触发事件
+    }
+    IEventManager ..> IMapContext
+
+    class ICamera {
+      相机接口
+
+      pitch: number
+      roll: number
+      zoom: number
+      position: Vector3
+
+
+      flyTo(position: Vector3)
+      rotateTo(rotation: Vector3)
+      zoomTo(zoom: number)
+      update()
+      render()
+    }
+
+    class Camera {
+      相机组件
+
+      init(context: IMapContext)
+      update()
+      render()
+    }
+    Camera ..|> ICamera
+    Camera ..> IMapContext
+
+    class IRenderer {
+      渲染器接口
+
+      render(scene: IScene)
+    }
+
+    class Renderer {
+      渲染器组件
+
+      init(context: IMapContext)
+      render()
+    }
+    Renderer ..|> IRenderer
+    Renderer ..> IMapContext
+
+    class IScene {
+      场景接口
+
+      init(context: IMapContext)
+      update()
+    }
+    IScene ..> IMapContext
+
+    class Scene {
+      场景组件
+
+      init(context: IMapContext)
+    }
+    Scene ..|> IScene
+    Scene ..> IMapContext
+
+    class ICrs {
+      参考坐标系接口，用于管理像素坐标系和世界坐标系之间的转换
+
+      bounds: Bounds
+      elevation: number
+      center: Vector3
+      scale: number
+
+
+      project(position: Vector3)
+      unproject(position: Vector3)
+    }
+
+```
+
+## 架构说明
+
+- Map 是引擎的入口，管理调度引擎的各个子系统，持有引擎的上下文。
+- EventManager 事件系统，实现引擎的生命周期 hook。
+- Camera 相机组件，实现相机接口。
+- Renderer 渲染器组件，实现渲染器接口。
+- Scene 场景组件，实现场景接口。
+- ComponentManager 管理系统组件，管理各个组件的注册、注销、获取，组件用于扩展系统的能力，不应影响引擎的核心功能。
+
+## 脑暴
+
+### 系统架构图
 
 ```mermaid
 graph LR
@@ -97,7 +235,7 @@ graph LR
     class Scene,Terrain,Object,Camera,UI,Effect,PostProcess,Loader,Editor component
 ```
 
-## UML 类图
+### UML 类图
 
 ```mermaid
 classDiagram
@@ -205,97 +343,3 @@ classDiagram
     SceneManager --> Terrain
     Terrain --> HeightMap
 ```
-
-## 关键组件说明
-
-### 1. 核心系统
-
-- **场景管理**：负责场景的创建、更新和渲染
-- **事件系统**：处理游戏中的各种事件
-- **配置系统**：管理引擎配置和地图配置
-- **调试系统**：提供调试工具和性能监控
-- **状态管理**：管理游戏状态和场景状态
-
-### 2. 渲染系统
-
-- **相机系统**：处理视角控制和相机效果
-- **地形系统**：管理地形渲染和编辑
-- **物件系统**：处理游戏物件的渲染和交互
-- **特效系统**：处理各种视觉效果
-- **后处理系统**：处理屏幕空间效果
-
-### 3. 资源系统
-
-- **资源加载器**：负责加载各种资源
-- **资源缓存**：管理已加载的资源
-- **对象池**：优化对象创建和销毁
-- **资产管理**：管理资源依赖关系
-
-### 4. 工具系统
-
-- **地图编辑器**：提供地图编辑功能
-- **路径规划**：处理寻路和路径生成
-- **预览系统**：提供实时预览功能
-
-### 5. 网络系统
-
-- **状态同步**：处理多人游戏状态同步
-- **回放系统**：支持游戏回放功能
-- **多人游戏**：处理多人游戏逻辑
-
-````mermaid
-graph TD
-    subgraph Core[核心管理层]
-        A[Core Manager] --> B[ECS Core]
-        B --> B1[Entity Manager]
-        B --> B2[Component Pool]
-        B --> B3[System Scheduler]
-        A --> C[Scene Graph]
-        C --> C1[Layer Manager]
-        C --> C2[Coordinate Transformer]
-    end
-
-    subgraph ECS[ECS模块]
-        D[Entity] --> D1[UUID]
-        E[Component] --> E1[TransformComponent]
-        E --> E2[TileComponent]
-        E --> E3[MeshComponent]
-        F[System] --> F1[RenderingSystem]
-        F --> F2[AnimationSystem]
-        F --> F3[PhysicsSystem]
-    end
-
-    subgraph ThreeJS[Three.js渲染模块]
-        G[Three.js Renderer] --> G1[Scene]
-        G --> G2[Camera Controller]
-        G --> G3[InstancedMesh Pool]
-        G --> G4[Material Manager]
-        G --> G5[Shader Processor]
-    end
-
-    subgraph Interaction[交互系统]
-        H[Input Handler] --> H1[Raycaster]
-        H --> H2[Event Dispatcher]
-        H --> H3[Tool Proxy]
-    end
-
-    subgraph Tools[工具插件]
-        I[Plugin Interface] --> I1[Measure Tool]
-        I --> I2[Path Planner]
-        I --> I3[Weather Simulator]
-    end
-
-    subgraph Perf[性能模块]
-        J[Frame Controller] --> J1[FPS Optimizer]
-        J --> J2[Memory Monitor]
-        J --> J3[LOD Manager]
-    end
-
-    Core -->|调度| ThreeJS
-    ECS -->|数据驱动| ThreeJS
-    ThreeJS -->|渲染输出| Canvas
-    Interaction -->|事件传递| Core
-    Tools -->|扩展功能| Interaction
-    Perf -->|优化参数| Core
-    ```
-````

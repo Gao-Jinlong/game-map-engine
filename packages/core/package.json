@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite build --watch",
+    "dev": "vite dev",
     "build": "vite build",
     "type-check": "tsc --noEmit"
   },

@@ -1,24 +1,29 @@
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import { defineConfig } from "vite";
+import { resolve } from "path";
 
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'MapEngine',
-      fileName: 'index',
-      formats: ['es', 'cjs']
+      entry: resolve(__dirname, "src/index.ts"),
+      name: "MapEngine",
+      fileName: "index",
+      formats: ["es", "cjs"],
     },
     watch: {
-      include: 'src/**'
+      include: "src/**",
     },
     rollupOptions: {
-      external: ['three'],
+      external: ["three"],
       output: {
         globals: {
-          three: 'THREE'
-        }
-      }
-    }
+          three: "THREE",
+        },
+      },
+    },
   },
-})
+  resolve: {
+    alias: {
+      "@core": resolve(__dirname, "src"),
+    },
+  },
+});
