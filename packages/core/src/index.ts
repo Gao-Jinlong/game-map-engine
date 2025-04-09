@@ -1,3 +1,3 @@
-import { MapEngine } from "./map-engine";
+import { Map } from "./Map";
 
-export { MapEngine };
+export { Map };

@@ -1,14 +1,19 @@
 import { Vector3 } from "three";
 
-export interface ICamera {
-  pitch: number;
-  roll: number;
-  zoom: number;
-  position: Vector3;
+declare global {
+  namespace MapEngine {
+    export interface ICameraSystem extends ISystem {
+      pitch: number;
+      roll: number;
+      zoom: number;
+      position: Vector3;
+      camera?: THREE.Camera;
 
-  flyTo(position: Vector3): void;
-  rollTo(roll: number): void;
-  zoomTo(zoom: number): void;
-  update(): void;
-  render(): void;
+      flyTo(position: Vector3): void;
+      rollTo(roll: number): void;
+      zoomTo(zoom: number): void;
+      update(): void;
+      render(): void;
+    }
+  }
 }

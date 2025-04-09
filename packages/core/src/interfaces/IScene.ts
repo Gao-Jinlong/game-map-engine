@@ -1,6 +1,9 @@
-import { IMap } from "./IMap";
+import * as THREE from "three";
 
-export interface IScene {
-  init(context: IMap): void;
-  update(): void;
+declare global {
+  namespace MapEngine {
+    export interface ISceneSystem extends ISystem {
+      scene?: THREE.Scene;
+    }
+  }
 }

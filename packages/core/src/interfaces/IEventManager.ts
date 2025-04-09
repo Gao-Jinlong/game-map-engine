@@ -1,5 +1,3 @@
-import { IMap } from "./IMap";
-
 export interface IEventManager {
   on(event: string, callback: Function): void;
   off(event: string, callback: Function): void;

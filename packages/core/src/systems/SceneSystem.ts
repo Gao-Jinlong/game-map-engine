@@ -1,20 +1,17 @@
-import { IScene } from "../interfaces/IScene";
-import { IMap } from "../interfaces/IMap";
-import { Scene as ThreeScene } from "three";
+import * as THREE from "three";
 
-export class SceneSystem implements IScene {
-  private context: IMap | null = null;
-  private scene: ThreeScene;
-
-  constructor(private context: IMap) {
-    this.scene = new ThreeScene();
+export class SceneSystem implements MapEngine.ISceneSystem {
+  scene: THREE.Scene;
+  context?: MapEngine.IMap;
+  constructor() {
+    this.scene = new THREE.Scene();
   }
 
-  init(context: IMap): void {
-    this.context = context;
-  }
-
-  update(): void {
-    // 场景更新逻辑
+  init() {
+    if (!this.context) {
+      throw new Error("SceneSystem must be initialized with a context");
+    }
+    const { options } = this.context;
+    this.scene.background = new THREE.Color(options.background);
   }
 }

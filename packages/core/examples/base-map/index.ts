@@ -1,4 +1,9 @@
-import { MapEngine } from "@core";
+import { Map } from "@core";
+main();
 
-const mapEngine = new MapEngine(document.getElementById("map") as HTMLElement);
-mapEngine.init();
+async function main() {
+  const map = new Map({
+    container: document.getElementById("map") as HTMLElement,
+  });
+  console.log("🚀 ~ main ~ map:", map);
+}
