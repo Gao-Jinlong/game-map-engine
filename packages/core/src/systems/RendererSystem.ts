@@ -3,40 +3,43 @@ import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
 
 export class RendererSystem implements MapEngine.IRendererSystem {
-  renderer: THREE.WebGLRenderer;
-  camera?: THREE.Camera;
-  scene?: THREE.Scene;
-  context?: MapEngine.IMap;
-  constructor() {
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-    });
-  }
+    public renderer: THREE.WebGLRenderer;
+    public context?: MapEngine.IMap;
 
-  init() {
-    if (!this.context) {
-      throw new Error("RendererSystem must be initialized with a context");
+    private camera?: THREE.Camera;
+    private scene?: THREE.Scene;
+    constructor() {
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+        });
     }
-    const { state, options, container, systemManager } = this.context;
 
-    this.renderer.setPixelRatio(options.devicePixelRatio);
-    this.renderer.setSize(state.width, state.height);
-    this.renderer.setClearColor(options.background);
+    init() {
+        if (!this.context) {
+            throw new Error(
+                "RendererSystem must be initialized with a context"
+            );
+        }
+        const { state, options, container, systemManager } = this.context;
 
-    const cameraSystem = systemManager.getSystem(CameraSystem);
-    const sceneSystem = systemManager.getSystem(SceneSystem);
+        this.renderer.setPixelRatio(options.devicePixelRatio);
+        this.renderer.setSize(state.width, state.height);
+        this.renderer.setClearColor(options.background);
 
-    container.appendChild(this.renderer.domElement);
-    this.camera = cameraSystem.camera;
-    this.scene = sceneSystem.scene;
+        const cameraSystem = systemManager.getSystem(CameraSystem);
+        const sceneSystem = systemManager.getSystem(SceneSystem);
 
-    this.renderer.setAnimationLoop(this.animate);
-  }
+        container.appendChild(this.renderer.domElement);
+        this.camera = cameraSystem.camera;
+        this.scene = sceneSystem.scene;
 
-  animate() {
-    this.render();
-  }
-  render() {
-    this.renderer.render(this.scene!, this.camera!);
-  }
+        this.renderer.setAnimationLoop(this.animate.bind(this));
+    }
+
+    animate() {
+        this.render();
+    }
+    render() {
+        this.renderer.render(this.scene!, this.camera!);
+    }
 }

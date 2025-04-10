@@ -1,24 +1,28 @@
-import { IComponentManager } from "../interfaces/IComponentManager";
 import { IComponent } from "../interfaces/IComponent";
-import { IMap } from "../interfaces/IMap";
 
-export class ComponentManager implements IComponentManager {
-  private components: Map<string, IComponent> = new Map();
+export class ComponentManager implements MapEngine.IComponentManager {
+    private components: Map<string, IComponent> = new Map();
+    public context?: MapEngine.IMap;
+    constructor() {}
+    init() {
+        if (!this.context) {
+            throw new Error(
+                "ComponentManager must be initialized with a context"
+            );
+        }
+    }
+    register(component: IComponent): void {
+        const componentName = component.constructor.name;
+        this.components.set(componentName, component);
+    }
 
-  constructor(private context: IMap) {}
+    unregister(component: IComponent): void {
+        const componentName = component.constructor.name;
+        this.components.delete(componentName);
+    }
 
-  register(component: IComponent): void {
-    const componentName = component.constructor.name;
-    this.components.set(componentName, component);
-  }
-
-  unregister(component: IComponent): void {
-    const componentName = component.constructor.name;
-    this.components.delete(componentName);
-  }
-
-  getComponent<T extends IComponent>(component: new () => T): T | undefined {
-    const componentName = component.name;
-    return this.components.get(componentName) as T | undefined;
-  }
+    getComponent<T extends IComponent>(component: new () => T): T | undefined {
+        const componentName = component.name;
+        return this.components.get(componentName) as T | undefined;
+    }
 }

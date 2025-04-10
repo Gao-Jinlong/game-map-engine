@@ -1,5 +1,10 @@
-export interface IEventManager {
-  on(event: string, callback: Function): void;
-  off(event: string, callback: Function): void;
-  emit(event: string, data: any): void;
+import EventEmitter from "eventemitter3";
+
+declare global {
+    namespace MapEngine {
+        export interface MapEvents {
+            resize: MapEngine.IMapState;
+        }
+        export interface IEventManager extends EventEmitter<MapEvents> {}
+    }
 }
