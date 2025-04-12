@@ -36,6 +36,11 @@ export class RendererSystem implements MapEngine.IRendererSystem {
         this.renderer.setAnimationLoop(this.animate.bind(this));
     }
 
+    resize(state: MapEngine.IMapState) {
+        this.renderer.setSize(state.width, state.height);
+        this.renderer.render(this.scene!, this.camera!);
+    }
+
     animate() {
         this.render();
     }

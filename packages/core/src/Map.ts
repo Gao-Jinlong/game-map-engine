@@ -81,6 +81,11 @@ export class Map implements MapEngine.IMap {
             }
         }
 
+        // this.systemManager.allSystems.forEach((system) => {
+        //     system.resize?.(this.state);
+        // });
+        this.systemManager.resize(this.state);
+
         this.eventManager.emit("resize", this.state);
     }
 }

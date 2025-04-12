@@ -40,7 +40,10 @@ export class CameraSystem implements MapEngine.ICameraSystem {
         this.controls.update();
 
         this.controls.target.y = 500;
-        // data[state.width / 2 + (state.depth / 2) * state.width] + 500;
+    }
+    resize(state: MapEngine.IMapState) {
+        this.camera!.aspect = state.width / state.height;
+        this.camera!.updateProjectionMatrix();
     }
     flyTo(position: Vector3): void {
         this.position.copy(position);
