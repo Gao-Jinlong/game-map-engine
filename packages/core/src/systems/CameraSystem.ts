@@ -3,6 +3,10 @@ import * as THREE from "three";
 import { ImprovedNoise } from "three/examples/jsm/math/ImprovedNoise";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RendererSystem } from "./RendererSystem";
+
+/**
+ * TODO 封装相机控制器,实现地图的视角控制逻辑
+ */
 export class CameraSystem implements MapEngine.ICameraSystem {
     public context?: MapEngine.IMap;
 

@@ -26,6 +26,10 @@ export class Map implements MapEngine.IMap {
             container: document.body,
             background: 0x000000,
             devicePixelRatio: window.devicePixelRatio,
+            center: [0, 0, 0],
+            zoom: 1,
+            pitch: 0,
+            roll: 0,
         });
         this.container = this.options.container;
         this.state = {

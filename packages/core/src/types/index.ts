@@ -20,12 +20,4 @@ export namespace MapEngine {
         height: number;
         depth: number;
     }
-
-    export function getContext(): IMap {
-        return (window as any).__MAP_ENGINE_CONTEXT__;
-    }
-
-    export function setContext(context: IMap) {
-        (window as any).__MAP_ENGINE_CONTEXT__ = context;
-    }
 }
