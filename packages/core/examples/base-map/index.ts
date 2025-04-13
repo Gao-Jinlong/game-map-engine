@@ -9,8 +9,6 @@ async function main() {
         devicePixelRatio: window.devicePixelRatio,
         center: [0, 0, 0],
         zoom: 1,
-        pitch:45,
+        pitch: 45,
     });
-
-    map.
 }

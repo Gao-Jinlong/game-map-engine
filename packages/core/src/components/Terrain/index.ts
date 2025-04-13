@@ -2,12 +2,12 @@ import * as THREE from "three";
 import { Component } from "../Component";
 
 export class TerrainComponent extends Component {
-    geometry: THREE.PlaneGeometry;
+    geometry?: THREE.PlaneGeometry;
     constructor() {
         super();
     }
     init(): void {
-        const { state } = this.context;
+        const { state } = this.context!;
         this.geometry = new THREE.PlaneGeometry(
             state.width,
             state.height,
