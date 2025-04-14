@@ -1,18 +1,13 @@
-export type ComponentId = string;
+import { BaseComponent } from "@core/components/BaseComponent";
+
+export type ComponentId = number;
 
 declare global {
     namespace MapEngine {
-        export interface IComponent {
-            init(): void;
-            update(): void;
-            render(): void;
-            destroy(): void;
-        }
-
         export interface IComponentManager extends ISystem {
-            add(component: IComponent): void;
-            remove(component: IComponent): void;
-            getComponent<T extends IComponent>(
+            add(component: BaseComponent): void;
+            remove(component: BaseComponent): void;
+            getComponent<T extends BaseComponent>(
                 componentId: ComponentId
             ): T | undefined;
         }

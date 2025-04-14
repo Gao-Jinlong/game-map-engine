@@ -1,4 +1,5 @@
 import { Map } from "@core";
+import { TerrainComponent } from "@core/components";
 
 main();
 
@@ -11,4 +12,13 @@ async function main() {
         zoom: 1,
         pitch: 45,
     });
+
+    map.addComponent(
+        new TerrainComponent({
+            color: 0xbfd1e5,
+            width: 7500,
+            height: 7500,
+            depth: 100,
+        })
+    );
 }

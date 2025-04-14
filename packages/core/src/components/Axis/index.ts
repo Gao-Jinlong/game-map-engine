@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { Component } from "@core/components/Component";
+import { BaseComponent } from "@core/components/BaseComponent";
 
-export class Axis extends Component {
+export class Axis extends BaseComponent {
     private axesHelper?: THREE.AxesHelper;
     private gridHelper?: THREE.GridHelper;
 
@@ -9,7 +9,7 @@ export class Axis extends Component {
         super();
     }
 
-    init() {
+    onAdd() {
         // 创建坐标轴
         this.axesHelper = new THREE.AxesHelper(1000);
         this.axesHelper.position.set(0, 0, 0);
@@ -27,7 +27,7 @@ export class Axis extends Component {
         // 可以在这里添加更新逻辑
     }
 
-    destroy() {
+    onRemove() {
         if (this.axesHelper) {
             this.scene.remove(this.axesHelper);
         }

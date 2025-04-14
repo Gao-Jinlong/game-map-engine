@@ -7,7 +7,7 @@ import { toDefaulted } from "es-toolkit/compat";
 import { SystemManager } from "./systems/SystemManager";
 import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
-
+import { BaseComponent } from "./components/BaseComponent";
 export class Map implements MapEngine.IMap {
     eventManager: EventManager;
     container: HTMLElement;
@@ -30,6 +30,11 @@ export class Map implements MapEngine.IMap {
             zoom: 1,
             pitch: 0,
             roll: 0,
+            world: {
+                width: 7500,
+                height: 7500,
+                depth: 100,
+            },
         });
         this.container = this.options.container;
         this.state = {
@@ -64,20 +69,17 @@ export class Map implements MapEngine.IMap {
             this.loadAxesHelper();
         }
     }
-
-    loadAxesHelper(): void {
-        const axesHelper = new THREE.AxesHelper(1000);
-        const gridHelper = new THREE.GridHelper(1000, 20, 0x888888, 0x888888);
-        this.systemManager.getSystem(SceneSystem).scene.add(axesHelper);
-        this.systemManager.getSystem(SceneSystem).scene.add(gridHelper);
-    }
-
-    render(): void {}
     destroy(): void {
         this.destroyHandlers.forEach((handler) => handler());
     }
+    addComponent(component: BaseComponent): void {
+        this.systemManager.getSystem(ComponentManager).add(component);
+    }
 
-    onResize(entries: ResizeObserverEntry[], _observer: ResizeObserver): void {
+    private onResize(
+        entries: ResizeObserverEntry[],
+        _observer: ResizeObserver
+    ): void {
         for (const entry of entries) {
             if (entry.target === this.container) {
                 this.state.width = Math.floor(entry.contentRect.width);
@@ -91,5 +93,12 @@ export class Map implements MapEngine.IMap {
         this.systemManager.resize(this.state);
 
         this.eventManager.emit("resize", this.state);
+    }
+
+    private loadAxesHelper(): void {
+        const axesHelper = new THREE.AxesHelper(1000);
+        const gridHelper = new THREE.GridHelper(1000, 20, 0x888888, 0x888888);
+        this.systemManager.getSystem(SceneSystem).scene.add(axesHelper);
+        this.systemManager.getSystem(SceneSystem).scene.add(gridHelper);
     }
 }

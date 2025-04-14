@@ -19,6 +19,12 @@ declare global {
             zoom?: number;
             pitch?: number;
             roll?: number;
+            world?: IMapWorld;
+        }
+        export interface IMapWorld {
+            width: number;
+            height: number;
+            depth: number;
         }
         export interface IMapState {
             width: number;
