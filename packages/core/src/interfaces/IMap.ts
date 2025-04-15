@@ -1,5 +1,8 @@
 import { SystemManager } from "../systems/SystemManager";
 
+/**
+ * TODO 重构类型定义方式，通过 model 和 export 的方式，避免全局作用域
+ */
 declare global {
     namespace MapEngine {
         export type Coord = [number, number, number];

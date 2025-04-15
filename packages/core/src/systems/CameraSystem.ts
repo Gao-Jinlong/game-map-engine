@@ -1,6 +1,5 @@
 import { Vector3 } from "three";
 import * as THREE from "three";
-import { ImprovedNoise } from "three/examples/jsm/math/ImprovedNoise";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RendererSystem } from "./RendererSystem";
 
@@ -35,16 +34,47 @@ export class CameraSystem implements MapEngine.ICameraSystem {
             rendererSystem.renderer.domElement
         );
 
-        this.controls.minDistance = 1000;
-        this.controls.maxDistance = 10000;
-        this.controls.maxPolarAngle = Math.PI / 2;
+        this.controls.target.set(0, 0, 0);
 
+        // TODO 配置参数化
         this.camera.position.y = this.controls.target.y + 2000;
         this.camera.position.x = 2000;
-        this.controls.update();
+        this.camera.position.z = 2000;
 
-        this.controls.target.y = 500;
+        // 设置相机控制参数
+        this.controls.minPolarAngle = -Math.PI / 4; // 45度
+        this.controls.maxPolarAngle = Math.PI / 4; // 90度
+        this.controls.minAzimuthAngle = -Math.PI / 4; // -45度
+        this.controls.maxAzimuthAngle = Math.PI / 4; // 45度
+
+        // 默认禁用旋转
+        // this.controls.enableRotate = false;
+        this.controls.enablePan = true;
+
+        // 设置旋转和平移速度
+        this.controls.rotateSpeed = 0.5;
+        this.controls.panSpeed = 1.0;
+
+        // 监听键盘事件
+        const domElement = rendererSystem.renderer.domElement;
+        domElement.addEventListener("keydown", this.onKeyDown.bind(this));
+        domElement.addEventListener("keyup", this.onKeyUp.bind(this));
+
+        this.controls.update();
     }
+
+    private onKeyDown(event: KeyboardEvent) {
+        if (event.key === "Control") {
+            this.controls!.enableRotate = true;
+        }
+    }
+
+    private onKeyUp(event: KeyboardEvent) {
+        if (event.key === "Control") {
+            this.controls!.enableRotate = false;
+        }
+    }
+
     resize(state: MapEngine.IMapState) {
         this.camera!.aspect = state.width / state.height;
         this.camera!.updateProjectionMatrix();
@@ -64,27 +94,4 @@ export class CameraSystem implements MapEngine.ICameraSystem {
     render(): void {
         throw new Error("Method not implemented.");
     }
-}
-
-function generateHeight(width: number, height: number) {
-    const size = width * height,
-        data = new Uint8Array(size),
-        perlin = new ImprovedNoise(),
-        z = Math.random() * 100;
-
-    let quality = 1;
-
-    for (let j = 0; j < 4; j++) {
-        for (let i = 0; i < size; i++) {
-            const x = i % width,
-                y = ~~(i / width);
-            data[i] += Math.abs(
-                perlin.noise(x / quality, y / quality, z) * quality * 1.75
-            );
-        }
-
-        quality *= 5;
-    }
-
-    return data;
 }

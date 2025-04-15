@@ -2,7 +2,6 @@ import { ComponentId } from "@core/interfaces/IComponentManager";
 import { SceneSystem } from "./SceneSystem";
 import { CameraSystem } from "./CameraSystem";
 import { BaseComponent } from "@core/components/BaseComponent";
-import { isNumber } from "es-toolkit/compat";
 import { isComponentId } from "@core/utils";
 
 export class ComponentManager implements MapEngine.IComponentManager {

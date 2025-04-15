@@ -18,7 +18,9 @@ async function main() {
             color: 0xbfd1e5,
             width: 7500,
             height: 7500,
-            depth: 100,
+            depth: 10,
+            widthSegments: 2 ** 8,
+            heightSegments: 2 ** 8,
         })
     );
 }

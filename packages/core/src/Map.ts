@@ -33,7 +33,7 @@ export class Map implements MapEngine.IMap {
             world: {
                 width: 7500,
                 height: 7500,
-                depth: 100,
+                depth: 1000,
             },
         });
         this.container = this.options.container;

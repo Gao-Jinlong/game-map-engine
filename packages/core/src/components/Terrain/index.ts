@@ -43,14 +43,13 @@ export class TerrainComponent extends BaseComponent<ITerrainOptions> {
         const { width, height, depth, widthSegments, heightSegments } =
             this.options;
 
-        const data = generateHeight(width, depth);
+        const data = generateHeight(widthSegments, heightSegments);
 
-        // TODO fix 渲染破面
         this.geometry = new THREE.PlaneGeometry(
             width,
             height,
-            widthSegments,
-            heightSegments
+            widthSegments - 1,
+            heightSegments - 1
         );
         this.geometry.rotateX(-Math.PI / 2);
 
@@ -60,7 +59,7 @@ export class TerrainComponent extends BaseComponent<ITerrainOptions> {
         }
 
         const texture = new THREE.CanvasTexture(
-            generateTexture(data, width, depth)
+            generateTexture(data, widthSegments, heightSegments)
         );
         texture.wrapS = THREE.ClampToEdgeWrapping;
         texture.wrapT = THREE.ClampToEdgeWrapping;
