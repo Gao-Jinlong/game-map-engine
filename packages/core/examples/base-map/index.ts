@@ -1,5 +1,5 @@
 import { Map } from "@core";
-import { TerrainComponent } from "@core/components";
+import { TerrainLayer } from "@core/components";
 
 main();
 
@@ -14,7 +14,7 @@ async function main() {
     });
 
     map.addComponent(
-        new TerrainComponent({
+        new TerrainLayer({
             color: 0xbfd1e5,
             width: 7500,
             height: 7500,

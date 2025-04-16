@@ -9,7 +9,7 @@ declare global {
         export interface IMap {
             eventManager: IEventManager;
             systemManager: SystemManager;
-
+            stats: Stats;
             container: HTMLElement;
             options: Required<IMapOptions>;
             state: IMapState;

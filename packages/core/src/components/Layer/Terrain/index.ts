@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import { BaseComponent } from "../BaseComponent";
-import { ITerrainOptions } from "./type";
+import { BaseComponent } from "../../BaseComponent";
+import { ITerrainLayerOptions } from "./type";
 import { toDefaulted } from "es-toolkit/compat";
 import { ImprovedNoise } from "three/examples/jsm/math/ImprovedNoise";
 
-export class TerrainComponent extends BaseComponent<ITerrainOptions> {
+export class TerrainLayer extends BaseComponent<ITerrainLayerOptions> {
     geometry?: THREE.PlaneGeometry;
     material?: THREE.MeshBasicMaterial;
-    constructor(options: Partial<ITerrainOptions>) {
+    constructor(options: Partial<ITerrainLayerOptions>) {
         const finalOptions = toDefaulted(options, {
             color: 0x000000,
             depth: 100,

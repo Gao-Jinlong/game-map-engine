@@ -1,4 +1,4 @@
-export interface ITerrainOptions extends MapEngine.IBaseComponentOptions {
+export interface ITerrainLayerOptions extends MapEngine.IBaseComponentOptions {
     /**
      * 地形颜色
      */

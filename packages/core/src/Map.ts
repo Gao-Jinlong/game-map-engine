@@ -14,8 +14,8 @@ export class Map implements MapEngine.IMap {
     options: Required<MapEngine.IMapOptions>;
     state: MapEngine.IMapState;
     systemManager: SystemManager;
+    stats: Stats;
 
-    private stats: Stats;
     private destroyHandlers: (() => void)[] = [];
     constructor(options: MapEngine.IMapOptions) {
         if (!options.container) {
@@ -66,7 +66,7 @@ export class Map implements MapEngine.IMap {
         this.destroyHandlers.push(() => observer.disconnect());
 
         if (import.meta.env.DEV) {
-            this.loadAxesHelper();
+            // this.loadAxesHelper();
         }
     }
     destroy(): void {
@@ -87,9 +87,6 @@ export class Map implements MapEngine.IMap {
             }
         }
 
-        // this.systemManager.allSystems.forEach((system) => {
-        //     system.resize?.(this.state);
-        // });
         this.systemManager.resize(this.state);
 
         this.eventManager.emit("resize", this.state);

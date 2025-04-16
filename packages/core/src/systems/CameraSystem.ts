@@ -25,7 +25,7 @@ export class CameraSystem implements MapEngine.ICameraSystem {
             60,
             state.width / state.height,
             10,
-            20000
+            25000
         );
 
         const rendererSystem = systemManager.getSystem(RendererSystem);
@@ -34,18 +34,18 @@ export class CameraSystem implements MapEngine.ICameraSystem {
             rendererSystem.renderer.domElement
         );
 
-        this.controls.target.set(0, 0, 0);
-
         // TODO 配置参数化
-        this.camera.position.y = this.controls.target.y + 2000;
-        this.camera.position.x = 2000;
-        this.camera.position.z = 2000;
+        this.camera.position.y = 4000;
+        this.camera.position.x = 0;
+        this.camera.position.z = 0;
 
         // 设置相机控制参数
         this.controls.minPolarAngle = -Math.PI / 4; // 45度
         this.controls.maxPolarAngle = Math.PI / 4; // 90度
         this.controls.minAzimuthAngle = -Math.PI / 4; // -45度
         this.controls.maxAzimuthAngle = Math.PI / 4; // 45度
+        this.controls.maxDistance = 10000;
+        this.controls.minDistance = 500;
 
         // 默认禁用旋转
         // this.controls.enableRotate = false;

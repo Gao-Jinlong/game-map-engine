@@ -45,6 +45,7 @@ export class RendererSystem implements MapEngine.IRendererSystem {
         this.render();
     }
     render() {
+        this.context?.stats.update();
         this.renderer.render(this.scene!, this.camera!);
     }
 }
