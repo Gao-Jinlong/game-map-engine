@@ -3,11 +3,12 @@ import { SceneSystem } from "./SceneSystem";
 import { CameraSystem } from "./CameraSystem";
 import { BaseComponent } from "@core/components/BaseComponent";
 import { isComponentId } from "@core/utils";
+import { IMap } from "@core/interfaces";
 
 export class ComponentManager implements MapEngine.IComponentManager {
     private components: Map<ComponentId, BaseComponent> = new Map();
     private componentNameMap: Map<string, BaseComponent> = new Map();
-    public context?: MapEngine.IMap;
+    public context?: IMap;
     private sceneSystem?: SceneSystem;
     private cameraSystem?: CameraSystem;
     constructor() {}

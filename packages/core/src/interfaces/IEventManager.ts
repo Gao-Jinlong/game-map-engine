@@ -1,10 +1,7 @@
 import EventEmitter from "eventemitter3";
+import { IMapState } from "./IMap";
 
-declare global {
-    namespace MapEngine {
-        export interface MapEvents {
-            resize: MapEngine.IMapState;
-        }
-        export interface IEventManager extends EventEmitter<MapEvents> {}
-    }
+export interface MapEvents {
+    resize: IMapState;
 }
+export interface IEventManager extends EventEmitter<MapEvents> {}

@@ -1,14 +1,20 @@
+import {
+    IBaseComponentOptions,
+    ICameraSystem,
+    IMap,
+    ISceneSystem,
+} from "@core/interfaces";
 import { createUniqueId } from "../utils";
 import { ComponentId } from "@core/interfaces/IComponentManager";
 
 export abstract class BaseComponent<
-    OPTIONS extends MapEngine.IBaseComponentOptions = MapEngine.IBaseComponentOptions
+    OPTIONS extends IBaseComponentOptions = IBaseComponentOptions
 > {
     public readonly __component_id__: ComponentId;
     private _options: OPTIONS;
-    public sceneSystem?: MapEngine.ISceneSystem;
-    public cameraSystem?: MapEngine.ICameraSystem;
-    public context?: MapEngine.IMap;
+    public sceneSystem?: ISceneSystem;
+    public cameraSystem?: ICameraSystem;
+    public context?: IMap;
 
     constructor(options: OPTIONS) {
         this.__component_id__ = createUniqueId();

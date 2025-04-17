@@ -1,9 +1,6 @@
 import * as THREE from "three";
+import { ISystem } from "./ISystem";
 
-declare global {
-  namespace MapEngine {
-    export interface ISceneSystem extends ISystem {
-      scene?: THREE.Scene;
-    }
-  }
+export interface ISceneSystem extends ISystem {
+    scene?: THREE.Scene;
 }

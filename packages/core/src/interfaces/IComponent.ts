@@ -1,7 +1,3 @@
-declare global {
-    namespace MapEngine {
-        export interface IBaseComponentOptions {
-            name?: string;
-        }
-    }
+export interface IBaseComponentOptions {
+    name?: string;
 }

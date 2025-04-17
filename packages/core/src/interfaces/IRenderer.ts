@@ -1,8 +1,6 @@
 import * as THREE from "three";
-declare global {
-  namespace MapEngine {
-    export interface IRendererSystem extends ISystem {
-      renderer: THREE.WebGLRenderer;
-    }
-  }
+import { ISystem } from "./ISystem";
+
+export interface IRendererSystem extends ISystem {
+    renderer: THREE.WebGLRenderer;
 }

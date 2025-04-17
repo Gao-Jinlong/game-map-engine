@@ -1,4 +1,6 @@
-export interface IImageLayerOptions extends MapEngine.IBaseComponentOptions {
+import { IBaseComponentOptions } from "@core/interfaces";
+
+export interface IImageLayerOptions extends IBaseComponentOptions {
     /**
      * 图片路径
      */

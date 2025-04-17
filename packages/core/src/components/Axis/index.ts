@@ -1,12 +1,19 @@
 import * as THREE from "three";
 import { BaseComponent } from "@core/components/BaseComponent";
+import { IBaseComponentOptions } from "@core/interfaces";
 
 export class Axis extends BaseComponent {
+    onUpdate?(): void {
+        throw new Error("Method not implemented.");
+    }
+    onResize?(): void {
+        throw new Error("Method not implemented.");
+    }
     private axesHelper?: THREE.AxesHelper;
     private gridHelper?: THREE.GridHelper;
 
-    constructor() {
-        super();
+    constructor(options: Partial<IBaseComponentOptions>) {
+        super(options);
     }
 
     onAdd() {
@@ -19,8 +26,8 @@ export class Axis extends BaseComponent {
         this.gridHelper.position.set(0, 0, 0);
 
         // 添加到场景
-        this.scene.add(this.axesHelper);
-        this.scene.add(this.gridHelper);
+        this.sceneSystem?.scene?.add(this.axesHelper);
+        this.sceneSystem?.scene?.add(this.gridHelper);
     }
 
     update() {
@@ -29,10 +36,10 @@ export class Axis extends BaseComponent {
 
     onRemove() {
         if (this.axesHelper) {
-            this.scene.remove(this.axesHelper);
+            this.sceneSystem?.scene?.remove(this.axesHelper);
         }
         if (this.gridHelper) {
-            this.scene.remove(this.gridHelper);
+            this.sceneSystem?.scene?.remove(this.gridHelper);
         }
     }
 }

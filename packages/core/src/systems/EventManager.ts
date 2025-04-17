@@ -1,10 +1,11 @@
+import { IEventManager, IMap, MapEvents } from "@core/interfaces";
 import EventEmitter from "eventemitter3";
 
 export class EventManager
-    extends EventEmitter<MapEngine.MapEvents>
-    implements MapEngine.IEventManager
+    extends EventEmitter<MapEvents>
+    implements IEventManager
 {
-    constructor(private context: MapEngine.IMap) {
+    constructor(private context: IMap) {
         super();
     }
 

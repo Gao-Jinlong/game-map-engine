@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
+import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
 
-export class RendererSystem implements MapEngine.IRendererSystem {
+export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;
-    public context?: MapEngine.IMap;
+    public context?: IMap;
 
     private camera?: THREE.Camera;
     private scene?: THREE.Scene;
@@ -36,7 +37,7 @@ export class RendererSystem implements MapEngine.IRendererSystem {
         this.renderer.setAnimationLoop(this.animate.bind(this));
     }
 
-    resize(state: MapEngine.IMapState) {
+    resize(state: IMapState) {
         this.renderer.setSize(state.width, state.height);
         this.renderer.render(this.scene!, this.camera!);
     }

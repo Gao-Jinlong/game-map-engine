@@ -2,12 +2,13 @@ import { Vector3 } from "three";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RendererSystem } from "./RendererSystem";
+import { ICameraSystem, IMap, IMapState } from "@core/interfaces";
 
 /**
  * TODO 封装相机控制器,实现地图的视角控制逻辑
  */
-export class CameraSystem implements MapEngine.ICameraSystem {
-    public context?: MapEngine.IMap;
+export class CameraSystem implements ICameraSystem {
+    public context?: IMap;
 
     pitch: number = 0;
     roll: number = 0;
@@ -75,7 +76,7 @@ export class CameraSystem implements MapEngine.ICameraSystem {
         }
     }
 
-    resize(state: MapEngine.IMapState) {
+    resize(state: IMapState) {
         this.camera!.aspect = state.width / state.height;
         this.camera!.updateProjectionMatrix();
     }

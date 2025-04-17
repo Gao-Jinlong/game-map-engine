@@ -1,21 +1,18 @@
+import { IMap, IMapState, ISystem, SystemClass } from "@core/interfaces";
 import { Map as MapInstance } from "../Map";
 export class SystemManager {
-    allSystems: Map<MapEngine.SystemClass, MapEngine.ISystem>;
-    constructor(private context: MapEngine.IMap) {
+    allSystems: Map<SystemClass, ISystem>;
+    constructor(private context: IMap) {
         this.allSystems = new Map();
     }
 
-    register<S extends MapEngine.ISystem>(
-        Class: MapEngine.SystemClass<MapInstance, S>
-    ) {
+    register<S extends ISystem>(Class: SystemClass<MapInstance, S>) {
         const system = new Class();
         system.context = this.context;
         this.allSystems.set(Class, system);
     }
 
-    getSystem<S extends MapEngine.ISystem>(
-        Class: MapEngine.SystemClass<MapInstance, S>
-    ): S {
+    getSystem<S extends ISystem>(Class: SystemClass<MapInstance, S>): S {
         return this.allSystems.get(Class) as S;
     }
 
@@ -24,7 +21,7 @@ export class SystemManager {
             system.init?.();
         });
     }
-    resize(state: MapEngine.IMapState) {
+    resize(state: IMapState) {
         this.allSystems.forEach((system) => {
             system.resize?.(state);
         });

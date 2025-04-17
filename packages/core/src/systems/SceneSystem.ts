@@ -1,8 +1,9 @@
+import { IMap, ISceneSystem } from "@core/interfaces";
 import * as THREE from "three";
 
-export class SceneSystem implements MapEngine.ISceneSystem {
+export class SceneSystem implements ISceneSystem {
     scene: THREE.Scene;
-    context?: MapEngine.IMap;
+    context?: IMap;
     constructor() {
         this.scene = new THREE.Scene();
     }
