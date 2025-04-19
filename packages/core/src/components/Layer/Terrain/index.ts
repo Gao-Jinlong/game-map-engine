@@ -40,8 +40,7 @@ export class TerrainLayer extends BaseComponent<ITerrainLayerOptions> {
     onResize(): void {}
 
     createTerrain(): void {
-        const { width, height, depth, widthSegments, heightSegments } =
-            this.options;
+        const { width, height, widthSegments, heightSegments } = this.options;
 
         const data = generateHeight(widthSegments, heightSegments);
 

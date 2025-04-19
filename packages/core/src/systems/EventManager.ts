@@ -7,7 +7,11 @@ export class EventManager
 {
     constructor(private context: IMap) {
         super();
+        console.log("🚀 ~ constructor ~ context:", this.context);
     }
 
     init(): void {}
+    destroy(): void {
+        this.removeAllListeners();
+    }
 }

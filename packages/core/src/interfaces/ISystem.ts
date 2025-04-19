@@ -16,10 +16,12 @@ export interface ISystem<S extends IMap = IMap> {
     // reset?: () => void;
     /** Method called when the system is resized, with the new width and height passed as arguments. Called every time the screen has resized. */
     resize?: (state: IMapState) => void;
+    /** Method called when the system is destroyed. Called only once when the system is destroyed. */
+    destroy?: () => void;
 }
 
 export interface SystemClass<
-    MAP extends IMap = IMap,
+    _MAP extends IMap = IMap,
     SYSTEM extends ISystem<IMap> = ISystem<IMap>
 > {
     new (): SYSTEM;

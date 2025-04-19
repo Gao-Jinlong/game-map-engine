@@ -1,11 +1,11 @@
-import { ComponentId } from "@core/interfaces/IComponentManager";
+import { ComponentId, IComponentManager } from "@core/interfaces";
 import { SceneSystem } from "./SceneSystem";
 import { CameraSystem } from "./CameraSystem";
 import { BaseComponent } from "@core/components/BaseComponent";
 import { isComponentId } from "@core/utils";
 import { IMap } from "@core/interfaces";
 
-export class ComponentManager implements MapEngine.IComponentManager {
+export class ComponentManager implements IComponentManager {
     private components: Map<ComponentId, BaseComponent> = new Map();
     private componentNameMap: Map<string, BaseComponent> = new Map();
     public context?: IMap;
@@ -55,5 +55,11 @@ export class ComponentManager implements MapEngine.IComponentManager {
         componentId: ComponentId
     ): T | undefined {
         return this.components.get(componentId) as T | undefined;
+    }
+
+    destroy() {
+        this.components.forEach((component) => {
+            component.onRemove?.();
+        });
     }
 }

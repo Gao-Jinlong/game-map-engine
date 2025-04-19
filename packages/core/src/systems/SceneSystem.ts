@@ -24,4 +24,8 @@ export class SceneSystem implements ISceneSystem {
         environmentLight.position.set(0, 2000, 0);
         this.scene.add(environmentLight);
     }
+
+    destroy() {
+        this.scene.clear();
+    }
 }

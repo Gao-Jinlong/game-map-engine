@@ -76,6 +76,10 @@ export class CameraSystem implements ICameraSystem {
         }
     }
 
+    destroy() {
+        this.controls?.dispose();
+    }
+
     resize(state: IMapState) {
         this.camera!.aspect = state.width / state.height;
         this.camera!.updateProjectionMatrix();

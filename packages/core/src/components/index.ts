@@ -1,1 +1,3 @@
-export * from "./Layer";
+import * as Layer from "./Layer";
+
+export { Layer };

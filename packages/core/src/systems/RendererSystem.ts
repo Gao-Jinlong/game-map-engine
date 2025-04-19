@@ -49,4 +49,9 @@ export class RendererSystem implements IRendererSystem {
         this.context?.stats.update();
         this.renderer.render(this.scene!, this.camera!);
     }
+
+    destroy() {
+        this.renderer.dispose();
+        this.renderer.domElement.remove();
+    }
 }

@@ -8,16 +8,18 @@ import { SystemManager } from "./systems/SystemManager";
 import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
 import { BaseComponent } from "./components/BaseComponent";
-export class Map implements MapEngine.IMap {
+import { IMap, IMapOptions, IMapState } from "@core/interfaces";
+
+class Map implements IMap {
     eventManager: EventManager;
     container: HTMLElement;
-    options: Required<MapEngine.IMapOptions>;
-    state: MapEngine.IMapState;
+    options: Required<IMapOptions>;
+    state: IMapState;
     systemManager: SystemManager;
     stats: Stats;
 
     private destroyHandlers: (() => void)[] = [];
-    constructor(options: MapEngine.IMapOptions) {
+    constructor(options: IMapOptions) {
         if (!options.container) {
             console.warn("container is required");
         }
@@ -65,12 +67,14 @@ export class Map implements MapEngine.IMap {
         observer.observe(this.container);
         this.destroyHandlers.push(() => observer.disconnect());
 
-        if (import.meta.env.DEV) {
-            // this.loadAxesHelper();
+        if (process.env.NODE_ENV === "development") {
+            this.loadAxesHelper();
         }
     }
     destroy(): void {
+        this.container.removeChild(this.stats.dom);
         this.destroyHandlers.forEach((handler) => handler());
+        this.systemManager.destroy();
     }
     addComponent(component: BaseComponent): void {
         this.systemManager.getSystem(ComponentManager).add(component);
@@ -99,3 +103,5 @@ export class Map implements MapEngine.IMap {
         this.systemManager.getSystem(SceneSystem).scene.add(gridHelper);
     }
 }
+
+export { Map };

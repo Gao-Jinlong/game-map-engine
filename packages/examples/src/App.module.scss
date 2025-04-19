@@ -1,0 +1,26 @@
+.app {
+    width: 100vw;
+
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.content {
+    width: 100vw;
+    height: 100vh;
+    flex: 1;
+
+    display: flex;
+
+    :global {
+        .map-container {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}

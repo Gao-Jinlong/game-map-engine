@@ -26,4 +26,9 @@ export class SystemManager {
             system.resize?.(state);
         });
     }
+    destroy() {
+        this.allSystems.forEach((system) => {
+            system.destroy?.();
+        });
+    }
 }
