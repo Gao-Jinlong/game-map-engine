@@ -4,6 +4,29 @@
 
 ```mermaid
 classDiagram
+    namespace Systems {
+      class IMapContext
+      class Map
+      class IEventManager
+      class EventManager
+      class IRenderer
+      class Renderer
+      class ICamera
+      class Camera
+      class IComponentManager
+      class ComponentManager
+      class ISystemManager
+      class SystemManager
+
+      class IScene
+      class Scene
+    }
+
+    namespace Components {
+      class IComponent
+      class Component
+    }
+
     class IMapContext {
       引擎接口
 
@@ -28,6 +51,34 @@ classDiagram
     Map ..> ICamera
     Map ..> IScene
 
+
+
+    class ISystemManager {
+      系统管理器，管理各个系统
+
+      register(System: ISystem) 注册系统
+      unregister(System: ISystem) 注销系统
+      getSystem(System: ISystem) 获取系统
+    }
+    ISystemManager ..> IMapContext
+
+    class SystemManager {
+      系统管理器，管理各个系统
+
+      init(context: IMapContext)
+    }
+    SystemManager ..|> ISystemManager
+    SystemManager ..> IMapContext
+    SystemManager ..> ISystem
+
+    class ISystem {
+      系统接口，各个子系统需要实现这个接口
+
+      init(context: IMapContext)
+      update()
+      render()
+    }
+
     class IComponentManager {
       组件管理器，管理各个组件
 
@@ -35,6 +86,17 @@ classDiagram
       unregister(Component: IComponent) 注销组件
       getComponent(Component: IComponent) 获取组件
     }
+
+    class ComponentManager {
+      组件管理器，管理各个组件
+
+      register(Component: IComponent) 注册组件
+      unregister(Component: IComponent) 注销组件
+      getComponent(Component: IComponent) 获取组件
+    }
+    ComponentManager ..|> IComponentManager
+    ComponentManager ..> IMapContext
+    ComponentManager ..> IComponent
 
     class IComponent {
       组件接口，各个子组件需要实现这个接口
@@ -44,6 +106,37 @@ classDiagram
       render()
       destroy()
     }
+    IComponent ..> IMapContext
+
+    namespace Layers {
+      class VectorLayer
+    }
+
+    class VectorLayer {
+      矢量图层，用于管理矢量数据
+
+      init(context: IMapContext)
+      update()
+      render()
+    }
+    VectorLayer ..|> IComponent
+    VectorLayer ..> IVectorSource
+
+    class ISource {
+      数据源接口，用于获取管理数据
+
+      getFeaturesByExtent(extent: Extent)
+      getFeaturesByFilter(filter: Filter)
+      getFeaturesByQuery(query: Query)
+    }
+    class VectorSource {
+      矢量数据源，用于获取矢量数据
+
+      init(context: IMapContext)
+      update()
+      render()
+    }
+    VectorSource ..|> ISource
 
     class IEventManager {
       事件系统，管理引擎的生命周期 hook
@@ -129,12 +222,12 @@ classDiagram
 
 ## 架构说明
 
-- Map 是引擎的入口，管理调度引擎的各个子系统，持有引擎的上下文。
-- EventManager 事件系统，实现引擎的生命周期 hook。
-- Camera 相机组件，实现相机接口。
-- Renderer 渲染器组件，实现渲染器接口。
-- Scene 场景组件，实现场景接口。
-- ComponentManager 管理系统组件，管理各个组件的注册、注销、获取，组件用于扩展系统的能力，不应影响引擎的核心功能。
+-   Map 是引擎的入口，管理调度引擎的各个子系统，持有引擎的上下文。
+-   EventManager 事件系统，实现引擎的生命周期 hook。
+-   Camera 相机组件，实现相机接口。
+-   Renderer 渲染器组件，实现渲染器接口。
+-   Scene 场景组件，实现场景接口。
+-   ComponentManager 管理系统组件，管理各个组件的注册、注销、获取，组件用于扩展系统的能力，不应影响引擎的核心功能。
 
 ## 脑暴
 
