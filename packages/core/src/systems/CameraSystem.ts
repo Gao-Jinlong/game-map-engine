@@ -1,6 +1,6 @@
 import { Vector3 } from "three";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { MapControls } from "three/examples/jsm/controls/MapControls";
 import { RendererSystem } from "./RendererSystem";
 import { ICameraSystem, IMap, IMapState } from "@core/interfaces";
 
@@ -15,7 +15,7 @@ export class CameraSystem implements ICameraSystem {
     zoom: number = 0;
     position: Vector3 = new Vector3();
     camera?: THREE.PerspectiveCamera;
-    private controls?: OrbitControls;
+    private controls?: MapControls;
     constructor() {}
     init() {
         if (!this.context) {
@@ -30,7 +30,7 @@ export class CameraSystem implements ICameraSystem {
         );
 
         const rendererSystem = systemManager.getSystem(RendererSystem);
-        this.controls = new OrbitControls(
+        this.controls = new MapControls(
             this.camera,
             rendererSystem.renderer.domElement
         );

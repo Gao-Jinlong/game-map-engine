@@ -1,4 +1,5 @@
 import { SystemManager } from "../systems/SystemManager";
+import { ICrsSystem } from "./ICRSSystem";
 import { IEventManager } from "./IEventManager";
 
 /**
@@ -6,6 +7,7 @@ import { IEventManager } from "./IEventManager";
  */
 export type Coord = [number, number, number];
 export interface IMap {
+    crsSystem: ICrsSystem;
     eventManager: IEventManager;
     systemManager: SystemManager;
     stats: Stats;

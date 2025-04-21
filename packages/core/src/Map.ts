@@ -9,8 +9,10 @@ import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
 import { BaseComponent } from "./components/BaseComponent";
 import { IMap, IMapOptions, IMapState } from "@core/interfaces";
+import { CrsSystem } from "./systems/CrsSystem";
 
 class Map implements IMap {
+    crsSystem: CrsSystem;
     eventManager: EventManager;
     container: HTMLElement;
     options: Required<IMapOptions>;
@@ -45,6 +47,7 @@ class Map implements IMap {
             depth: 100,
         };
 
+        this.crsSystem = new CrsSystem(this);
         this.eventManager = new EventManager(this);
         this.systemManager = new SystemManager(this);
 
@@ -75,6 +78,7 @@ class Map implements IMap {
         this.container.removeChild(this.stats.dom);
         this.destroyHandlers.forEach((handler) => handler());
         this.systemManager.destroy();
+        this.eventManager.destroy();
     }
     addComponent(component: BaseComponent): void {
         this.systemManager.getSystem(ComponentManager).add(component);
