@@ -5,7 +5,7 @@ import { RendererSystem } from "./RendererSystem";
 import { ICameraSystem, IMap, IMapState } from "@core/interfaces";
 
 /**
- * TODO 封装相机控制器,实现地图的视角控制逻辑
+ * 相机系统
  */
 export class CameraSystem implements ICameraSystem {
     public context?: IMap;

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Map } from "gme";
+import { Map } from "@gme/core";
 
 const BaseMap: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { Map } from "gme";
-import { ImageLayer } from "gme/layers";
+import { Map } from "@gme/core";
+import { ImageLayer } from "@gme/core/layers";
 
 const ImageLayerExample: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
