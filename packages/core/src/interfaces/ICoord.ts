@@ -31,6 +31,9 @@ export interface IBounds {
     maxX: number;
     maxY: number;
     maxZ: number;
+    min: IPosition;
+    max: IPosition;
+    clone(): IBounds;
 }
 
 export type IBoundsTuple = [number, number, number, number, number, number];

@@ -62,6 +62,8 @@ class Map implements IMap {
     }
 
     init(): void {
+        this.crsSystem.init();
+        this.eventManager.init();
         this.systemManager.init();
 
         this.container.appendChild(this.stats.dom);

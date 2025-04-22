@@ -39,3 +39,7 @@ export class Coord implements ICoord {
         return new Coord(this.lon, this.lat, this.alt);
     }
 }
+
+export function isCoord(coord: ICoord | ICoordTuple): coord is ICoord {
+    return coord instanceof Coord;
+}

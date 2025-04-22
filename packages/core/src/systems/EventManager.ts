@@ -1,3 +1,4 @@
+import { Position } from "@core/entity";
 import {
     BaseEventPayload,
     IEventManager,
@@ -26,8 +27,6 @@ export class EventManager
         super();
         this.container = this.context.container;
         this.crsSystem = this.context.crsSystem;
-
-        this.init();
     }
 
     init(): void {
@@ -55,11 +54,18 @@ export class EventManager
         if (event instanceof MouseEvent) {
             const { offsetX, offsetY } = event;
 
-            const { lng, lat } = this.crsSystem.unproject(offsetX, offsetY);
+            // TODO:
+            // 1. 使用鼠标射线检测落点位置的高度
+            // 2. 屏幕坐标与空间坐标的转换计算
+            // 3. 派发事件
+
+            const { lon, lat } = this.crsSystem.unproject(
+                new Position(offsetX, offsetY, 0)
+            );
 
             // TODO: 事件派发 or 快捷键注册机制？
             this.emit(EventEnum.CLICK, {
-                lng,
+                lon,
                 lat,
                 context: this.context,
             });

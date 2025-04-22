@@ -11,3 +11,9 @@ export class Position implements IPosition {
         return new Position(this.x, this.y, this.z);
     }
 }
+
+export function isPosition(
+    position: IPosition | IPositionTuple
+): position is IPosition {
+    return position instanceof Position;
+}

@@ -59,7 +59,7 @@ export abstract class CRS {
         const min = this.transformation.transform(b.min, s);
         const max = this.transformation.transform(b.max, s);
 
-        return new Bounds(min.tuple, max.tuple);
+        return Bounds.fromPositions(min, max);
     }
 
     // // @method wrapLatLng(latlng: LatLng): LatLng

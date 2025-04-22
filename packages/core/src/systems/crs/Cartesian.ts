@@ -13,8 +13,8 @@ export interface ICartesianOptions {
  */
 export class Cartesian extends CRS {
     private _options: ICartesianOptions;
-    constructor(options: Partial<ICartesianOptions>) {
-        const finalOptions = toDefaulted(options, {
+    constructor(options?: Partial<ICartesianOptions>) {
+        const finalOptions = toDefaulted(options ?? {}, {
             bounds: [
                 -Infinity,
                 -Infinity,
@@ -32,7 +32,9 @@ export class Cartesian extends CRS {
 
         this._options = finalOptions;
     }
-
+    get options() {
+        return this._options;
+    }
     scale(zoom: number) {
         return 2 ** zoom;
     }

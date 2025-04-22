@@ -1,6 +1,7 @@
 import { ISystem } from "./ISystem";
+import { ICoord, IPosition } from "./ICoord";
 
 export interface ICrsSystem extends ISystem {
-    project(lng: number, lat: number): { x: number; y: number };
-    unproject(x: number, y: number): { lng: number; lat: number };
+    project(coord: ICoord): IPosition;
+    unproject(position: IPosition): ICoord;
 }

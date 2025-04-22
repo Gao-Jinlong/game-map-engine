@@ -1,4 +1,10 @@
-import { IBounds, IBoundsTuple } from "@core/interfaces/ICoord";
+import {
+    IBounds,
+    IBoundsTuple,
+    ICoord,
+    IPosition,
+} from "@core/interfaces/ICoord";
+import { Position } from "./Position";
 
 export class Bounds implements IBounds {
     minX: number;
@@ -7,6 +13,8 @@ export class Bounds implements IBounds {
     maxX: number;
     maxY: number;
     maxZ: number;
+    private _min: IPosition;
+    private _max: IPosition;
     constructor(bounds: IBoundsTuple) {
         this.minX = bounds[0];
         this.minY = bounds[1];
@@ -14,6 +22,12 @@ export class Bounds implements IBounds {
         this.maxX = bounds[3];
         this.maxY = bounds[4];
         this.maxZ = bounds[5];
+
+        this._min = new Position(this.minX, this.minY, this.minZ);
+        this._max = new Position(this.maxX, this.maxY, this.maxZ);
+    }
+    static fromPositions(min: IPosition, max: IPosition) {
+        return new Bounds([min.x, min.y, min.z, max.x, max.y, max.z]);
     }
 
     clone(): IBounds {
@@ -25,5 +39,12 @@ export class Bounds implements IBounds {
             this.maxY,
             this.maxZ,
         ]);
+    }
+
+    get max() {
+        return this._max;
+    }
+    get min() {
+        return this._min;
     }
 }

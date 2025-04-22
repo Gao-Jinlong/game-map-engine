@@ -1,21 +1,48 @@
 import { IMap, IMapState } from "@core/interfaces";
-import { ICrsSystem } from "@core/interfaces/ICRSSystem";
+import { ICrsSystem } from "@core/interfaces/ICrsSystem";
+import { CRS } from "./crs/CRS";
+import { Cartesian } from "./crs/Cartesian";
+import { toDefaulted } from "es-toolkit/compat";
+import {
+    ICoord,
+    ICoordTuple,
+    IPosition,
+    IPositionTuple,
+} from "@core/interfaces/ICoord";
+import { Coord, isCoord, Position, isPosition } from "@core/entity";
 
+export interface ICrsOptions {
+    crs: CRS;
+}
 /**
  * 坐标系系统
- *
- * 屏幕坐标与空间坐标转换
  */
 export class CrsSystem implements ICrsSystem {
+    crs?: CRS;
+    private _options?: ICrsOptions;
     constructor(public context: IMap) {
-        // TODO 坐标映射
+        // TODO: 屏幕坐标与空间坐标的转换计算
     }
-    init?: (() => void) | undefined;
-    public project(lng: number, lat: number): { x: number; y: number } {
-        return { x: 0, y: 0 };
+    init(options?: Partial<ICrsOptions>): void {
+        const finalOptions = toDefaulted(options ?? {}, {
+            crs: new Cartesian(),
+        });
+
+        this.crs = finalOptions.crs;
+        this._options = finalOptions;
     }
-    public unproject(x: number, y: number): { lng: number; lat: number } {
-        return { lng: 0, lat: 0 };
+    get options() {
+        return this._options;
+    }
+    public project(coordLike: ICoordTuple | ICoord): IPosition {
+        const coord = isCoord(coordLike) ? coordLike : new Coord(...coordLike);
+        return this.crs!.project(coord);
+    }
+    public unproject(positionLike: IPosition | IPositionTuple): ICoord {
+        const position = isPosition(positionLike)
+            ? positionLike
+            : new Position(...positionLike);
+        return this.crs!.unproject(position);
     }
     resize?: ((state: IMapState) => void) | undefined;
     destroy?: (() => void) | undefined;
