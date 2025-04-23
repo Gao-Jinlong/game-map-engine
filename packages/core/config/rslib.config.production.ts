@@ -1,25 +1,28 @@
 import { defineConfig } from "@rslib/core";
-import path from "path";
+import path, { resolve } from "path";
 
 const root = path.resolve(__dirname, "../");
+const src = path.resolve(__dirname, "../src");
 
 export default defineConfig({
     lib: [
         {
             format: "esm",
+            bundle: true,
             dts: true,
             output: {
                 distPath: {
-                    root: `${root}/dist`,
+                    root: resolve(root, "dist/esm"),
                 },
             },
         },
         {
             format: "cjs",
+            bundle: true,
             dts: true,
             output: {
                 distPath: {
-                    root: `${root}/dist/cjs`,
+                    root: resolve(root, "dist/cjs"),
                 },
             },
         },
@@ -27,6 +30,13 @@ export default defineConfig({
     output: {
         target: "web",
         cleanDistPath: true,
+        sourceMap: true,
+    },
+    source: {
+        entry: {
+            index: resolve(src, "index.ts"),
+            layers: resolve(src, "layers.ts"),
+        },
     },
     plugins: [],
 });

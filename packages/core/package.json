@@ -2,28 +2,27 @@
     "name": "@gme/core",
     "version": "0.0.1",
     "private": true,
-    "main": "./dist/cjs/index.js",
-    "module": "./dist/esm/index.js",
-    "types": "./dist/esm/index.d.ts",
     "files": [
         "dist"
     ],
     "exports": {
         ".": {
+            "source": "./src/index.ts",
             "import": "./dist/esm/index.js",
             "require": "./dist/cjs/index.js",
-            "types": "./dist/esm/index.d.ts"
+            "types": "./dist/esm/src/index.d.ts"
         },
         "./layers": {
+            "source": "./src/layers.ts",
             "import": "./dist/esm/layers.js",
             "require": "./dist/cjs/layers.js",
-            "types": "./dist/esm/layers.d.ts"
+            "types": "./dist/esm/src/layers.d.ts"
         }
     },
     "scripts": {
         "build": "rslib build --config ./config/rslib.config.production.ts",
         "build:watch": "rslib build --watch --config ./config/rslib.config.development.ts",
-        "dev": "pnpm build:watch",
+        "dev": "pnpm run build",
         "type-check": "tsc --noEmit",
         "test": "vitest"
     },

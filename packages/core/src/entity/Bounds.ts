@@ -1,9 +1,4 @@
-import {
-    IBounds,
-    IBoundsTuple,
-    ICoord,
-    IPosition,
-} from "@core/interfaces/ICoord";
+import { IBounds, IBoundsTuple, IPosition } from "@core/interfaces/ICoord";
 import { Position } from "./Position";
 
 export class Bounds implements IBounds {

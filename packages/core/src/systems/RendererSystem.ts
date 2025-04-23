@@ -1,7 +1,12 @@
 import * as THREE from "three";
 import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
-import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
+import {
+    IEventManager,
+    IMap,
+    IMapState,
+    IRendererSystem,
+} from "@core/interfaces";
 
 export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;
@@ -9,6 +14,7 @@ export class RendererSystem implements IRendererSystem {
 
     private camera?: THREE.Camera;
     private scene?: THREE.Scene;
+    private eventManager?: IEventManager;
     constructor() {
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
@@ -30,6 +36,8 @@ export class RendererSystem implements IRendererSystem {
         const cameraSystem = systemManager.getSystem(CameraSystem);
         const sceneSystem = systemManager.getSystem(SceneSystem);
 
+        this.eventManager = this.context.eventManager;
+
         container.appendChild(this.renderer.domElement);
         this.camera = cameraSystem.camera;
         this.scene = sceneSystem.scene;
@@ -43,7 +51,9 @@ export class RendererSystem implements IRendererSystem {
     }
 
     animate() {
+        this.eventManager?.emit("preFrame", this.context);
         this.render();
+        this.eventManager?.emit("postFrame", this.context);
     }
     render() {
         this.context?.stats.update();

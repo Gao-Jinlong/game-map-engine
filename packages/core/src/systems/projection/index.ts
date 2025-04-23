@@ -1,2 +1,2 @@
 export * from "./Simple";
-export * from "./type";
+export * from "./type.d";

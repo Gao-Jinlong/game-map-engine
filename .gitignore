@@ -33,3 +33,4 @@ Thumbs.db
 # 下载的贴图
 public/assets
 
+*.tsbuildinfo

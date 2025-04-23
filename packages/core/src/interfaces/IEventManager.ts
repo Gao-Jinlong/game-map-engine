@@ -13,6 +13,9 @@ export interface MouseEventPayload extends BaseEventPayload {
 export interface MapEvents {
     resize: IMapState;
     click: MouseEventPayload;
+    preFrame: IMap;
+    postFrame: IMap;
+    onReady: IMap;
 }
 
 export interface IEventManager extends EventEmitter<MapEvents> {}

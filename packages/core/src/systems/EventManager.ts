@@ -1,12 +1,9 @@
 import { Position } from "@core/entity";
-import {
-    BaseEventPayload,
-    IEventManager,
-    IMap,
-    MapEvents,
-} from "@core/interfaces";
-import { ICrsSystem } from "@core/interfaces/ICRSSystem";
+import { IEventManager, IMap, MapEvents } from "@core/interfaces";
+import { ICrsSystem } from "@core/interfaces/ICrsSystem";
 import EventEmitter from "eventemitter3";
+import { Raycaster, Vector2 } from "three";
+import { CameraSystem } from "./CameraSystem";
 
 export enum EventEnum {
     MOUSE_DOWN = "mousedown",
@@ -23,7 +20,10 @@ export class EventManager
     private container: HTMLElement;
     private crsSystem: ICrsSystem;
     private destroyHandlers: (() => void)[] = [];
-    constructor(private context: IMap) {
+    private cameraSystem?: CameraSystem;
+    public pointer: Vector2 = new Vector2();
+    public raycaster: Raycaster = new Raycaster();
+    constructor(public context: IMap) {
         super();
         this.container = this.context.container;
         this.crsSystem = this.context.crsSystem;
@@ -48,25 +48,32 @@ export class EventManager
                 this.container.removeEventListener(event, dispatch);
             });
         });
+
+        this.once("onReady", () => {
+            this.cameraSystem =
+                this.context.systemManager.getSystem(CameraSystem);
+        });
     }
 
     dispatch(event: Event): void {
         if (event instanceof MouseEvent) {
             const { offsetX, offsetY } = event;
 
-            // TODO:
-            // 1. 使用鼠标射线检测落点位置的高度
-            // 2. 屏幕坐标与空间坐标的转换计算
-            // 3. 派发事件
+            // 事件发生在二维屏幕上，因此没有 z 维度， z 需要从具体实体上获取
+            this.pointer.x =
+                (event.clientX / this.container.clientWidth) * 2 - 1;
+            this.pointer.y =
+                -(event.clientY / this.container.clientHeight) * 2 + 1;
 
             const { lon, lat } = this.crsSystem.unproject(
                 new Position(offsetX, offsetY, 0)
             );
+            // console.log("🚀 ~ dispatch ~ lon, lat :", lon, lat);
 
-            // TODO: 事件派发 or 快捷键注册机制？
             this.emit(EventEnum.CLICK, {
                 lon,
                 lat,
+                pointer: this.pointer,
                 context: this.context,
             });
         }

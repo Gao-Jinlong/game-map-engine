@@ -19,7 +19,13 @@
         /* type checking */
         "strict": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": true,
+        "composite": true
     },
+    "references": [
+        {
+            "path": "../core"
+        }
+    ],
     "include": ["src", "src/types"]
 }

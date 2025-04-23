@@ -26,6 +26,8 @@ class Map implements IMap {
             console.warn("container is required");
         }
 
+        console.log("test123456");
+
         this.options = toDefaulted(options, {
             container: document.body,
             background: 0x000000,
@@ -75,6 +77,8 @@ class Map implements IMap {
         if (process.env.NODE_ENV === "development") {
             this.loadAxesHelper();
         }
+
+        this.eventManager.emit("onReady", this);
     }
     destroy(): void {
         this.container.removeChild(this.stats.dom);
