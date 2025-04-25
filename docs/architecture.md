@@ -235,12 +235,13 @@ classDiagram
 -   事件注册到 container 上，通过 dispatch 在引擎内派发
 -   事件派发时携带 event 和 context 上下文
 -   实现 pickup 功能，传入事件坐标和其他判定条件，返回通过 Raycaster 检测到的对象
+-   地形系统中实现屏幕坐标和世界坐标计算
 
 ```mermaid
     flowchart LR
     Map[Map] --初始化--> EventManager[EventManager]
     EventManager --dispatch 派发事件--> Subscriber[Subscriber 各类订阅者（如：图层、组件）]
-    Subscriber --> haveSub{是否有订阅}
+    Subscriber --> haveSub{是否有订阅事件}
     haveSub -->|是| Raycaster[Raycaster 拾取目标/其他事件]
     haveSub -->|否| End[结束]
     Raycaster --> Callback[Callback 回调函数]
