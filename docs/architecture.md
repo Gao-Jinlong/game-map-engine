@@ -229,6 +229,11 @@ classDiagram
 -   Scene 场景组件，实现场景接口。
 -   ComponentManager 管理系统组件，管理各个组件的注册、注销、获取，组件用于扩展系统的能力，不应影响引擎的核心功能。
 
+### 事件系统
+
+-   是否支持冒泡？
+-   基础的 dom 事件（如：click、mousemove）到高级的 map 事件（如：doubleclick、longpress），自主实现还是引入第三方库？
+
 ### 事件处理模型
 
 -   事件系统通过 EventManager 管理，实现引擎的生命周期 hook。
@@ -237,15 +242,50 @@ classDiagram
 -   实现 pickup 功能，传入事件坐标和其他判定条件，返回通过 Raycaster 检测到的对象
 -   地形系统中实现屏幕坐标和世界坐标计算
 
+#### EventManager 分发模型
+
 ```mermaid
     flowchart LR
     Map[Map] --初始化--> EventManager[EventManager]
-    EventManager --dispatch 派发事件--> Subscriber[Subscriber 各类订阅者（如：图层、组件）]
+    EventManager --dispatch 派发事件--> Subscriber[Subscriber （其他系统或组件）]
     Subscriber --> haveSub{是否有订阅事件}
-    haveSub -->|是| Raycaster[Raycaster 拾取目标/其他事件]
+    haveSub -->|是| Callback[Callback 回调函数]
     haveSub -->|否| End[结束]
-    Raycaster --> Callback[Callback 回调函数]
-    Callback --> End
+    Callback --> bubble{是否冒泡}
+    bubble -->|是| hasParent{是否有父级}
+    bubble -->|否| End[结束]
+    hasParent -->|是| Parent[Parent 父级]
+    hasParent -->|否| End[结束]
+    Parent --> haveSub
+    End
+```
+
+#### 交互事件模型
+
+大部分交互事件是需要命中点坐标的，因此需要借助 TerrainSystem 完成屏幕坐标到世界坐标的转换，因此这个交互模型分为两个阶段
+第一阶段是 Map 捕获事件，通过 EventManager 派发事件，事件中携带屏幕坐标
+第二阶段是用户主动调用 Map 的 getCoordinateByPoint(暂定接口) 获取命中点坐标，Map 负责调用 TerrainSystem 的接口完成坐标转换
+
+这里的时序图为上文事件分发模型的一种具体场景，上问的订阅者在这里为具体的 Component
+
+```mermaid
+sequenceDiagram
+    participant EventManager
+    participant Component
+    participant Callback
+    participant Map
+    participant TerrainSystem
+
+    EventManager->>Component: dispatch 派发事件
+    Component->>Callback: 触发用户注册回调
+    Callback->>Callback: 判断是否需要命中点坐标
+    alt 需要坐标
+        Callback->>Map: 请求坐标
+        Map->>TerrainSystem: getCoordinateByPoint
+        TerrainSystem-->>Map: 返回坐标
+        Map-->>Callback: 返回坐标
+    end
+    Callback->>Callback: 回调结束
 ```
 
 ### 组件系统
@@ -255,210 +295,7 @@ TODO:
 背景问题：TerrainSystem 中需要获取所有地形组件，以判断鼠标事件命中的组件和坐标，如果组件直接注册到 TerrainSystem 中会产生耦合，TerrainSystem 需要知道所有地形组件类型，或者所有地形组件需要知道 TerrainSystem 的存在。
 组件依赖系统在设计中是合理的，可以通过 context 获取所有注册的系统，但是系统依赖组件在设计中是不合理的，系统不应该关心组件的具体实现，可以通过 ITerrain 接口反转依赖。
 
-## 脑暴
-
-### 系统架构图
-
-```mermaid
-graph LR
-    %% 核心引擎层
-    Engine[游戏地图引擎] --> Core[核心系统]
-    Engine --> Render[渲染系统]
-    Engine --> Resource[资源系统]
-    Engine --> Tool[工具系统]
-    Engine --> Network[网络系统]
-
-    %% 核心系统
-    Core --> Scene[场景管理]
-    Core --> Event[事件系统]
-    Core --> Config[配置系统]
-    Core --> Debug[调试系统]
-    Core --> State[状态管理]
-
-    %% 渲染系统
-    Render --> Camera[相机系统]
-    Render --> Terrain[地形系统]
-    Render --> Object[物件系统]
-    Render --> Effect[特效系统]
-    Render --> UI[UI系统]
-    Render --> PostProcess[后处理系统]
-
-    %% 资源系统
-    Resource --> Loader[资源加载器]
-    Resource --> Cache[资源缓存]
-    Resource --> Pool[对象池]
-    Resource --> Asset[资产管理]
-
-    %% 工具系统
-    Tool --> Editor[地图编辑器]
-    Tool --> Path[路径规划]
-    Tool --> Export[地图导出]
-    Tool --> Preview[预览系统]
-
-    %% 网络系统
-    Network --> Sync[状态同步]
-    Network --> Replay[回放系统]
-    Network --> Multiplayer[多人游戏]
-
-    %% 场景管理
-    Scene --> SceneGraph[场景图]
-    Scene --> Culling[视锥体剔除]
-    Scene --> LOD[LOD管理]
-    Scene --> Partition[空间分区]
-
-    %% 地形系统
-    Terrain --> Grid[地形网格]
-    Terrain --> Material[地形材质]
-    Terrain --> Texture[地形纹理]
-    Terrain --> HeightMap[高度图]
-    Terrain --> Blend[地形混合]
-
-    %% 物件系统
-    Object --> Static[静态物件]
-    Object --> Dynamic[动态物件]
-    Object --> Collision[碰撞检测]
-    Object --> Animation[动画系统]
-    Object --> Physics[物理系统]
-
-    %% 相机系统
-    Camera --> Control[相机控制]
-    Camera --> View[视口管理]
-    Camera --> Transition[相机过渡]
-    Camera --> Shake[相机震动]
-
-    %% UI系统
-    UI --> HUD[HUD系统]
-    UI --> Window[窗口系统]
-    UI --> Marker[标记系统]
-    UI --> Minimap[小地图系统]
-
-    %% 特效系统
-    Effect --> Weather[天气系统]
-    Effect --> Light[光照系统]
-    Effect --> Particle[粒子系统]
-    Effect --> Decal[贴花系统]
-
-    %% 后处理系统
-    PostProcess --> Bloom[泛光]
-    PostProcess --> SSAO[环境光遮蔽]
-    PostProcess --> DOF[景深]
-    PostProcess --> Color[色彩校正]
-
-    %% 样式定义
-    classDef engine fill:#f9f,stroke:#333,stroke-width:2px
-    classDef system fill:#bbf,stroke:#333,stroke-width:2px
-    classDef component fill:#bfb,stroke:#333,stroke-width:2px
-
-    class Engine engine
-    class Core,Render,Resource,Tool,Network system
-    class Scene,Terrain,Object,Camera,UI,Effect,PostProcess,Loader,Editor component
 ```
 
-### UML 类图
-
-```mermaid
-classDiagram
-    %% 核心类
-    class MapEngine {
-        +SceneManager sceneManager
-        +ResourceManager resourceManager
-        +EventManager eventManager
-        +ConfigManager configManager
-        +initialize()
-        +update()
-        +render()
-        +destroy()
-    }
-
-    class SceneManager {
-        -SceneGraph sceneGraph
-        -Camera camera
-        +addObject()
-        +removeObject()
-        +update()
-        +render()
-    }
-
-    class ResourceManager {
-        -ResourceCache cache
-        -ObjectPool pool
-        +loadResource()
-        +unloadResource()
-        +getResource()
-    }
-
-    %% 场景相关类
-    class SceneGraph {
-        -Node root
-        +addNode()
-        +removeNode()
-        +update()
-    }
-
-    class Node {
-        -Transform transform
-        -List~Component~ components
-        +update()
-        +render()
-    }
-
-    class Camera {
-        -Vector3 position
-        -Vector3 target
-        -Matrix4 viewMatrix
-        -Matrix4 projectionMatrix
-        +update()
-        +getViewMatrix()
-        +getProjectionMatrix()
-    }
-
-    %% 地形相关类
-    class Terrain {
-        -HeightMap heightMap
-        -TerrainMaterial material
-        -TerrainMesh mesh
-        +update()
-        +render()
-    }
-
-    class HeightMap {
-        -float[] heightData
-        -int width
-        -int height
-        +getHeight()
-        +setHeight()
-    }
-
-    %% 物件相关类
-    class GameObject {
-        -Transform transform
-        -List~Component~ components
-        +update()
-        +render()
-    }
-
-    class Component {
-        <<interface>>
-        +update()
-        +render()
-    }
-
-    class Transform {
-        -Vector3 position
-        -Vector3 rotation
-        -Vector3 scale
-        +getWorldMatrix()
-    }
-
-    %% 关系定义
-    MapEngine --> SceneManager
-    MapEngine --> ResourceManager
-    SceneManager --> SceneGraph
-    SceneGraph --> Node
-    Node --> GameObject
-    GameObject --> Component
-    GameObject --> Transform
-    SceneManager --> Camera
-    SceneManager --> Terrain
-    Terrain --> HeightMap
+</rewritten_file>
 ```

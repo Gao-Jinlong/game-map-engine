@@ -1,5 +1,11 @@
 import { Position } from "@core/entity";
-import { IEventManager, IMap, MapEvents } from "@core/interfaces";
+import {
+    IEventManager,
+    IMap,
+    MapEventKey,
+    MapEvents,
+    MapLifeCycleKey,
+} from "@core/interfaces";
 import { ICrsSystem } from "@core/interfaces/ICrsSystem";
 import EventEmitter from "eventemitter3";
 import { Raycaster, Vector2 } from "three";
@@ -22,7 +28,6 @@ export class EventManager
     private destroyHandlers: (() => void)[] = [];
     private cameraSystem?: CameraSystem;
     public pointer: Vector2 = new Vector2();
-    public raycaster: Raycaster = new Raycaster();
     constructor(public context: IMap) {
         super();
         this.container = this.context.container;
@@ -30,7 +35,6 @@ export class EventManager
     }
 
     init(): void {
-        const dispatch = this.dispatch.bind(this);
         const events = [
             EventEnum.CLICK,
             EventEnum.RESIZE,
@@ -40,26 +44,23 @@ export class EventManager
         ];
 
         events.forEach((event) => {
+            const dispatch = this.dispatch.bind(this, event);
             this.container.addEventListener(event, dispatch);
-        });
-
-        this.destroyHandlers.push(() => {
-            events.forEach((event) => {
+            this.destroyHandlers.push(() => {
                 this.container.removeEventListener(event, dispatch);
             });
         });
 
-        this.once("onReady", () => {
+        this.once(MapLifeCycleKey.ON_READY, () => {
             this.cameraSystem =
                 this.context.systemManager.getSystem(CameraSystem);
         });
     }
 
-    dispatch(event: Event): void {
+    dispatch(type: EventEnum, event: Event): void {
         if (event instanceof MouseEvent) {
             const { offsetX, offsetY } = event;
 
-            // 事件发生在二维屏幕上，因此没有 z 维度， z 需要从具体实体上获取
             this.pointer.x =
                 (event.clientX / this.container.clientWidth) * 2 - 1;
             this.pointer.y =
@@ -68,9 +69,12 @@ export class EventManager
             const { lon, lat } = this.crsSystem.unproject(
                 new Position(offsetX, offsetY, 0)
             );
-            // console.log("🚀 ~ dispatch ~ lon, lat :", lon, lat);
 
-            this.emit(EventEnum.CLICK, {
+            // TODO 交互系统设计，将基础的 dom 键鼠事件转为复杂的 map 交互事件（如：双击、双指捏合等）
+            // 考虑引入第三方库实现
+            // 考虑冒泡机制，现有事件系统能否支持冒泡？
+
+            this.emit(MapEventKey.CLICK, {
                 lon,
                 lat,
                 pointer: this.pointer,

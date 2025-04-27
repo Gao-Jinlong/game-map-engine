@@ -8,7 +8,12 @@ import { SystemManager } from "./systems/SystemManager";
 import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
 import { BaseComponent } from "./components/BaseComponent";
-import { IMap, IMapOptions, IMapState } from "@core/interfaces";
+import {
+    IMap,
+    IMapOptions,
+    IMapState,
+    MapLifeCycleKey,
+} from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
 
@@ -78,7 +83,7 @@ class Map implements IMap {
             this.loadAxesHelper();
         }
 
-        this.eventManager.emit("onReady", this);
+        this.eventManager.emit(MapLifeCycleKey.ON_READY, this);
     }
     destroy(): void {
         this.container.removeChild(this.stats.dom);
