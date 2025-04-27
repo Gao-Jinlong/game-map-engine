@@ -10,6 +10,7 @@ import * as THREE from "three";
 import { BaseComponent } from "./components/BaseComponent";
 import { IMap, IMapOptions, IMapState } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
+import { TerrainSystem } from "./systems/TerrainSystem";
 
 class Map implements IMap {
     crsSystem: CrsSystem;
@@ -25,8 +26,6 @@ class Map implements IMap {
         if (!options.container) {
             console.warn("container is required");
         }
-
-        console.log("test123456");
 
         this.options = toDefaulted(options, {
             container: document.body,
@@ -57,6 +56,7 @@ class Map implements IMap {
         this.systemManager.register(CameraSystem);
         this.systemManager.register(RendererSystem);
         this.systemManager.register(ComponentManager);
+        this.systemManager.register(TerrainSystem);
 
         this.stats = new Stats();
 

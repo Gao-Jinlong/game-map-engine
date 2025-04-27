@@ -248,6 +248,13 @@ classDiagram
     Callback --> End
 ```
 
+### 组件系统
+
+TODO:
+考虑使用类 ECS 系统，由 ComponentManager 管理组件，各系统/组件初始化后注册 filter 到 ComponentManager 中，组件加载时 ComponentManager 通过 filter 判断将组件分类管理。
+背景问题：TerrainSystem 中需要获取所有地形组件，以判断鼠标事件命中的组件和坐标，如果组件直接注册到 TerrainSystem 中会产生耦合，TerrainSystem 需要知道所有地形组件类型，或者所有地形组件需要知道 TerrainSystem 的存在。
+组件依赖系统在设计中是合理的，可以通过 context 获取所有注册的系统，但是系统依赖组件在设计中是不合理的，系统不应该关心组件的具体实现，可以通过 ITerrain 接口反转依赖。
+
 ## 脑暴
 
 ### 系统架构图
