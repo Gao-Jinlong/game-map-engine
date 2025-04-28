@@ -1,7 +1,7 @@
+import { IEventManager } from "@core/systems/EventSystem";
 import { SystemManager } from "../systems/SystemManager";
 import { ICoord, ICoordTuple } from "./ICoord";
 import { ICrsSystem } from "./ICrsSystem";
-import { IEventManager } from "./IEventManager";
 
 /**
  * TODO 重构类型定义方式，通过 model 和 export 的方式，避免全局作用域

@@ -17,12 +17,23 @@
             "import": "./dist/esm/layers.js",
             "require": "./dist/cjs/layers.js",
             "types": "./dist/esm/src/layers.d.ts"
+        },
+        "./events": {
+            "source": "./src/events.ts",
+            "import": "./dist/esm/events.js",
+            "require": "./dist/cjs/events.js",
+            "types": "./dist/esm/src/events.d.ts"
+        },
+        "./project": {
+            "source": "./src/project.ts",
+            "import": "./dist/esm/project.js",
+            "require": "./dist/cjs/project.js",
+            "types": "./dist/esm/src/project.d.ts"
         }
     },
     "scripts": {
         "build": "rslib build --config ./config/rslib.config.production.ts",
         "build:watch": "rslib build --watch --config ./config/rslib.config.development.ts",
-        "dev": "pnpm run build",
         "type-check": "tsc --noEmit",
         "test": "vitest"
     },

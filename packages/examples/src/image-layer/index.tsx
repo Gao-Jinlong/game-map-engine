@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Map } from "@gme/core";
 import { ImageLayer } from "@gme/core/layers";
+import { EventKey } from "@gme/core/events";
 
 const ImageLayerExample: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -23,6 +24,13 @@ const ImageLayerExample: React.FC = () => {
                     displacementScale: 700,
                 }),
             );
+
+            mapRef.current.on(EventKey.CLICK, (event) => {
+                console.log("🚀 ~ mapRef.current.on ~ event:", event);
+            });
+            mapRef.current.on(EventKey.POINTER_MOVE, (event) => {
+                console.log("🚀 ~ mapRef.current.on ~ event:", event);
+            });
         }
 
         return () => {

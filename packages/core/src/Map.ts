@@ -1,4 +1,8 @@
-import { EventManager } from "./systems/EventManager";
+import {
+    EventManager,
+    LifeCycleKey,
+    MapEventKeys,
+} from "./systems/EventSystem";
 import { ComponentManager } from "./systems/ComponentManager";
 import { RendererSystem } from "./systems/RendererSystem";
 import { CameraSystem } from "./systems/CameraSystem";
@@ -8,12 +12,7 @@ import { SystemManager } from "./systems/SystemManager";
 import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
 import { BaseComponent } from "./components/BaseComponent";
-import {
-    IMap,
-    IMapOptions,
-    IMapState,
-    MapLifeCycleKey,
-} from "@core/interfaces";
+import { IMap, IMapOptions, IMapState } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
 
@@ -83,7 +82,7 @@ class Map implements IMap {
             this.loadAxesHelper();
         }
 
-        this.eventManager.emit(MapLifeCycleKey.ON_READY, this);
+        this.eventManager.emit(LifeCycleKey.ON_READY, this);
     }
     destroy(): void {
         this.container.removeChild(this.stats.dom);
@@ -93,6 +92,20 @@ class Map implements IMap {
     }
     addComponent(component: BaseComponent): void {
         this.systemManager.getSystem(ComponentManager).add(component);
+    }
+
+    // TODO 事件注册
+    on(event: MapEventKeys, callback: (map: IMap) => void): void {
+        this.eventManager.on(event, callback);
+    }
+    off(event: MapEventKeys, callback: (map: IMap) => void): void {
+        this.eventManager.off(event, callback);
+    }
+    emit(event: MapEventKeys, data: IMap): void {
+        this.eventManager.emit(event, data);
+    }
+    once(event: MapEventKeys, callback: (map: IMap) => void): void {
+        this.eventManager.once(event, callback);
     }
 
     private onResize(
@@ -108,9 +121,8 @@ class Map implements IMap {
 
         this.systemManager.resize(this.state);
 
-        this.eventManager.emit("resize", this.state);
+        this.eventManager.emit(LifeCycleKey.RESIZE, this.state);
     }
-
     private loadAxesHelper(): void {
         const axesHelper = new THREE.AxesHelper(1000);
         const gridHelper = new THREE.GridHelper(1000, 20, 0x888888, 0x888888);

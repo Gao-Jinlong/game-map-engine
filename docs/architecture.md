@@ -234,13 +234,21 @@ classDiagram
 -   是否支持冒泡？
 -   基础的 dom 事件（如：click、mousemove）到高级的 map 事件（如：doubleclick、longpress），自主实现还是引入第三方库？
 
-### 事件处理模型
+#### 事件处理模型
 
 -   事件系统通过 EventManager 管理，实现引擎的生命周期 hook。
 -   事件注册到 container 上，通过 dispatch 在引擎内派发
 -   事件派发时携带 event 和 context 上下文
 -   实现 pickup 功能，传入事件坐标和其他判定条件，返回通过 Raycaster 检测到的对象
 -   地形系统中实现屏幕坐标和世界坐标计算
+
+#### 事件模型考虑兼容 dom 的事件模型
+
+https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget
+
+这样可以方便兼容 dom 的生态，且能够支持冒泡、捕获、阻止等功能
+
+NOTE: 实现较复杂，现阶段先不考虑
 
 #### EventManager 分发模型
 
@@ -287,6 +295,10 @@ sequenceDiagram
     end
     Callback->>Callback: 回调结束
 ```
+
+#### 生命周期模型
+
+TODO: 考虑通过 tapable 库支持生命周期，以支持异步生命周期钩子
 
 ### 组件系统
 

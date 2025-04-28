@@ -1,15 +1,16 @@
 import { Position } from "@core/entity";
+import { IMap } from "@core/interfaces";
 import {
     IEventManager,
-    IMap,
-    MapEventKey,
-    MapEvents,
-    MapLifeCycleKey,
-} from "@core/interfaces";
+    EventKey,
+    LifeCycleKey,
+} from "@core/systems/EventSystem";
 import { ICrsSystem } from "@core/interfaces/ICrsSystem";
 import EventEmitter from "eventemitter3";
-import { Raycaster, Vector2 } from "three";
-import { CameraSystem } from "./CameraSystem";
+import { Vector2 } from "three";
+import { CameraSystem } from "../CameraSystem";
+import { MapEvents } from "./interface";
+import { BaseEvent, PointerEvent } from "./events";
 
 export enum EventEnum {
     MOUSE_DOWN = "mousedown",
@@ -51,7 +52,7 @@ export class EventManager
             });
         });
 
-        this.once(MapLifeCycleKey.ON_READY, () => {
+        this.once(LifeCycleKey.ON_READY, () => {
             this.cameraSystem =
                 this.context.systemManager.getSystem(CameraSystem);
         });
@@ -59,27 +60,46 @@ export class EventManager
 
     dispatch(type: EventEnum, event: Event): void {
         if (event instanceof MouseEvent) {
-            const { offsetX, offsetY } = event;
+            // const { offsetX, offsetY } = event;
 
             this.pointer.x =
                 (event.clientX / this.container.clientWidth) * 2 - 1;
             this.pointer.y =
                 -(event.clientY / this.container.clientHeight) * 2 + 1;
 
-            const { lon, lat } = this.crsSystem.unproject(
-                new Position(offsetX, offsetY, 0)
-            );
+            // const { lon, lat } = this.crsSystem.unproject(
+            //     new Position(offsetX, offsetY, 0)
+            // );
 
             // TODO 交互系统设计，将基础的 dom 键鼠事件转为复杂的 map 交互事件（如：双击、双指捏合等）
             // 考虑引入第三方库实现
             // 考虑冒泡机制，现有事件系统能否支持冒泡？
 
-            this.emit(MapEventKey.CLICK, {
-                lon,
-                lat,
-                pointer: this.pointer,
-                context: this.context,
-            });
+            const eventSource = this.createEvent(type, event);
+            this.emit(eventSource.type, eventSource);
+        }
+    }
+
+    // TODO : 临时 将 dom 事件转为 map 事件
+    // 考虑引入第三方库实现
+    private createEvent(type: EventEnum, event: Event) {
+        console.log("🚀 ~ createEvent ~ type:", type);
+        if (type === EventEnum.CLICK) {
+            return new PointerEvent(
+                EventKey.CLICK,
+                this.context,
+                event,
+                this.pointer
+            );
+        } else if (type === EventEnum.MOUSE_MOVE) {
+            return new PointerEvent(
+                EventKey.POINTER_MOVE,
+                this.context,
+                event,
+                this.pointer
+            );
+        } else {
+            return new BaseEvent(type, this.context, event);
         }
     }
 

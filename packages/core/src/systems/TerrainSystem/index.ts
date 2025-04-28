@@ -1,16 +1,14 @@
 import {
     ComponentId,
     ICameraSystem,
-    IEventManager,
     IMap,
     IMapState,
     ISystem,
-    MapEventKey,
 } from "@core/interfaces";
 import { ITerrain } from "../../components/Layer/interface";
-import { Raycaster } from "three";
+import { Mesh, Raycaster, Vector2 } from "three";
 import { CameraSystem } from "../CameraSystem";
-import { EventEnum, EventManager } from "../EventManager";
+import { IEventManager } from "@core/systems/EventSystem";
 
 /**
  * 地形系统
@@ -20,10 +18,12 @@ import { EventEnum, EventManager } from "../EventManager";
 export class TerrainSystem implements ISystem {
     public context?: IMap;
     public components: Map<ComponentId, ITerrain> = new Map();
+    private meshes: Map<ComponentId, Mesh> = new Map();
     private raycaster: Raycaster = new Raycaster();
     private cameraSystem?: ICameraSystem;
     private eventManager?: IEventManager;
     private destroyHandlers: (() => void)[] = [];
+
     constructor() {}
     init() {
         if (!this.context) {
@@ -32,30 +32,33 @@ export class TerrainSystem implements ISystem {
 
         this.eventManager = this.context?.eventManager;
         this.cameraSystem = this.context?.systemManager.getSystem(CameraSystem);
-
-        const bind = this.onPointerMove.bind(this);
-        this.eventManager?.on(MapEventKey.POINTER_MOVE, bind);
-        this.destroyHandlers.push(() => {
-            this.eventManager?.off(MapEventKey.POINTER_MOVE, bind);
-        });
     }
 
     addComponent(component: ITerrain) {
         this.components.set(component.__component_id__, component);
+
+        if (!this.meshes.has(component.__component_id__)) {
+            this.meshes.set(component.__component_id__, component.mesh);
+        }
     }
 
     removeComponent(component: ITerrain) {
         this.components.delete(component.__component_id__);
+        this.meshes.delete(component.__component_id__);
     }
 
     resize?: ((state: IMapState) => void) | undefined;
     destroy?: (() => void) | undefined;
-
-    onPointerMove(event: MouseEvent) {
-        const { lat, lng } = this.eventManager?.pointer;
+    getCoordinateByPoint(point: Vector2) {
         const camera = this.cameraSystem?.camera;
         if (!camera) {
             return;
         }
+
+        this.raycaster.setFromCamera(point, camera);
+        const intersects = this.raycaster.intersectObjects(
+            Array.from(this.meshes.values())
+        );
+        return intersects;
     }
 }

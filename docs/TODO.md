@@ -8,4 +8,3 @@
 [ ] 拆分架构图为多个不同 level 的子图，每个 level 专注于描述各个 level 的细节
 
 [ ] 鼠标命中判定
-[ ] fix: monorepo 类型引用报错

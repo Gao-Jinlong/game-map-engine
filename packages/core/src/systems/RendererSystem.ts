@@ -1,12 +1,8 @@
 import * as THREE from "three";
 import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
-import {
-    IEventManager,
-    IMap,
-    IMapState,
-    IRendererSystem,
-} from "@core/interfaces";
+import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
+import { IEventManager, LifeCycleKey } from "@core/systems/EventSystem";
 
 export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;
@@ -51,9 +47,9 @@ export class RendererSystem implements IRendererSystem {
     }
 
     animate() {
-        this.eventManager?.emit("preFrame", this.context);
+        this.eventManager?.emit(LifeCycleKey.PRE_FRAME, this.context);
         this.render();
-        this.eventManager?.emit("postFrame", this.context);
+        this.eventManager?.emit(LifeCycleKey.POST_FRAME, this.context);
     }
     render() {
         this.context?.stats.update();
