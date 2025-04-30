@@ -1,5 +1,9 @@
 import { IMap } from "@core/interfaces";
-import { EventKey, IPointerEvent, MapEventKeys } from "../interface";
+import {
+    EventKey,
+    IPointerEvent,
+    MapEventKeys,
+} from "../systems/EventSystem/interface";
 import { BaseEvent } from "./BaseEvent";
 import { Vector2 } from "three";
 

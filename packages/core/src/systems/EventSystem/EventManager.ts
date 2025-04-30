@@ -10,7 +10,7 @@ import EventEmitter from "eventemitter3";
 import { Vector2 } from "three";
 import { CameraSystem } from "../CameraSystem";
 import { MapEvents } from "./interface";
-import { BaseEvent, PointerEvent } from "./events";
+import { BaseEvent, PointerEvent } from "../../events";
 
 export enum EventEnum {
     MOUSE_DOWN = "mousedown",

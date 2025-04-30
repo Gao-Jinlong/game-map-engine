@@ -1,5 +1,5 @@
 import { IMap } from "@core/interfaces";
-import { IBaseEvent, MapEventKeys } from "../interface";
+import { IBaseEvent, MapEventKeys } from "../systems/EventSystem/interface";
 
 export class BaseEvent implements IBaseEvent {
     constructor(
