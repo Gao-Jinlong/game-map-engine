@@ -1,7 +1,8 @@
 import Disposable from "@core/components/Disposable";
 import { BaseEvent } from "./BaseEvent";
+import { Map as MapInstance } from "@core/Map";
 
-export type Listener = (event: BaseEvent) => void;
+export type Listener = (event: BaseEvent) => void | boolean;
 /**
  * @classdesc
  * A simplified implementation of the W3C DOM Level 2 EventTarget interface.
@@ -18,12 +19,24 @@ export type Listener = (event: BaseEvent) => void;
  *    returns false.
  */
 class EventTarget extends Disposable {
-    private eventTarget_: EventTarget;
+    /**
+     * 事件作用目标
+     */
+    private eventTarget_?: EventTarget;
+    /**
+     * 待移除的事件
+     */
     private pendingRemovals_: Map<string, number>;
+    /**
+     * 正在派发的事件
+     */
     private dispatching_: Map<string, number>;
+    /**
+     * 事件监听器
+     */
     private listeners_?: Map<string, Set<Listener>>;
 
-    constructor(target: EventTarget) {
+    constructor(target: any) {
         super();
 
         this.eventTarget_ = target;
@@ -44,16 +57,9 @@ class EventTarget extends Disposable {
     }
 
     /**
-     * Dispatches an event and calls all listeners listening for events
-     * of this type. The event parameter can either be a string or an
-     * Object with a `type` property.
-     *
-     * @param {import("./Event.js").default|string} event Event object.
-     * @return {boolean|undefined} `false` if anyone called preventDefault on the
-     *     event object or if any of the listeners returned false.
-     * @api
+     * 派发事件，支持字符串类型和 BaseEvent 类型
      */
-    dispatchEvent(event: BaseEvent) {
+    dispatchEvent(event: BaseEvent | string) {
         const isString = typeof event === "string";
         const type = isString ? event : event.type;
         const listeners = this.listeners_ && this.listeners_.get(type);
@@ -61,29 +67,30 @@ class EventTarget extends Disposable {
             return;
         }
 
-        const evt = isString
-            ? new BaseEvent(event, this.eventTarget_ || this, event)
-            : /** @type {Event} */ event;
+        const evt = isString ? new BaseEvent(event) : event;
         if (!evt.target) {
             evt.target = this.eventTarget_ || this;
         }
+        // NOTE 暂且没搞懂 dispatching 和 pendingRemovals 的作用
         const dispatching =
             this.dispatching_ || (this.dispatching_ = new Map());
         const pendingRemovals =
             this.pendingRemovals_ || (this.pendingRemovals_ = new Map());
+
         if (!dispatching.has(type)) {
             dispatching.set(type, 0);
             pendingRemovals.set(type, 0);
         }
-        dispatching.set(type, dispatching.get(type) + 1);
-        let propagate;
+        dispatching.set(type, dispatching.get(type)! + 1);
+        let propagate: boolean | void = true;
         for (const listener of listeners) {
             propagate = listener(evt);
             if (propagate === false || evt.propagationStopped) {
                 break;
             }
         }
-        if (--dispatching.get(type) === 0) {
+        dispatching.set(type, dispatching.get(type)! - 1);
+        if (dispatching.get(type) === 0) {
             let pr = pendingRemovals.get(type) ?? 0;
             pendingRemovals.delete(type);
             while (pr--) {

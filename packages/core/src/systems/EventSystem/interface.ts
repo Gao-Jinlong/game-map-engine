@@ -49,14 +49,12 @@ export interface MapEvents extends MapLifeCycle {
     [key: string]: any;
 }
 
-// TODO 考虑通过类来实现不同的事件实例
 /**
  * 事件基类
  * 所有事件都继承自此基类
  */
 export interface IBaseEvent {
-    type: MapEventKeys;
-    context: IMap;
+    type: string;
 }
 /**
  * 指针事件

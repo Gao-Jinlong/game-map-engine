@@ -11,12 +11,13 @@ import { toDefaulted } from "es-toolkit/compat";
 import { SystemManager } from "./systems/SystemManager";
 import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
-import { BaseComponent } from "./components/BaseComponent";
 import { IMap, IMapOptions, IMapState } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
+import { BaseComponent } from "./addons/BaseComponent";
+import EventTarget from "./events/EventTarget";
 
-class Map implements IMap {
+class Map extends EventTarget implements IMap {
     crsSystem: CrsSystem;
     eventManager: EventManager;
     container: HTMLElement;
@@ -27,6 +28,7 @@ class Map implements IMap {
 
     private destroyHandlers: (() => void)[] = [];
     constructor(options: IMapOptions) {
+        super(options.container);
         if (!options.container) {
             console.warn("container is required");
         }
