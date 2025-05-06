@@ -246,10 +246,6 @@ classDiagram
 
 https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget
 
-这样可以方便兼容 dom 的生态，且能够支持冒泡、捕获、阻止等功能
-
-NOTE: 实现较复杂，现阶段先不考虑
-
 #### EventManager 分发模型
 
 ```mermaid

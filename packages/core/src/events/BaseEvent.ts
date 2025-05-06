@@ -1,5 +1,5 @@
-import { IBaseEvent } from "../systems/EventSystem/interface";
-import EventTarget from "./EventTarget";
+import { IBaseEvent } from "../systems/Intercation/interface";
+import { EventTarget } from "./EventTarget";
 
 export class BaseEvent implements IBaseEvent {
     public defaultPrevented: boolean = false;

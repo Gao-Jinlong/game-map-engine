@@ -1,14 +1,15 @@
-import { IEventManager } from "@core/systems/EventSystem";
+import { IEventManager } from "@core/systems/Intercation";
 import { SystemManager } from "../systems/SystemManager";
 import { ICoord, ICoordTuple } from "./ICoord";
 import { ICrsSystem } from "./ICrsSystem";
+import { EventTarget } from "@core/events/EventTarget";
 
 /**
  * TODO 重构类型定义方式，通过 model 和 export 的方式，避免全局作用域
  */
-export interface IMap {
+export interface IMap extends EventTarget {
     crsSystem: ICrsSystem;
-    eventManager: IEventManager;
+    // eventManager: IEventManager;
     systemManager: SystemManager;
     stats: Stats;
     container: HTMLElement;

@@ -4,7 +4,7 @@ import {
     IEventManager,
     EventKey,
     LifeCycleKey,
-} from "@core/systems/EventSystem";
+} from "@core/systems/Intercation";
 import { ICrsSystem } from "@core/interfaces/ICrsSystem";
 import EventEmitter from "eventemitter3";
 import { Vector2 } from "three";

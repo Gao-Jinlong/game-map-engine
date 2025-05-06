@@ -3,7 +3,7 @@ import {
     EventKey,
     IPointerEvent,
     MapEventKeys,
-} from "../systems/EventSystem/interface";
+} from "../systems/Intercation/interface";
 import { BaseEvent } from "./BaseEvent";
 import { Vector2 } from "three";
 
@@ -18,6 +18,6 @@ export class PointerEvent extends BaseEvent implements IPointerEvent {
         public event: Event,
         public pointer: Vector2
     ) {
-        super(type, context, event);
+        super(type);
     }
 }

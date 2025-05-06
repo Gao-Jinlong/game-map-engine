@@ -1,1 +1,1 @@
-export * from "./systems/EventSystem";
+export * from "./events/";

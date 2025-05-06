@@ -8,7 +8,7 @@ import {
 import { ITerrain } from "../../components/Layer/interface";
 import { Mesh, Raycaster, Vector2 } from "three";
 import { CameraSystem } from "../CameraSystem";
-import { IEventManager } from "@core/systems/EventSystem";
+import { IEventManager } from "@core/systems/Intercation";
 
 /**
  * 地形系统

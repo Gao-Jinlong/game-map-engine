@@ -2,7 +2,7 @@ import {
     EventManager,
     LifeCycleKey,
     MapEventKeys,
-} from "./systems/EventSystem";
+} from "./systems/Intercation";
 import { ComponentManager } from "./systems/ComponentManager";
 import { RendererSystem } from "./systems/RendererSystem";
 import { CameraSystem } from "./systems/CameraSystem";
@@ -15,11 +15,11 @@ import { IMap, IMapOptions, IMapState } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
 import { BaseComponent } from "./addons/BaseComponent";
-import EventTarget from "./events/EventTarget";
+import { BaseEvent, EventTarget } from "./events";
+import { ResizeEvent } from "./events/ResizeEvent";
 
 class Map extends EventTarget implements IMap {
     crsSystem: CrsSystem;
-    eventManager: EventManager;
     container: HTMLElement;
     options: Required<IMapOptions>;
     state: IMapState;
@@ -55,7 +55,6 @@ class Map extends EventTarget implements IMap {
         };
 
         this.crsSystem = new CrsSystem(this);
-        this.eventManager = new EventManager(this);
         this.systemManager = new SystemManager(this);
 
         this.systemManager.register(SceneSystem);
@@ -71,7 +70,6 @@ class Map extends EventTarget implements IMap {
 
     init(): void {
         this.crsSystem.init();
-        this.eventManager.init();
         this.systemManager.init();
 
         this.container.appendChild(this.stats.dom);
@@ -84,30 +82,17 @@ class Map extends EventTarget implements IMap {
             this.loadAxesHelper();
         }
 
-        this.eventManager.emit(LifeCycleKey.ON_READY, this);
+        // this.eventManager.emit(LifeCycleKey.ON_READY, this);
     }
-    destroy(): void {
+    disposeInternal() {
         this.container.removeChild(this.stats.dom);
         this.destroyHandlers.forEach((handler) => handler());
-        this.systemManager.destroy();
-        this.eventManager.destroy();
-    }
-    addComponent(component: BaseComponent): void {
-        this.systemManager.getSystem(ComponentManager).add(component);
+        this.systemManager.dispose();
+        super.disposeInternal();
     }
 
-    // TODO 事件注册
-    on(event: MapEventKeys, callback: (map: IMap) => void): void {
-        this.eventManager.on(event, callback);
-    }
-    off(event: MapEventKeys, callback: (map: IMap) => void): void {
-        this.eventManager.off(event, callback);
-    }
-    emit(event: MapEventKeys, data: IMap): void {
-        this.eventManager.emit(event, data);
-    }
-    once(event: MapEventKeys, callback: (map: IMap) => void): void {
-        this.eventManager.once(event, callback);
+    addComponent(component: BaseComponent): void {
+        this.systemManager.getSystem(ComponentManager).add(component);
     }
 
     private onResize(
@@ -123,7 +108,9 @@ class Map extends EventTarget implements IMap {
 
         this.systemManager.resize(this.state);
 
-        this.eventManager.emit(LifeCycleKey.RESIZE, this.state);
+        this.dispatchEvent(
+            new ResizeEvent(this.state.width, this.state.height)
+        );
     }
     private loadAxesHelper(): void {
         const axesHelper = new THREE.AxesHelper(1000);

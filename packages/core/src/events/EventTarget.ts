@@ -133,4 +133,4 @@ class EventTarget extends Disposable {
     }
 }
 
-export default EventTarget;
+export { EventTarget };

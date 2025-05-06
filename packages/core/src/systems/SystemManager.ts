@@ -1,8 +1,10 @@
 import { IMap, IMapState, ISystem, SystemClass } from "@core/interfaces";
 import { Map as MapInstance } from "../Map";
-export class SystemManager {
+import Disposable from "@core/components/Disposable";
+export class SystemManager extends Disposable {
     allSystems: Map<SystemClass, ISystem>;
     constructor(private context: IMap) {
+        super();
         this.allSystems = new Map();
     }
 
@@ -26,7 +28,7 @@ export class SystemManager {
             system.resize?.(state);
         });
     }
-    destroy() {
+    protected disposeInternal(): void {
         this.allSystems.forEach((system) => {
             system.destroy?.();
         });

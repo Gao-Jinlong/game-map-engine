@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
 import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
-import { IEventManager, LifeCycleKey } from "@core/systems/EventSystem";
+import { IEventManager, LifeCycleKey } from "@core/systems/Intercation";
 
 export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;
