@@ -1,5 +1,5 @@
-import { BaseComponent } from "@core/components/BaseComponent";
 import { Mesh } from "three";
+import { BaseComponent } from "../BaseComponent";
 
 export interface ITerrain extends BaseComponent {
     name: string;

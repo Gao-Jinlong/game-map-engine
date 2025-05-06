@@ -36,7 +36,7 @@ class EventTarget extends Disposable {
      */
     private listeners_?: Map<string, Set<Listener>>;
 
-    constructor(target: any) {
+    constructor(target?: EventTarget) {
         super();
 
         this.eventTarget_ = target;

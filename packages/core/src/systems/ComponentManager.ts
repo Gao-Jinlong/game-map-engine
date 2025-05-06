@@ -1,7 +1,7 @@
 import { ComponentId, IComponentManager } from "@core/interfaces";
 import { SceneSystem } from "./SceneSystem";
 import { CameraSystem } from "./CameraSystem";
-import { BaseComponent } from "@core/components/BaseComponent";
+import { BaseComponent } from "@core/addons/BaseComponent";
 import { isComponentId } from "@core/utils";
 import { IMap } from "@core/interfaces";
 

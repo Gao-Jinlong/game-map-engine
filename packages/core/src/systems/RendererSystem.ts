@@ -3,6 +3,7 @@ import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
 import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
 import { IEventManager, LifeCycleKey } from "@core/systems/Intercation";
+import { BaseEvent } from "@core/events";
 
 export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;
@@ -10,7 +11,7 @@ export class RendererSystem implements IRendererSystem {
 
     private camera?: THREE.Camera;
     private scene?: THREE.Scene;
-    private eventManager?: IEventManager;
+    // private eventManager?: IEventManager;
     constructor() {
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
@@ -32,7 +33,7 @@ export class RendererSystem implements IRendererSystem {
         const cameraSystem = systemManager.getSystem(CameraSystem);
         const sceneSystem = systemManager.getSystem(SceneSystem);
 
-        this.eventManager = this.context.eventManager;
+        // this.eventManager = this.context.eventManager;
 
         container.appendChild(this.renderer.domElement);
         this.camera = cameraSystem.camera;
@@ -47,9 +48,9 @@ export class RendererSystem implements IRendererSystem {
     }
 
     animate() {
-        this.eventManager?.emit(LifeCycleKey.PRE_FRAME, this.context);
+        this.context?.dispatchEvent(new BaseEvent(LifeCycleKey.PRE_FRAME));
         this.render();
-        this.eventManager?.emit(LifeCycleKey.POST_FRAME, this.context);
+        this.context?.dispatchEvent(new BaseEvent(LifeCycleKey.POST_FRAME));
     }
     render() {
         this.context?.stats.update();

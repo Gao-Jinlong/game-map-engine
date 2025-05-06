@@ -1,1 +1,1 @@
-export * from "./components/Layer";
+export * from "./addons/Layer";

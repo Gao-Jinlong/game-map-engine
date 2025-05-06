@@ -1,4 +1,4 @@
-import { BaseComponent } from "@core/components/BaseComponent";
+import { BaseComponent } from "@core/addons/BaseComponent";
 import { ISystem } from "./ISystem";
 
 export type ComponentId = number;

@@ -5,10 +5,9 @@ import {
     IMapState,
     ISystem,
 } from "@core/interfaces";
-import { ITerrain } from "../../components/Layer/interface";
 import { Mesh, Raycaster, Vector2 } from "three";
 import { CameraSystem } from "../CameraSystem";
-import { IEventManager } from "@core/systems/Intercation";
+import { ITerrain } from "@core/addons/Layer/interface";
 
 /**
  * 地形系统
@@ -21,7 +20,6 @@ export class TerrainSystem implements ISystem {
     private meshes: Map<ComponentId, Mesh> = new Map();
     private raycaster: Raycaster = new Raycaster();
     private cameraSystem?: ICameraSystem;
-    private eventManager?: IEventManager;
     private destroyHandlers: (() => void)[] = [];
 
     constructor() {}
@@ -30,7 +28,6 @@ export class TerrainSystem implements ISystem {
             throw new Error("context is required");
         }
 
-        this.eventManager = this.context?.eventManager;
         this.cameraSystem = this.context?.systemManager.getSystem(CameraSystem);
     }
 

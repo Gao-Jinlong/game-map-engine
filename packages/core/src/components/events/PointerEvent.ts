@@ -3,7 +3,7 @@ import {
     EventKey,
     IPointerEvent,
     MapEventKeys,
-} from "../systems/Intercation/interface";
+} from "../../systems/Intercation/interface";
 import { BaseEvent } from "./BaseEvent";
 import { Vector2 } from "three";
 

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { BaseComponent } from "@core/components/BaseComponent";
+import { BaseComponent } from "@core/addons/BaseComponent";
 import { IBaseComponentOptions } from "@core/interfaces";
 
 export class Axis extends BaseComponent {

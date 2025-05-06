@@ -1,7 +1,6 @@
-import { IBaseEvent } from "../systems/Intercation/interface";
 import { EventTarget } from "./EventTarget";
 
-export class BaseEvent implements IBaseEvent {
+export class BaseEvent {
     public defaultPrevented: boolean = false;
     public propagationStopped: boolean = false;
     public target?: EventTarget;

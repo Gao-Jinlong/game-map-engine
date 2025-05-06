@@ -1,8 +1,3 @@
-import {
-    EventManager,
-    LifeCycleKey,
-    MapEventKeys,
-} from "./systems/Intercation";
 import { ComponentManager } from "./systems/ComponentManager";
 import { RendererSystem } from "./systems/RendererSystem";
 import { CameraSystem } from "./systems/CameraSystem";
@@ -16,7 +11,8 @@ import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
 import { BaseComponent } from "./addons/BaseComponent";
 import { BaseEvent, EventTarget } from "./events";
-import { ResizeEvent } from "./events/ResizeEvent";
+import { ResizeEvent } from "./components/events/ResizeEvent";
+import { LifeCycleKey } from "./components/events/EventType";
 
 class Map extends EventTarget implements IMap {
     crsSystem: CrsSystem;
@@ -28,7 +24,8 @@ class Map extends EventTarget implements IMap {
 
     private destroyHandlers: (() => void)[] = [];
     constructor(options: IMapOptions) {
-        super(options.container);
+        super();
+
         if (!options.container) {
             console.warn("container is required");
         }
@@ -66,6 +63,7 @@ class Map extends EventTarget implements IMap {
         this.stats = new Stats();
 
         this.init();
+        this.dispatchEvent(new BaseEvent(LifeCycleKey.ON_READY));
     }
 
     init(): void {
@@ -81,8 +79,6 @@ class Map extends EventTarget implements IMap {
         if (process.env.NODE_ENV === "development") {
             this.loadAxesHelper();
         }
-
-        // this.eventManager.emit(LifeCycleKey.ON_READY, this);
     }
     disposeInternal() {
         this.container.removeChild(this.stats.dom);

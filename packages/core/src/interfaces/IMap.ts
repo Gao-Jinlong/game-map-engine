@@ -2,7 +2,7 @@ import { IEventManager } from "@core/systems/Intercation";
 import { SystemManager } from "../systems/SystemManager";
 import { ICoord, ICoordTuple } from "./ICoord";
 import { ICrsSystem } from "./ICrsSystem";
-import { EventTarget } from "@core/events/EventTarget";
+import { EventTarget } from "@core/components/events/EventTarget";
 
 /**
  * TODO 重构类型定义方式，通过 model 和 export 的方式，避免全局作用域
@@ -17,7 +17,7 @@ export interface IMap extends EventTarget {
     state: IMapState;
 }
 export interface IMapOptions {
-    container: HTMLElement;
+    container?: HTMLElement;
     background?: number;
     devicePixelRatio?: number;
     center?: ICoordTuple;

@@ -1,9 +1,9 @@
 import { BaseEvent } from "./BaseEvent";
-import { EventType } from "./EventType";
+import { LifeCycleKey } from "./EventType";
 
 export class ResizeEvent extends BaseEvent {
-    public type = EventType.RESIZE;
+    public type = LifeCycleKey.RESIZE;
     constructor(public width: number, public height: number) {
-        super(EventType.RESIZE);
+        super(LifeCycleKey.RESIZE);
     }
 }

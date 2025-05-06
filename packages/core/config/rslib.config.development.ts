@@ -36,6 +36,8 @@ export default defineConfig({
         entry: {
             index: resolve(src, "index.ts"),
             layers: resolve(src, "layers.ts"),
+            events: resolve(src, "events.ts"),
+            project: resolve(src, "project.ts"),
         },
     },
     plugins: [],

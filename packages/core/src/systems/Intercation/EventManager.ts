@@ -99,7 +99,7 @@ export class EventManager
                 this.pointer
             );
         } else {
-            return new BaseEvent(type, this.context, event);
+            return new BaseEvent(type);
         }
     }
 
