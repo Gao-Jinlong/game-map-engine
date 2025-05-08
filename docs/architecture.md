@@ -4,6 +4,39 @@
 
 ```mermaid
 classDiagram
+    namespace Base {
+        class Map
+        class ServiceManager
+    }
+
+    namespace Services {
+        class ContextService
+        class CommandService
+        class EventService
+        class InteractionService
+        class KeybindingService
+    }
+
+    Map ..> ServiceManager
+    InteractionService ..> ServiceManager
+
+    class ServiceManager {
+        管理引擎的各个服务
+
+        +register(service: Service)
+        +unregister(service: Service)
+        +getService(service: Service)
+    }
+
+    class IService {
+        +init(context: IMapContext)
+        +update()
+        +render()
+    }
+```
+
+```mermaid
+classDiagram
     namespace Systems {
       class IMapContext
       class Map
@@ -231,8 +264,53 @@ classDiagram
 
 ### 事件系统
 
--   是否支持冒泡？
--   基础的 dom 事件（如：click、mousemove）到高级的 map 事件（如：doubleclick、longpress），自主实现还是引入第三方库？
+基础事件系统负责捕获交互事件，并转换为引擎事件，然后派发引擎事件给各个子系统
+
+交互事件系统负责管理交互事件，并提供交互服务
+
+```mermaid
+classDiagram
+namespace EventSystem {
+    class EventTarget
+    class BaseEvent
+    class PointerEvent
+}
+class EventTarget{
+    事件目标，所有可以触发事件的对象需要继承这个类
+
+    addEventListener(event: string, callback: Function) 注册事件
+    removeEventListener(event: string, callback: Function) 注销事件
+    dispatchEvent(event: string, data: any) 派发事件
+}
+class BaseEvent{
+    基础事件对象，所有事件对象需要继承这个类
+
+    type: string 事件类型
+    target: EventTarget 事件目标
+    propagationStopped: boolean 是否停止冒泡
+    defaultPrevented: boolean 是否阻止默认行为
+
+    stopPropagation() 停止冒泡
+    preventDefault() 阻止默认行为
+}
+class PointerEvent {
+    指针事件对象，所有指针事件需要继承这个类
+
+    pointer: Vector2 指针坐标
+}
+PointerEvent ..|> BaseEvent
+
+namespace Interaction {
+    class InteractionService
+}
+class InteractionService {
+    交互服务，管理交互事件
+
+    init(context: IMapContext)
+    update()
+    render()
+}
+```
 
 #### 事件处理模型
 
