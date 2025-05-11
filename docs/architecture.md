@@ -9,16 +9,7 @@ classDiagram
         class ServiceManager
     }
 
-    namespace Services {
-        class ContextService
-        class CommandService
-        class EventService
-        class InteractionService
-        class KeybindingService
-    }
-
     Map ..> ServiceManager
-    InteractionService ..> ServiceManager
 
     class ServiceManager {
         管理引擎的各个服务
@@ -32,6 +23,29 @@ classDiagram
         +init(context: IMapContext)
         +update()
         +render()
+    }
+
+    namespace Services {
+        class ContextService
+        class ActionService
+        class EventService
+        class InteractionService
+        class KeybindingService
+    }
+
+    namespace action {
+        class ActionFlyTo
+        class ActionRotateTo
+        class ActionZoomTo
+    }
+
+    class IAction {
+        name: string
+        label: string
+        icon: ActionIcon
+        predicate: (context: IMapContext) => boolean
+        execute: (context: IMapContext) => void
+        keyTest: (event: Event) => boolean
     }
 ```
 

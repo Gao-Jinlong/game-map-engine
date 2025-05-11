@@ -1,8 +1,12 @@
 import Disposable from "@core/components/Disposable";
 import { BaseEvent } from "./BaseEvent";
 import { Map as MapInstance } from "@core/Map";
+import { MapEventType } from "./EventType";
+import { PointerEvent } from "./PointerEvent";
 
-export type Listener = (event: BaseEvent) => void | boolean;
+export type Listener<E extends BaseEvent = BaseEvent> = (
+    event: E
+) => void | boolean;
 /**
  * @classdesc
  * A simplified implementation of the W3C DOM Level 2 EventTarget interface.
@@ -44,8 +48,15 @@ class EventTarget extends Disposable {
         this.dispatching_ = new Map();
         this.listeners_ = new Map();
     }
-
-    addEventListener(type: string, listener: Listener) {
+    addEventListener(
+        type: "pointerMove" | "click",
+        listener: Listener<PointerEvent>
+    ): void;
+    addEventListener(type: MapEventType, listener: Listener<BaseEvent>): void;
+    addEventListener(
+        type: string,
+        listener: Listener<PointerEvent & BaseEvent>
+    ) {
         if (!type || !listener) {
             return;
         }

@@ -1,19 +1,12 @@
 import { IMap } from "@core/interfaces";
-import {
-    EventKey,
-    IPointerEvent,
-    MapEventKeys,
-} from "../../systems/Intercation/interface";
+import { EventKey, IPointerEvent } from "../../systems/Intercation/interface";
 import { BaseEvent } from "./BaseEvent";
 import { Vector2 } from "three";
+import { MAP_EVENT_TYPE, MapEventType } from "./EventType";
 
 export class PointerEvent extends BaseEvent implements IPointerEvent {
     constructor(
-        public type:
-            | EventKey.POINTER_DOWN
-            | EventKey.POINTER_MOVE
-            | EventKey.POINTER_UP
-            | EventKey.CLICK,
+        public type: MapEventType,
         public context: IMap,
         public event: Event,
         public pointer: Vector2

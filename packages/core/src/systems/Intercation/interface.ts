@@ -1,13 +1,8 @@
 import { Vector2 } from "three";
-import EventEmitter from "eventemitter3";
 import { IMap, IMapState } from "@core/interfaces";
+import Disposable from "@core/components/Disposable";
+import { MapEventType } from "@core/events";
 
-export enum LifeCycleKey {
-    RESIZE = "resize",
-    PRE_FRAME = "preFrame",
-    POST_FRAME = "postFrame",
-    ON_READY = "onReady",
-}
 /**
  * 地图事件
  *
@@ -28,25 +23,16 @@ export enum EventKey {
     ROLL_START = "roll-start",
     ROLL_END = "roll-end",
 }
-export type MapEventKeys = LifeCycleKey | EventKey;
-/**
- * 事件管理器接口
- */
-export interface IEventManager extends EventEmitter<MapEvents> {}
 
 /**
- * 地图生命周期钩子
+ * 事件系统
+ *
+ * 捕获 dom 事件，转换为 map 事件分发到需要的 system 中
  */
-export interface MapLifeCycle {
-    [LifeCycleKey.RESIZE]: IMap;
-    [LifeCycleKey.PRE_FRAME]: IMap;
-    [LifeCycleKey.POST_FRAME]: IMap;
-    [LifeCycleKey.ON_READY]: IMap;
-}
-export interface MapEvents extends MapLifeCycle {
-    [EventKey.CLICK]: IPointerEvent;
-    [EventKey.POINTER_MOVE]: IPointerEvent;
-    [key: string]: any;
+export interface IEventDispatcher extends Disposable {
+    // register(): void;
+    // unregister(): void;
+    // dispatch(): void;
 }
 
 /**
@@ -60,10 +46,6 @@ export interface IBaseEvent {
  * 指针事件
  */
 export interface IPointerEvent extends IBaseEvent {
-    type:
-        | EventKey.POINTER_DOWN
-        | EventKey.POINTER_MOVE
-        | EventKey.POINTER_UP
-        | EventKey.CLICK;
+    type: MapEventType;
     pointer: Vector2;
 }

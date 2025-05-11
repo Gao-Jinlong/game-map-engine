@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Map } from "@gme/core";
 import { ImageLayer } from "@gme/core/layers";
-import { EventType } from "@gme/core/events";
+import { MAP_EVENT_TYPE } from "@gme/core/events";
 
 const ImageLayerExample: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -25,10 +25,19 @@ const ImageLayerExample: React.FC = () => {
                 }),
             );
 
-            mapRef.current.addEventListener(EventType.CLICK, (event) => {
-                console.log("🚀 ~ mapRef.current.on ~ event:", event);
+            mapRef.current.addEventListener(MAP_EVENT_TYPE.CLICK, (event) => {
+                console.log("🚀 ~ mapRef.current.on ~ event:", event.pointer);
             });
-            mapRef.current.addEventListener(EventType.POINTER_MOVE, (event) => {
+            mapRef.current.addEventListener(
+                MAP_EVENT_TYPE.POINTER_MOVE,
+                (event) => {
+                    console.log(
+                        "🚀 ~ mapRef.current.on ~ event:",
+                        event.pointer,
+                    );
+                },
+            );
+            mapRef.current.addEventListener(MAP_EVENT_TYPE.CHANGE, (event) => {
                 console.log("🚀 ~ mapRef.current.on ~ event:", event);
             });
         }

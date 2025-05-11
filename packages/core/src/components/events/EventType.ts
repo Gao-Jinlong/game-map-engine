@@ -16,7 +16,7 @@ export const LifeCycleKey = {
  *
  * TODO 可能需要在 interaction System 定义，而不是这里
  */
-export const EventType = {
+export const MAP_EVENT_TYPE = {
     /**
      * 点击事件
      */
@@ -30,3 +30,4 @@ export const EventType = {
      */
     POINTER_MOVE: "pointerMove",
 } as const;
+export type MapEventType = (typeof MAP_EVENT_TYPE)[keyof typeof MAP_EVENT_TYPE];

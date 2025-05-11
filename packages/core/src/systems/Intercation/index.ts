@@ -1,4 +1,4 @@
-export * from "./EventManager";
+export * from "./EventDispatcherSystem";
 export * from "./interface";
 
 // TODO 重写 Interaction 系统
