@@ -49,7 +49,7 @@ class EventTarget extends Disposable {
         this.listeners_ = new Map();
     }
     addEventListener(
-        type: "pointerMove" | "click",
+        type: MapEventType.CLICK | MapEventType.POINTER_MOVE,
         listener: Listener<PointerEvent>
     ): void;
     addEventListener(type: MapEventType, listener: Listener<BaseEvent>): void;
