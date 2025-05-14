@@ -1,12 +1,10 @@
 import { BaseEvent } from "../BaseEvent";
-import type {
-    PointerEventType,
-    PointerType,
-    Point,
-} from "@interactjs/core/types";
-import * as pointerUtils from "@interactjs/utils/pointerUtils";
+import type { PointerEventType, PointerType, Point } from "../types";
 import Interaction from "../Interaction";
 
+/**
+ * TODO 重构 PointerEvent 类，不需要实现复杂的交互机制，只实现当前的简单需求即可
+ */
 export class PointerEvent<T extends string = any> extends BaseEvent {
     declare type: T;
     declare originalEvent: PointerEventType;
@@ -26,65 +24,11 @@ export class PointerEvent<T extends string = any> extends BaseEvent {
         pointer: PointerType | PointerEvent<any>,
         event: PointerEventType,
         eventTarget: Node,
-        interaction: Interaction<never>,
+        interaction: Interaction,
         timeStamp: number
     ) {
-        super(interaction);
-        pointerUtils.pointerExtend(this, event);
-
-        if (event !== pointer) {
-            pointerUtils.pointerExtend(this, pointer);
-        }
-
-        this.timeStamp = timeStamp;
-        this.originalEvent = event;
-        this.type = type;
-        this.pointerId = pointerUtils.getPointerId(pointer);
-        this.pointerType = pointerUtils.getPointerType(pointer);
-        this.target = eventTarget;
-        this.currentTarget = null;
-
-        if (type === "tap") {
-            const pointerIndex = interaction.getPointerIndex(pointer);
-            this.dt =
-                this.timeStamp - interaction.pointers[pointerIndex].downTime;
-
-            const interval = this.timeStamp - interaction.tapTime;
-
-            this.double =
-                !!interaction.prevTap &&
-                interaction.prevTap.type !== "doubletap" &&
-                interaction.prevTap.target === this.target &&
-                interval < 500;
-        } else if (type === "doubletap") {
-            this.dt =
-                (pointer as PointerEvent<"tap">).timeStamp -
-                interaction.tapTime;
-            this.double = true;
-        }
+        super();
     }
-
-    _subtractOrigin({ x: originX, y: originY }: Point) {
-        this.pageX -= originX;
-        this.pageY -= originY;
-        this.clientX -= originX;
-        this.clientY -= originY;
-
-        return this;
-    }
-
-    _addOrigin({ x: originX, y: originY }: Point) {
-        this.pageX += originX;
-        this.pageY += originY;
-        this.clientX += originX;
-        this.clientY += originY;
-
-        return this;
-    }
-
-    /**
-     * Prevent the default behaviour of the original Event
-     */
     preventDefault() {
         this.originalEvent.preventDefault();
     }

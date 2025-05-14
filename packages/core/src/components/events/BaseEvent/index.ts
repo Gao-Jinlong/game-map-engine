@@ -10,7 +10,7 @@ export interface IBaseEvent {
 /**
  * 事件基类
  */
-export class BaseEvent {
+export abstract class BaseEvent {
     declare type: string;
     declare target: EventTarget;
     declare currentTarget: Node;

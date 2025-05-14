@@ -2,7 +2,7 @@ import Disposable from "@core/components/Disposable";
 import { BaseEvent } from "./BaseEvent";
 import { Map as MapInstance } from "@core/Map";
 import { MapEventType } from "./EventType";
-import { PointerEvent } from "./PointerEvent";
+import { PointerEvent } from "./PointEvent";
 
 export type Listener<E extends BaseEvent = BaseEvent> = (
     event: E
