@@ -13,7 +13,11 @@ import { BaseComponent } from "./addons/BaseComponent";
 import { BaseEvent, EventTarget } from "./events";
 import { ResizeEvent } from "./components/events/ResizeEvent";
 import { LifeCycleKey } from "./components/events/EventType";
-import { EventDispatcherSystem, IEventDispatcher } from "./systems/Intercation";
+import {
+    EventDispatcherSystem,
+    IEventDispatcher,
+    Interaction,
+} from "./systems/Intercation";
 
 class Map extends EventTarget implements IMap {
     crsSystem: CrsSystem;
@@ -22,6 +26,7 @@ class Map extends EventTarget implements IMap {
     state: IMapState;
     systemManager: SystemManager;
     eventManager: IEventDispatcher;
+    interaction: Interaction;
     stats: Stats;
 
     private destroyHandlers: (() => void)[] = [];
@@ -54,6 +59,7 @@ class Map extends EventTarget implements IMap {
         };
 
         this.eventManager = new EventDispatcherSystem(this);
+        this.interaction = new Interaction(this);
         this.systemManager = new SystemManager(this);
         this.crsSystem = new CrsSystem(this);
 
@@ -66,7 +72,7 @@ class Map extends EventTarget implements IMap {
         this.stats = new Stats();
 
         this.init();
-        this.dispatchEvent(new BaseEvent(LifeCycleKey.ON_READY));
+        this.dispatchEvent(new BaseEvent(LifeCycleKey.ON_READY, this));
     }
 
     init(): void {

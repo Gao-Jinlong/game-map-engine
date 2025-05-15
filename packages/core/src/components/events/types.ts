@@ -1,7 +1,6 @@
-import type { Interactable } from "./Interactable";
 import type { PhaseMap, InteractEvent } from "./InteractEvent";
-import type Interaction from "./Interaction";
-import type { NativePointerEvent as NativePointerEvent_ } from "./NativeTypes";
+import type Interaction from "../../systems/Intercation/Interaction";
+import { Interactable } from "./Interactable";
 
 export type OrBoolean<T> = {
     [P in keyof T]: T[P] | boolean;
@@ -135,17 +134,8 @@ export interface PointerEventsOptions {
 
 export type RectChecker = (element: Element) => Rect;
 
-export type NativePointerEventType = typeof NativePointerEvent_;
-export type PointerEventType =
-    | MouseEvent
-    | TouchEvent
-    | Partial<NativePointerEventType>
-    | InteractEvent;
-export type PointerType =
-    | MouseEvent
-    | Touch
-    | Partial<NativePointerEventType>
-    | InteractEvent;
+export type PointerEventType = MouseEvent | TouchEvent | InteractEvent;
+export type PointerType = MouseEvent | Touch | InteractEvent;
 
 export type EventTypes = string | ListenerMap | Array<string | ListenerMap>;
 

@@ -10,15 +10,19 @@ export interface IBaseEvent {
 /**
  * 事件基类
  */
-export abstract class BaseEvent {
-    declare type: string;
-    declare target: EventTarget;
-    declare currentTarget: Node;
-    declare timeStamp: number;
-    immediatePropagationStopped = false;
-    propagationStopped = false;
+export class BaseEvent {
+    public type: string;
+    public target: EventTarget | null;
+    public timeStamp: number;
+    public immediatePropagationStopped = false;
+    public propagationStopped = false;
 
-    constructor() {}
+    constructor(type: string, target: EventTarget | null) {
+        this.timeStamp = Date.now();
+
+        this.type = type;
+        this.target = target;
+    }
 
     preventDefault() {}
 

@@ -11,7 +11,7 @@ import type {
 } from "./types";
 
 import { BaseEvent } from "./BaseEvent";
-import type { Interaction } from "./Interaction";
+import type { Interaction } from "../../systems/Intercation/Interaction";
 import { defaults } from "./options";
 
 export type EventPhase = keyof PhaseMap;

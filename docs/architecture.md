@@ -326,6 +326,44 @@ class InteractionService {
 }
 ```
 
+```mermaid
+graph TD
+    A[用户交互] --> B[PointerEvent]
+    B --> C[Interaction]
+
+    subgraph Interaction处理
+        C --> D{判断交互类型}
+        D -->|拖拽| E[Drag]
+        D -->|调整大小| F[Resize]
+        D -->|手势| G[Gesture]
+
+        E --> H[事件阶段]
+        F --> H
+        G --> H
+
+        H -->|开始| I[Start Phase]
+        H -->|移动| J[Move Phase]
+        H -->|结束| K[End Phase]
+    end
+
+    subgraph 事件处理
+        I --> L[InteractEvent]
+        J --> L
+        K --> L
+
+        L --> M[Scope.fire]
+        M --> N[Eventable]
+        N --> O[事件监听器]
+    end
+
+    subgraph 响应处理
+        O --> P[更新元素状态]
+        O --> Q[触发回调]
+        O --> R[应用修饰器]
+    end
+
+```
+
 #### 事件处理模型
 
 -   事件系统通过 EventManager 管理，实现引擎的生命周期 hook。

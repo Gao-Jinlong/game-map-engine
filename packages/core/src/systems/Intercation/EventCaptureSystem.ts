@@ -4,6 +4,8 @@ import { Vector2 } from "three";
 import { BaseEvent, MapEventType, PointerEvent } from "../../events";
 import Disposable from "@core/components/Disposable";
 import { MapKeyboardEvent } from "@core/components/events/KeyboardEvent";
+import Interaction from "@core/systems/Intercation/Interaction";
+import * as eventUtils from "@core/utils/eventUtils";
 
 /**
  * dom 事件类型
@@ -27,7 +29,6 @@ export class EventDispatcherSystem
 {
     private container: HTMLElement;
     private destroyHandlers: (() => void)[] = [];
-    public pointer: Vector2 = new Vector2();
     constructor(public context: IMap) {
         super();
         this.container = this.context.container;
@@ -63,16 +64,9 @@ export class EventDispatcherSystem
     }
 
     dispatch(type: EventType, event: Event): void {
-        if (event instanceof MouseEvent) {
-            this.pointer.x =
-                (event.clientX / this.container.clientWidth) * 2 - 1;
-            this.pointer.y =
-                -(event.clientY / this.container.clientHeight) * 2 + 1;
+        if (eventUtils.isPointerEvent(event)) {
+            const pointEvent = new PointerEvent(event);
         }
-
-        const eventSource = this.createEvent(type, event);
-
-        this.context.dispatchEvent(eventSource);
     }
 
     // TODO : 临时 将 dom 事件转为 map 事件
@@ -81,7 +75,7 @@ export class EventDispatcherSystem
             event instanceof MouseEvent &&
             (type === EventType.CLICK || type === EventType.MOUSE_DOWN)
         ) {
-            return new PointerEvent(MapEventType.CLICK, event, this.pointer);
+            return new PointerEvent(event);
         } else if (
             event instanceof KeyboardEvent &&
             (type === EventType.KEY_DOWN || type === EventType.KEY_UP)
