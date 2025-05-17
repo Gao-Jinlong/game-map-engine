@@ -17,6 +17,16 @@ export class Interaction {
     constructor(context: IMap) {
         this.context = context;
     }
+
+    pointerDown(event: PointerEvent) {
+        console.log("pointerDown", event);
+    }
+    pointerMove(event: PointerEvent) {
+        console.log("pointerMove", event);
+    }
+    pointerUp(event: PointerEvent) {
+        console.log("pointerUp", event);
+    }
 }
 
 export default Interaction;

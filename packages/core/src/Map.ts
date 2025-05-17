@@ -14,19 +14,21 @@ import { BaseEvent, EventTarget } from "./events";
 import { ResizeEvent } from "./components/events/ResizeEvent";
 import { LifeCycleKey } from "./components/events/EventType";
 import {
-    EventDispatcherSystem,
-    IEventDispatcher,
+    EventCaptureSystem,
+    IEventCapture,
     Interaction,
 } from "./systems/Intercation";
 
 class Map extends EventTarget implements IMap {
+    // 暂时将 service 注册到 Map 上，后续可以通过 ServiceManager 集中管理注册
+    eventCaptureService: IEventCapture;
+    interactionService: Interaction;
+
     crsSystem: CrsSystem;
     container: HTMLElement;
     options: Required<IMapOptions>;
     state: IMapState;
     systemManager: SystemManager;
-    eventManager: IEventDispatcher;
-    interaction: Interaction;
     stats: Stats;
 
     private destroyHandlers: (() => void)[] = [];
@@ -58,8 +60,8 @@ class Map extends EventTarget implements IMap {
             depth: 100,
         };
 
-        this.eventManager = new EventDispatcherSystem(this);
-        this.interaction = new Interaction(this);
+        this.eventCaptureService = new EventCaptureSystem(this);
+        this.interactionService = new Interaction(this);
         this.systemManager = new SystemManager(this);
         this.crsSystem = new CrsSystem(this);
 

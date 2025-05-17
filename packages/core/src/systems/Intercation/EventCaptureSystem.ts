@@ -1,5 +1,5 @@
 import { IMap } from "@core/interfaces";
-import { IEventDispatcher } from "@core/systems/Intercation";
+import { IEventCapture } from "@core/systems/Intercation";
 import { Vector2 } from "three";
 import { BaseEvent, MapEventType, PointerEvent } from "../../events";
 import Disposable from "@core/components/Disposable";
@@ -23,10 +23,7 @@ export enum EventType {
 /**
  * 捕获 dom 事件，转换为 map 事件分发到需要的 system 中
  */
-export class EventDispatcherSystem
-    extends Disposable
-    implements IEventDispatcher
-{
+export class EventCaptureSystem extends Disposable implements IEventCapture {
     private container: HTMLElement;
     private destroyHandlers: (() => void)[] = [];
     constructor(public context: IMap) {

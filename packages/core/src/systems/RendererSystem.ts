@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
 import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
-import { IEventDispatcher } from "@core/systems/Intercation";
+import { IEventCapture } from "@core/systems/Intercation";
 import { BaseEvent, LifeCycleKey } from "@core/events";
 
 export class RendererSystem implements IRendererSystem {

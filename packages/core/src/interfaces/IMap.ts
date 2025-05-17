@@ -1,4 +1,4 @@
-import { IEventDispatcher } from "@core/systems/Intercation";
+import { IEventCapture, Interaction } from "@core/systems/Intercation";
 import { SystemManager } from "../systems/SystemManager";
 import { ICoord, ICoordTuple } from "./ICoord";
 import { ICrsSystem } from "./ICrsSystem";
@@ -6,8 +6,20 @@ import { EventTarget } from "@core/components/events/EventTarget";
 
 export interface IMap extends EventTarget {
     crsSystem: ICrsSystem;
-    eventManager: IEventDispatcher;
+    /**
+     * 事件捕获 Service
+     */
+    eventCaptureService: IEventCapture;
+    /**
+     * pointer 交互 Service
+     */
+    interactionService: Interaction;
+
+    /**
+     * 系统管理器
+     */
     systemManager: SystemManager;
+
     // stateService: IStateService;
     /**
      * 地图状态
