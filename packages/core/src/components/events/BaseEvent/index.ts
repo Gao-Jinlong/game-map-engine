@@ -11,16 +11,16 @@ export interface IBaseEvent {
  * 事件基类
  */
 export class BaseEvent {
-    public type: string;
-    public target: EventTarget | null;
     public timeStamp: number;
-    public immediatePropagationStopped = false;
-    public propagationStopped = false;
 
-    constructor(type: string, target: EventTarget | null) {
+    declare type: string;
+    declare target?: EventTarget;
+    declare immediatePropagationStopped: boolean;
+    declare propagationStopped: boolean;
+
+    constructor(target?: EventTarget) {
         this.timeStamp = Date.now();
 
-        this.type = type;
         this.target = target;
     }
 

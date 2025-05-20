@@ -1,5 +1,5 @@
 import { IMap } from "@core/interfaces";
-import { IEventCapture } from "@core/systems/Intercation";
+import { IEventCapture, PointerEventTypeEnum } from "@core/systems/Intercation";
 import { Vector2 } from "three";
 import { BaseEvent, MapEventType, PointerEvent } from "../../events";
 import Disposable from "@core/components/Disposable";
@@ -16,6 +16,7 @@ export enum EventType {
     MOUSE_MOVE = "mousemove",
     CLICK = "click",
     RESIZE = "resize",
+
     KEY_DOWN = "keydown",
     KEY_UP = "keyup",
 }
@@ -26,10 +27,11 @@ export enum EventType {
 export class EventCaptureSystem extends Disposable implements IEventCapture {
     private container: HTMLElement;
     private destroyHandlers: (() => void)[] = [];
+    private interactionService: Interaction;
     constructor(public context: IMap) {
         super();
         this.container = this.context.container;
-
+        this.interactionService = this.context.interactionService;
         this.init();
     }
 
@@ -44,7 +46,7 @@ export class EventCaptureSystem extends Disposable implements IEventCapture {
         const keyEvents = [EventType.KEY_DOWN, EventType.KEY_UP];
 
         events.forEach((event) => {
-            const dispatch = this.dispatch.bind(this, event);
+            const dispatch = this.dispatchHandler.bind(this, event);
             this.container.addEventListener(event, dispatch);
             this.destroyHandlers.push(() => {
                 this.container.removeEventListener(event, dispatch);
@@ -52,7 +54,7 @@ export class EventCaptureSystem extends Disposable implements IEventCapture {
         });
 
         keyEvents.forEach((event) => {
-            const dispatch = this.dispatch.bind(this, event);
+            const dispatch = this.dispatchHandler.bind(this, event);
             document.addEventListener(event, dispatch);
             this.destroyHandlers.push(() => {
                 document.removeEventListener(event, dispatch);
@@ -60,12 +62,32 @@ export class EventCaptureSystem extends Disposable implements IEventCapture {
         });
     }
 
-    dispatch(type: EventType, event: Event): void {
-        if (eventUtils.isPointerEvent(event)) {
-            const pointEvent = new PointerEvent(event);
+    dispatchHandler(type: EventType, event: Event): void {
+        const pointEventType = this.handleEventType(type);
+        if (pointEventType && eventUtils.isPointerEvent(event)) {
+            const pointEvent = new PointerEvent(pointEventType, event);
         }
     }
 
+    handleEventType(type: EventType) {
+        switch (type) {
+            case EventType.CLICK:
+                return PointerEventTypeEnum.TAP;
+            case EventType.MOUSE_DOWN:
+                return PointerEventTypeEnum.POINTER_DOWN;
+            case EventType.MOUSE_UP:
+                return PointerEventTypeEnum.POINTER_UP;
+            case EventType.MOUSE_MOVE:
+                return PointerEventTypeEnum.POINTER_MOVE;
+            case EventType.KEY_DOWN:
+            case EventType.KEY_UP:
+            case EventType.RESIZE:
+                return void 0;
+            default:
+                let _exhaustiveCheck: never = type;
+                return void 0;
+        }
+    }
     // TODO : 临时 将 dom 事件转为 map 事件
     private createEvent(type: EventType, event: Event) {
         if (
