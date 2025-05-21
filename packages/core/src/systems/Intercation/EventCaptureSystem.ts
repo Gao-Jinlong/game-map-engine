@@ -1,7 +1,7 @@
 import { IMap } from "@core/interfaces";
-import { IEventCapture, PointerEventTypeEnum } from "@core/systems/Intercation";
+import { IEventCapture } from "@core/systems/Intercation";
 import { Vector2 } from "three";
-import { BaseEvent, MapEventType, PointerEvent } from "../../events";
+import { BaseEvent, PointerEvent, PointerEventTypeEnum } from "../../events";
 import Disposable from "@core/components/Disposable";
 import { MapKeyboardEvent } from "@core/components/events/KeyboardEvent";
 import Interaction from "@core/systems/Intercation/Interaction";
@@ -27,15 +27,15 @@ export enum EventType {
 export class EventCaptureSystem extends Disposable implements IEventCapture {
     private container: HTMLElement;
     private destroyHandlers: (() => void)[] = [];
-    private interactionService: Interaction;
+    private interactionService?: Interaction;
     constructor(public context: IMap) {
         super();
         this.container = this.context.container;
-        this.interactionService = this.context.interactionService;
-        this.init();
     }
 
     init(): void {
+        this.interactionService = this.context.interactionService;
+
         const events = [
             EventType.CLICK,
             EventType.RESIZE,
@@ -65,7 +65,40 @@ export class EventCaptureSystem extends Disposable implements IEventCapture {
     dispatchHandler(type: EventType, event: Event): void {
         const pointEventType = this.handleEventType(type);
         if (pointEventType && eventUtils.isPointerEvent(event)) {
-            const pointEvent = new PointerEvent(pointEventType, event);
+            const pointEvent = new PointerEvent(
+                pointEventType,
+                event,
+                this.interactionService!,
+                this.context
+            );
+
+            this.dispatchPointerEvent(pointEvent);
+        }
+    }
+
+    dispatchPointerEvent(pointEvent: PointerEvent) {
+        if (!this.interactionService) {
+            throw Error("interactionService is not initialized");
+        }
+
+        switch (pointEvent.type) {
+            case PointerEventTypeEnum.TAP:
+                this.interactionService.tap(pointEvent);
+                break;
+            case PointerEventTypeEnum.DOUBLE_TAP:
+                this.interactionService.doubleTap(pointEvent);
+                break;
+            case PointerEventTypeEnum.POINTER_DOWN:
+                this.interactionService.pointerDown(pointEvent);
+                break;
+            case PointerEventTypeEnum.POINTER_UP:
+                this.interactionService.pointerUp(pointEvent);
+                break;
+            case PointerEventTypeEnum.POINTER_MOVE:
+                this.interactionService.pointerMove(pointEvent);
+                break;
+            default:
+                break;
         }
     }
 
@@ -89,30 +122,30 @@ export class EventCaptureSystem extends Disposable implements IEventCapture {
         }
     }
     // TODO : 临时 将 dom 事件转为 map 事件
-    private createEvent(type: EventType, event: Event) {
-        if (
-            event instanceof MouseEvent &&
-            (type === EventType.CLICK || type === EventType.MOUSE_DOWN)
-        ) {
-            return new PointerEvent(event);
-        } else if (
-            event instanceof KeyboardEvent &&
-            (type === EventType.KEY_DOWN || type === EventType.KEY_UP)
-        ) {
-            // TODO 临时测试使用，后续需要通过 ActionService 来处理
-            const evt = new MapKeyboardEvent(event);
+    // private createEvent(type: EventType, event: Event) {
+    //     if (
+    //         event instanceof MouseEvent &&
+    //         (type === EventType.CLICK || type === EventType.MOUSE_DOWN)
+    //     ) {
+    //         return new PointerEvent(event);
+    //     } else if (
+    //         event instanceof KeyboardEvent &&
+    //         (type === EventType.KEY_DOWN || type === EventType.KEY_UP)
+    //     ) {
+    //         // TODO 临时测试使用，后续需要通过 ActionService 来处理
+    //         const evt = new MapKeyboardEvent(event);
 
-            // if (evt.ctrlKey && evt.key === "c") {
-            //     evt.preventDefault();
-            //     evt.stopPropagation();
-            //     this.context.dispatchEvent(MapEventType.COPY);
-            // }
+    //         // if (evt.ctrlKey && evt.key === "c") {
+    //         //     evt.preventDefault();
+    //         //     evt.stopPropagation();
+    //         //     this.context.dispatchEvent(MapEventType.COPY);
+    //         // }
 
-            return evt;
-        } else {
-            return new BaseEvent(type);
-        }
-    }
+    //         return evt;
+    //     } else {
+    //         return new BaseEvent(type);
+    //     }
+    // }
 
     disposeInternal(): void {
         this.destroyHandlers.forEach((handler) => handler());

@@ -1,8 +1,8 @@
 import Disposable from "@core/components/Disposable";
 import { BaseEvent } from "./BaseEvent";
 import { Map as MapInstance } from "@core/Map";
-import { MapEventType } from "./EventType";
 import { PointerEvent } from "./PointEvent";
+import { PointerEventTypeEnum } from "./EventType";
 
 export type Listener<E extends BaseEvent = BaseEvent> = (
     event: E
@@ -49,10 +49,10 @@ class EventTarget extends Disposable {
         this.listeners_ = new Map();
     }
     addEventListener(
-        type: MapEventType.CLICK | MapEventType.POINTER_MOVE,
+        type: PointerEventTypeEnum,
         listener: Listener<PointerEvent>
     ): void;
-    addEventListener(type: MapEventType, listener: Listener<BaseEvent>): void;
+    addEventListener(type: string, listener: Listener<BaseEvent>): void;
     addEventListener(
         type: string,
         listener: Listener<PointerEvent & BaseEvent>
@@ -78,7 +78,7 @@ class EventTarget extends Disposable {
             return;
         }
 
-        const evt = isString ? new BaseEvent(event) : event;
+        const evt = isString ? new BaseEvent(this, type) : event;
         if (!evt.target) {
             evt.target = this.eventTarget_ || this;
         }

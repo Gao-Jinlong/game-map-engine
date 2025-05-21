@@ -12,7 +12,7 @@ import { TerrainSystem } from "./systems/TerrainSystem";
 import { BaseComponent } from "./addons/BaseComponent";
 import { BaseEvent, EventTarget } from "./events";
 import { ResizeEvent } from "./components/events/ResizeEvent";
-import { LifeCycleKey } from "./components/events/EventType";
+import { LifeCycleType } from "./components/events/EventType";
 import {
     EventCaptureSystem,
     IEventCapture,
@@ -74,10 +74,11 @@ class Map extends EventTarget implements IMap {
         this.stats = new Stats();
 
         this.init();
-        this.dispatchEvent(new BaseEvent(LifeCycleKey.ON_READY, this));
+        this.dispatchEvent(new BaseEvent(this, LifeCycleType.ON_READY));
     }
 
     init(): void {
+        this.eventCaptureService.init();
         this.crsSystem.init();
         this.systemManager.init();
 
@@ -92,6 +93,9 @@ class Map extends EventTarget implements IMap {
         }
     }
     disposeInternal() {
+        this.interactionService.dispose();
+        this.eventCaptureService.dispose();
+
         this.container.removeChild(this.stats.dom);
         this.destroyHandlers.forEach((handler) => handler());
         this.systemManager.dispose();
@@ -116,7 +120,7 @@ class Map extends EventTarget implements IMap {
         this.systemManager.resize(this.state);
 
         this.dispatchEvent(
-            new ResizeEvent(this.state.width, this.state.height)
+            new ResizeEvent(this, this.state.width, this.state.height)
         );
     }
     private loadAxesHelper(): void {

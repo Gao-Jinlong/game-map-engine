@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Map } from "@gme/core";
 import { ImageLayer } from "@gme/core/layers";
-import { MapEventType } from "@core/events";
+import { PointerEventTypeEnum } from "@core/events";
 
 const ImageLayerExample: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -25,21 +25,14 @@ const ImageLayerExample: React.FC = () => {
                 }),
             );
 
-            // mapRef.current.addEventListener(MapEventType.CLICK, (event) => {
-            //     console.log("🚀 ~ mapRef.current.on ~ event:", event.pointer);
-            // });
-            // mapRef.current.addEventListener(
-            //     MapEventType.POINTER_MOVE,
-            //     (event) => {
-            //         console.log(
-            //             "🚀 ~ mapRef.current.on ~ event:",
-            //             event.pointer,
-            //         );
-            //     },
-            // );
-
             mapRef.current.addEventListener(
-                MapEventType.DOUBLE_CLICK,
+                PointerEventTypeEnum.DOUBLE_TAP,
+                (event) => {
+                    console.log("🚀 ~ mapRef.current.on ~ event:", event);
+                },
+            );
+            mapRef.current.addEventListener(
+                PointerEventTypeEnum.TAP,
                 (event) => {
                     console.log("🚀 ~ mapRef.current.on ~ event:", event);
                 },
@@ -50,6 +43,7 @@ const ImageLayerExample: React.FC = () => {
             if (mapRef.current) {
                 mapRef.current.dispose();
                 mapRef.current = null;
+                containerRef.current = null;
             }
         };
     }, []);

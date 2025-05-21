@@ -1,23 +1,25 @@
 /**
  * 引擎生命周期
  */
-export const LifeCycleKey = {
-    RESIZE: "resize",
-    PRE_FRAME: "preFrame",
-    POST_FRAME: "postFrame",
+export enum LifeCycleType {
+    RESIZE = "resize",
+    PRE_FRAME = "preFrame",
+    POST_FRAME = "postFrame",
     /**
      * 初始化完成
      */
-    ON_READY: "onReady",
-} as const;
+    ON_READY = "onReady",
+}
 
 /**
- * 引擎事件
+ * 指针事件类型
  */
-export enum MapEventType {
-    CLICK = "click",
+export enum PointerEventTypeEnum {
+    TAP = "tap",
+    DOUBLE_TAP = "doubleTap",
+    POINTER_DOWN = "pointerDown",
     POINTER_MOVE = "pointerMove",
-    DOUBLE_CLICK = "doubleClick",
-
-    CHANGE = "change",
+    POINTER_UP = "pointerUp",
 }
+
+export type EventType = LifeCycleType | PointerEventTypeEnum | string;

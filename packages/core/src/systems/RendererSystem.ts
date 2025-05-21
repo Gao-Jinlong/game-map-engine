@@ -2,8 +2,7 @@ import * as THREE from "three";
 import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
 import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
-import { IEventCapture } from "@core/systems/Intercation";
-import { BaseEvent, LifeCycleKey } from "@core/events";
+import { BaseEvent, LifeCycleType } from "@core/events";
 
 export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;
@@ -48,9 +47,13 @@ export class RendererSystem implements IRendererSystem {
     }
 
     animate() {
-        this.context?.dispatchEvent(new BaseEvent(LifeCycleKey.PRE_FRAME));
+        this.context?.dispatchEvent(
+            new BaseEvent(this.context, LifeCycleType.PRE_FRAME)
+        );
         this.render();
-        this.context?.dispatchEvent(new BaseEvent(LifeCycleKey.POST_FRAME));
+        this.context?.dispatchEvent(
+            new BaseEvent(this.context, LifeCycleType.POST_FRAME)
+        );
     }
     render() {
         this.context?.stats.update();

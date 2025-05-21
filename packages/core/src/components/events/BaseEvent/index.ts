@@ -1,4 +1,5 @@
 import { EventTarget } from "../EventTarget";
+import { EventType } from "../EventType";
 
 /**
  * 事件基类接口
@@ -13,15 +14,16 @@ export interface IBaseEvent {
 export class BaseEvent {
     public timeStamp: number;
 
-    declare type: string;
-    declare target?: EventTarget;
-    declare immediatePropagationStopped: boolean;
-    declare propagationStopped: boolean;
+    public type!: EventType;
+    public target?: EventTarget;
+    public immediatePropagationStopped: boolean = false;
+    public propagationStopped: boolean = false;
 
-    constructor(target?: EventTarget) {
+    constructor(target: EventTarget, type: EventType) {
         this.timeStamp = Date.now();
 
         this.target = target;
+        this.type = type;
     }
 
     preventDefault() {}

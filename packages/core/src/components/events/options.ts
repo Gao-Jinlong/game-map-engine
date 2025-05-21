@@ -1,14 +1,5 @@
 import type { Point, Listeners, OrBoolean, Element, Rect } from "./types";
 
-export interface Defaults {
-    base: BaseDefaults;
-    perAction: PerActionDefaults;
-    actions: ActionDefaults;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ActionDefaults {}
-
 export interface BaseDefaults {
     preventDefault?: "always" | "never" | "auto";
 }
@@ -22,25 +13,3 @@ export interface PerActionDefaults {
 }
 
 export type Options = Partial<BaseDefaults>;
-// &
-//     Partial<PerActionDefaults> & {
-//         [P in keyof ActionDefaults]?: Partial<ActionDefaults[P]>;
-//     };
-
-export interface OptionsArg
-    extends BaseDefaults,
-        OrBoolean<Partial<ActionDefaults>> {}
-
-export const defaults: Defaults = {
-    base: {
-        preventDefault: "auto",
-        deltaSource: "page",
-    },
-
-    perAction: {
-        enabled: false,
-        origin: { x: 0, y: 0 },
-    },
-
-    actions: {} as ActionDefaults,
-};

@@ -1,5 +1,5 @@
 import Disposable from "@core/components/Disposable";
-import { PointerEvent } from "@core/events";
+import { EventTarget, PointerEvent } from "@core/events";
 
 /**
  * 事件系统
@@ -7,6 +7,7 @@ import { PointerEvent } from "@core/events";
  * 捕获 dom 事件，转换为 map 事件分发到需要的 system 中
  */
 export interface IEventCapture extends Disposable {
+    init(): void;
     // register(): void;
     // unregister(): void;
     // dispatch(): void;
@@ -16,16 +17,11 @@ export interface IEventCapture extends Disposable {
  * 交互处理程序
  */
 export interface IInteraction {
-    previousEvent: PointerEvent | null;
+    target: EventTarget;
+    previousTapEvent: PointerEvent | null;
     pointerDown(event: PointerEvent): void;
     pointerMove(event: PointerEvent): void;
     pointerUp(event: PointerEvent): void;
-}
-
-export enum PointerEventTypeEnum {
-    TAP = "tap",
-    DOUBLE_TAP = "doubleTap",
-    POINTER_DOWN = "pointerDown",
-    POINTER_MOVE = "pointerMove",
-    POINTER_UP = "pointerUp",
+    tap(event: PointerEvent): void;
+    doubleTap(event: PointerEvent): void;
 }

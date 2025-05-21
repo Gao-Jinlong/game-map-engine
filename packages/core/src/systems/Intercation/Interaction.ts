@@ -1,7 +1,8 @@
 import { IMap } from "@core/interfaces";
 import { Interactable } from "../../components/events/Interactable";
-import { PointerEvent } from "@core/events";
+import { EventTarget, PointerEvent } from "@core/events";
 import { IInteraction } from "./interface";
+import Disposable from "@core/components/Disposable";
 
 /**
  * pointer 交互系统
@@ -14,25 +15,46 @@ import { IInteraction } from "./interface";
  *
  * 后续对于多点触控可能需要使用多个 Interaction 实现，现在暂时不考虑
  */
-export class Interaction implements IInteraction {
+export class Interaction extends Disposable implements IInteraction {
+    private timer: ReturnType<typeof setTimeout> | null = null;
+
     /** 当前交互的元素 */
-    interactable: Interactable | null = null;
+    public interactable: Interactable | null = null;
     /** 当前交互的元素 */
-    public context: IMap;
+    public target: EventTarget;
     /** 上一个事件对象 */
-    public previousEvent: PointerEvent | null = null;
-    constructor(context: IMap) {
-        this.context = context;
+    public previousTapEvent: PointerEvent | null = null;
+    constructor(target: EventTarget) {
+        super();
+        this.target = target;
     }
 
     pointerDown(event: PointerEvent) {
-        console.log("pointerDown", event);
+        this.target.dispatchEvent(event);
     }
     pointerMove(event: PointerEvent) {
-        console.log("pointerMove", event);
+        this.target.dispatchEvent(event);
     }
     pointerUp(event: PointerEvent) {
-        console.log("pointerUp", event);
+        this.target.dispatchEvent(event);
+    }
+    tap(event: PointerEvent) {
+        this.previousTapEvent = event;
+        this.timer = setTimeout(() => {
+            this.target.dispatchEvent(event);
+            this.timer = null;
+        }, PointerEvent.DOUBLE_TAP_INTERVAL);
+    }
+    doubleTap(event: PointerEvent) {
+        this.timer && clearTimeout(this.timer);
+        this.timer = null;
+
+        this.target.dispatchEvent(event);
+    }
+
+    disposeInternal(): void {
+        this.timer && clearTimeout(this.timer);
+        this.timer = null;
     }
 }
 

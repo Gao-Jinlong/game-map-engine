@@ -1,4 +1,4 @@
-import type { PhaseMap, InteractEvent } from "./InteractEvent";
+import type { PhaseMap } from "./InteractEvent";
 import type Interaction from "../../systems/Intercation/Interaction";
 import { Interactable } from "./Interactable";
 
@@ -134,8 +134,14 @@ export interface PointerEventsOptions {
 
 export type RectChecker = (element: Element) => Rect;
 
-export type PointerEventType = MouseEvent | TouchEvent | InteractEvent;
-export type PointerType = MouseEvent | Touch | InteractEvent;
+/**
+ * 指针事件类型
+ */
+export type PointerEventType = MouseEvent | TouchEvent;
+/**
+ * 指针事件类型
+ */
+export type PointerType = MouseEvent | Touch;
 
 export type EventTypes = string | ListenerMap | Array<string | ListenerMap>;
 
