@@ -9,6 +9,6 @@ export class ResizeEvent extends BaseEvent {
         public width: number,
         public height: number
     ) {
-        super(target);
+        super(target, LifeCycleType.RESIZE);
     }
 }

@@ -1,0 +1,24 @@
+---
+description: 工程的目录说明
+globs:
+alwaysApply: false
+---
+
+# 目录说明
+
+packages\core 地图引擎核心项目
+packages\core\src\systems 引擎的核心组成系统
+packages\core\src\interfaces 引擎的开放的接口定义
+packages\core\src\entity 引擎中的基础元素实例
+packages\core\src\constants 项目中常量配置
+packages\core\src\components 引擎的构成组件，引擎中各个子系统的共同构成部分
+packages\core\src\addons 地图引擎的各种构成控件，如 layer, marker 等
+
+packages\examples 基于地图引擎的核心创建的实例项目
+
+
+
+
+
+
+

@@ -5,3 +5,5 @@ export * from "./IScene";
 export * from "./ISystem";
 export * from "./IComponentManager";
 export * from "./ICamera";
+export * from "./ICoord";
+export * from "./Vector";

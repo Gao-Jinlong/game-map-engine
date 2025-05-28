@@ -1,6 +1,5 @@
 import { BaseEvent } from "../BaseEvent";
 import type { PointerEventType, PointerType, Point } from "../types";
-import Interaction from "../../../systems/Intercation/Interaction";
 import { EventTarget } from "../EventTarget";
 import { IInteraction } from "@core/systems/Intercation";
 import { PointerEventTypeEnum } from "../EventType";
@@ -11,7 +10,7 @@ import { PointerEventTypeEnum } from "../EventType";
 export class PointerEvent<T extends string = any> extends BaseEvent {
     declare originalEvent: PointerEventType;
 
-    static DOUBLE_TAP_INTERVAL = 300;
+    static DOUBLE_TAP_INTERVAL = 200;
     public type: T;
     /**
      * 是否是双击事件

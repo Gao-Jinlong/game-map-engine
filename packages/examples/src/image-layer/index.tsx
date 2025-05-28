@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Map } from "@gme/core";
 import { ImageLayer } from "@gme/core/layers";
 import { PointerEventTypeEnum } from "@core/events";
+import { Marker } from "@core/marker";
 
 const ImageLayerExample: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -22,6 +23,17 @@ const ImageLayerExample: React.FC = () => {
                     src: "/assets/terrain_z1.jpg",
                     displacementSrc: "/assets/depth_z1.jpg",
                     displacementScale: 700,
+                }),
+            );
+
+            mapRef.current.addComponent(
+                // TODO 类型 fix
+                new Marker({
+                    position: [0, 100, 0],
+                    iconUrl: "/assets/demacia.png",
+                    size: 200,
+                    color: 0xff0000,
+                    onClick: (marker) => console.log("点击了标记!"),
                 }),
             );
 

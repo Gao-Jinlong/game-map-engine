@@ -18,6 +18,12 @@
             "require": "./dist/cjs/layers.js",
             "types": "./dist/esm/src/layers.d.ts"
         },
+        "./marker": {
+            "source": "./src/marker.ts",
+            "import": "./dist/esm/marker.js",
+            "require": "./dist/cjs/marker.js",
+            "types": "./dist/esm/src/marker.d.ts"
+        },
         "./events": {
             "source": "./src/events.ts",
             "import": "./dist/esm/events.js",

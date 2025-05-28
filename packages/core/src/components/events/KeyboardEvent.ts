@@ -1,5 +1,6 @@
 import { BaseEvent, IBaseEvent } from "./BaseEvent";
 import { EventTarget } from "./EventTarget";
+import { KeyboardEventTypeEnum } from "./EventType";
 
 /**
  * 键盘事件接口
@@ -23,7 +24,7 @@ export class MapKeyboardEvent extends BaseEvent implements IKeyboardEvent {
     public metaKey: boolean;
 
     constructor(public target: EventTarget, public event: KeyboardEvent) {
-        super(target);
+        super(target, KeyboardEventTypeEnum.KEY_DOWN);
 
         this.key = event.key;
         this.ctrlKey = event.ctrlKey;

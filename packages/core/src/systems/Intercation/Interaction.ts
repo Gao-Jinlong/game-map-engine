@@ -16,7 +16,11 @@ import Disposable from "@core/components/Disposable";
  * 后续对于多点触控可能需要使用多个 Interaction 实现，现在暂时不考虑
  */
 export class Interaction extends Disposable implements IInteraction {
-    private timer: ReturnType<typeof setTimeout> | null = null;
+    /**
+     * 延迟 dispatch TAP 事件的定时器
+     * 用于判定是否是双击事件
+     */
+    private doubleTapTimer: ReturnType<typeof setTimeout> | null = null;
 
     /** 当前交互的元素 */
     public interactable: Interactable | null = null;
@@ -40,21 +44,21 @@ export class Interaction extends Disposable implements IInteraction {
     }
     tap(event: PointerEvent) {
         this.previousTapEvent = event;
-        this.timer = setTimeout(() => {
+        this.doubleTapTimer = setTimeout(() => {
             this.target.dispatchEvent(event);
-            this.timer = null;
+            this.doubleTapTimer = null;
         }, PointerEvent.DOUBLE_TAP_INTERVAL);
     }
     doubleTap(event: PointerEvent) {
-        this.timer && clearTimeout(this.timer);
-        this.timer = null;
+        this.doubleTapTimer && clearTimeout(this.doubleTapTimer);
+        this.doubleTapTimer = null;
 
         this.target.dispatchEvent(event);
     }
 
     disposeInternal(): void {
-        this.timer && clearTimeout(this.timer);
-        this.timer = null;
+        this.doubleTapTimer && clearTimeout(this.doubleTapTimer);
+        this.doubleTapTimer = null;
     }
 }
 

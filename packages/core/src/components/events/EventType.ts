@@ -22,4 +22,16 @@ export enum PointerEventTypeEnum {
     POINTER_UP = "pointerUp",
 }
 
-export type EventType = LifeCycleType | PointerEventTypeEnum | string;
+/**
+ * 键盘事件类型
+ */
+export enum KeyboardEventTypeEnum {
+    KEY_DOWN = "keyDown",
+    KEY_UP = "keyUp",
+}
+
+export type EventType =
+    | LifeCycleType
+    | PointerEventTypeEnum
+    | KeyboardEventTypeEnum
+    | string;

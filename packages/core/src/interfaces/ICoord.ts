@@ -1,3 +1,5 @@
+import { Vector3Tuple } from "./Vector";
+
 /**
  * 经过投影后变换后的坐标系中的坐标
  */
@@ -9,7 +11,7 @@ export interface ICoord {
     clone(): ICoord;
 }
 
-export type ICoordTuple = [number, number, number];
+export type ICoordTuple = Vector3Tuple;
 
 /**
  * 原始数据的空间位置
@@ -22,7 +24,7 @@ export interface IPosition {
     clone(): IPosition;
 }
 
-export type IPositionTuple = [number, number, number];
+export type IPositionTuple = Vector3Tuple;
 
 export interface IBounds {
     minX: number;
