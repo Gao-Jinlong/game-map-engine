@@ -4,6 +4,8 @@ import { CameraSystem } from "./CameraSystem";
 import { BaseComponent } from "@core/addons/BaseComponent";
 import { isComponentId } from "@core/utils";
 import { IMap } from "@core/interfaces";
+import { Marker } from "@core/addons/Marker/Marker";
+import { MarkerSystem } from "./MarkerSystem";
 
 export class ComponentManager implements IComponentManager {
     private components: Map<ComponentId, BaseComponent> = new Map();
@@ -11,7 +13,10 @@ export class ComponentManager implements IComponentManager {
     public context?: IMap;
     private sceneSystem?: SceneSystem;
     private cameraSystem?: CameraSystem;
+    private markerSystem?: MarkerSystem;
+
     constructor() {}
+
     init() {
         if (!this.context) {
             throw new Error(
@@ -21,7 +26,9 @@ export class ComponentManager implements IComponentManager {
 
         this.sceneSystem = this.context.systemManager.getSystem(SceneSystem);
         this.cameraSystem = this.context.systemManager.getSystem(CameraSystem);
+        this.markerSystem = this.context.systemManager.getSystem(MarkerSystem);
     }
+
     add(component: BaseComponent): void {
         if (component.name) {
             this.componentNameMap.set(component.name, component);
@@ -31,6 +38,11 @@ export class ComponentManager implements IComponentManager {
         component.context = this.context;
         component.sceneSystem = this.sceneSystem;
         component.cameraSystem = this.cameraSystem;
+
+        // 如果是 Marker 组件，同时注册到 MarkerSystem
+        if (component instanceof Marker) {
+            this.markerSystem?.addComponent(component);
+        }
 
         component.onAdd?.();
     }
@@ -47,6 +59,12 @@ export class ComponentManager implements IComponentManager {
             if (component.name) {
                 this.componentNameMap.delete(component.name);
             }
+
+            // 如果是 Marker 组件，同时从 MarkerSystem 移除
+            if (component instanceof Marker) {
+                this.markerSystem?.removeComponent(component);
+            }
+
             component.onRemove?.();
         }
     }

@@ -23,6 +23,7 @@ export const defaultTexture = (() => {
  * 排除光照影响
  * 指针交互事件
  * popup 弹窗
+ * 层级渲染不被其他物体遮挡
  */
 export class Marker extends BaseComponent<IMarkerOptions> {
     private mesh?: THREE.Mesh;

@@ -33,7 +33,29 @@ const ImageLayerExample: React.FC = () => {
                     iconUrl: "/assets/demacia.png",
                     size: 200,
                     color: 0xff0000,
-                    onClick: (marker) => console.log("点击了标记!"),
+                    onClick: (marker) => {
+                        console.log(
+                            "Marker 被点击了！位置:",
+                            marker.getPosition(),
+                        );
+
+                        // 点击时改变颜色和大小（示例效果）
+                        marker.setScale(new THREE.Vector3(1.5, 1.5, 1.5));
+
+                        // 500ms 后恢复原始大小
+                        setTimeout(() => {
+                            marker.setScale(new THREE.Vector3(1, 1, 1));
+                        }, 500);
+                    },
+                    onHover: (marker, isHovering) => {
+                        if (isHovering) {
+                            console.log("鼠标悬停在 Marker 上");
+                            marker.setOpacity(0.7);
+                        } else {
+                            console.log("鼠标离开 Marker");
+                            marker.setOpacity(1.0);
+                        }
+                    },
                 }),
             );
 

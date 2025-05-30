@@ -9,6 +9,7 @@ import * as THREE from "three";
 import { IMap, IMapOptions, IMapState } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
+import { MarkerSystem } from "./systems/MarkerSystem";
 import { BaseComponent } from "./addons/BaseComponent";
 import { BaseEvent, EventTarget } from "./events";
 import { ResizeEvent } from "./components/events/ResizeEvent";
@@ -70,6 +71,7 @@ class Map extends EventTarget implements IMap {
         this.systemManager.register(RendererSystem);
         this.systemManager.register(ComponentManager);
         this.systemManager.register(TerrainSystem);
+        this.systemManager.register(MarkerSystem);
 
         this.stats = new Stats();
 
@@ -104,6 +106,20 @@ class Map extends EventTarget implements IMap {
 
     addComponent(component: BaseComponent): void {
         this.systemManager.getSystem(ComponentManager).add(component);
+    }
+
+    /**
+     * 添加组件到地图（便捷方法）
+     */
+    add(component: BaseComponent): void {
+        this.addComponent(component);
+    }
+
+    /**
+     * 从地图移除组件
+     */
+    remove(component: BaseComponent): void {
+        this.systemManager.getSystem(ComponentManager).remove(component);
     }
 
     private onResize(
