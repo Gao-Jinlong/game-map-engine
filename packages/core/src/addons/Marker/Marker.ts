@@ -17,6 +17,32 @@ export const defaultTexture = (() => {
     return new THREE.CanvasTexture(canvas);
 })();
 
+// 缓动函数
+const easingFunctions = {
+    linear: (t: number) => t,
+    easeInOut: (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
+    easeIn: (t: number) => t * t,
+    easeOut: (t: number) => t * (2 - t),
+};
+
+// 动画状态接口
+interface AnimationState {
+    startTime: number;
+    duration: number;
+    startValues: {
+        opacity: number;
+        scale: number;
+        color?: THREE.Color;
+    };
+    targetValues: {
+        opacity: number;
+        scale: number;
+        color?: THREE.Color;
+    };
+    easing: (t: number) => number;
+    onComplete?: () => void;
+}
+
 /**
  * TODO
  * 固定大小，不随地图缩放
@@ -30,6 +56,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     private geometry?: THREE.PlaneGeometry;
     private material?: THREE.MeshBasicMaterial;
     private texture?: THREE.Texture;
+    private hoverTexture?: THREE.Texture;
     private loader?: THREE.TextureLoader;
     private sprite?: THREE.Sprite;
     private spriteMaterial?: THREE.SpriteMaterial;
@@ -37,6 +64,15 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     private position: THREE.Vector3;
     private rotation: THREE.Vector3;
     private scale: THREE.Vector3;
+
+    // 悬停状态和动画相关
+    private isHovering: boolean = false;
+    private currentAnimation?: AnimationState;
+    private animationFrameId?: number;
+    private originalSize: number;
+    private originalOpacity: number;
+    private originalColor: THREE.Color;
+
     constructor(options: Partial<IMarkerOptions>) {
         // 创建一个完整的选项对象，确保所有必需的属性都有值
         const completeOptions: IMarkerOptions = toDefaulted(options, {
@@ -50,6 +86,8 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             billboard: true,
             iconUrl: "",
             name: uniqueId("marker_"),
+            animationDuration: 300,
+            animationEasing: "easeInOut",
             onHover: () => {},
             onClick: () => {},
         });
@@ -58,28 +96,58 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         this.position = new THREE.Vector3(...completeOptions.position);
         this.rotation = new THREE.Vector3(...completeOptions.rotation!);
         this.scale = new THREE.Vector3(...completeOptions.scale!);
+
+        // 保存原始值
+        this.originalSize = completeOptions.size;
+        this.originalOpacity = completeOptions.opacity;
+        this.originalColor = new THREE.Color(completeOptions.color);
     }
 
     onAdd(): void {
         this.createMarker();
         this.addToScene();
         this.setupInteraction();
+        this.preloadHoverTexture();
     }
 
     onUpdate?(): void {
         if (this.mesh || this.sprite) {
             this.updateTransform();
+            this.updateAnimation();
         }
     }
 
     onRemove?(): void {
         this.removeFromScene();
         this.dispose();
+        this.stopAnimation();
     }
 
     onResize?(): void {
         // Marker 通常不需要在窗口大小改变时做特殊处理
         // 但如果需要保持屏幕大小不变，可以在这里实现
+    }
+
+    /**
+     * 预加载悬停纹理
+     */
+    private preloadHoverTexture(): void {
+        if (
+            this.options.hoverIconUrl &&
+            this.options.hoverIconUrl !== this.options.iconUrl
+        ) {
+            this.loader = this.loader || new THREE.TextureLoader();
+            this.hoverTexture = this.loader.load(
+                this.options.hoverIconUrl,
+                (texture) => {
+                    console.log("Hover texture loaded successfully");
+                },
+                undefined,
+                (error) => {
+                    console.warn("Failed to load hover texture:", error);
+                }
+            );
+        }
     }
 
     /**
@@ -261,6 +329,117 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     }
 
     /**
+     * 更新动画
+     */
+    private updateAnimation(): void {
+        if (!this.currentAnimation) return;
+
+        const now = performance.now();
+        const elapsed = now - this.currentAnimation.startTime;
+        const progress = Math.min(elapsed / this.currentAnimation.duration, 1);
+        const easedProgress = this.currentAnimation.easing(progress);
+
+        // 插值计算当前值
+        const currentOpacity = this.lerp(
+            this.currentAnimation.startValues.opacity,
+            this.currentAnimation.targetValues.opacity,
+            easedProgress
+        );
+
+        const currentScale = this.lerp(
+            this.currentAnimation.startValues.scale,
+            this.currentAnimation.targetValues.scale,
+            easedProgress
+        );
+
+        // 应用动画值
+        this.setOpacity(currentOpacity);
+        this.updateMarkerSize(currentScale);
+
+        // 如果有颜色动画
+        if (
+            this.currentAnimation.startValues.color &&
+            this.currentAnimation.targetValues.color
+        ) {
+            const currentColor = new THREE.Color().lerpColors(
+                this.currentAnimation.startValues.color,
+                this.currentAnimation.targetValues.color,
+                easedProgress
+            );
+            this.setColor(currentColor);
+        }
+
+        // 动画完成
+        if (progress >= 1) {
+            this.currentAnimation.onComplete?.();
+            this.currentAnimation = undefined;
+        }
+    }
+
+    /**
+     * 线性插值
+     */
+    private lerp(start: number, end: number, t: number): number {
+        return start + (end - start) * t;
+    }
+
+    /**
+     * 开始动画
+     */
+    private startAnimation(
+        targetValues: {
+            opacity?: number;
+            scale?: number;
+            color?: THREE.Color;
+        },
+        onComplete?: () => void
+    ): void {
+        this.stopAnimation();
+
+        const object = this.mesh || this.sprite;
+        if (!object) return;
+
+        const material = this.material || this.spriteMaterial;
+        if (!material) return;
+
+        const currentScale = this.sprite
+            ? this.sprite.scale.x
+            : this.mesh
+            ? Math.max(this.mesh.scale.x, this.mesh.scale.y)
+            : this.originalSize;
+
+        this.currentAnimation = {
+            startTime: performance.now(),
+            duration: this.options.animationDuration || 300,
+            startValues: {
+                opacity: material.opacity,
+                scale: currentScale,
+                color: material.color ? material.color.clone() : undefined,
+            },
+            targetValues: {
+                opacity: targetValues.opacity ?? material.opacity,
+                scale: targetValues.scale ?? currentScale,
+                color: targetValues.color,
+            },
+            easing: easingFunctions[
+                this.options.animationEasing || "easeInOut"
+            ],
+            onComplete,
+        };
+    }
+
+    /**
+     * 停止动画
+     */
+    private stopAnimation(): void {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = undefined;
+        }
+        this.currentAnimation = undefined;
+    }
+
+    /**
      * 设置交互事件
      */
     private setupInteraction(): void {
@@ -286,8 +465,84 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 处理悬停事件
      */
     public handleHover(isHovering: boolean): void {
+        if (this.isHovering === isHovering) return;
+
+        this.isHovering = isHovering;
+
+        if (isHovering) {
+            this.startHoverAnimation();
+        } else {
+            this.endHoverAnimation();
+        }
+
         if (this.options.onHover) {
             this.options.onHover(this, isHovering);
+        }
+    }
+
+    /**
+     * 开始悬停动画
+     */
+    private startHoverAnimation(): void {
+        const targetOpacity = this.options.hoverOpacity ?? this.originalOpacity;
+        const targetSize = this.options.hoverSize ?? this.originalSize * 1.2;
+        const targetColor = this.options.hoverColor
+            ? new THREE.Color(this.options.hoverColor)
+            : undefined;
+
+        this.startAnimation(
+            {
+                opacity: targetOpacity,
+                scale: targetSize,
+                color: targetColor,
+            },
+            () => {
+                // 切换到悬停纹理
+                if (this.hoverTexture && this.isHovering) {
+                    this.switchTexture(this.hoverTexture);
+                }
+            }
+        );
+    }
+
+    /**
+     * 结束悬停动画
+     */
+    private endHoverAnimation(): void {
+        // 先切换回原始纹理
+        if (this.texture) {
+            this.switchTexture(this.texture);
+        }
+
+        this.startAnimation({
+            opacity: this.originalOpacity,
+            scale: this.originalSize,
+            color: this.originalColor,
+        });
+    }
+
+    /**
+     * 切换纹理
+     */
+    private switchTexture(texture: THREE.Texture): void {
+        if (this.spriteMaterial) {
+            this.spriteMaterial.map = texture;
+            this.spriteMaterial.needsUpdate = true;
+        } else if (this.material) {
+            this.material.map = texture;
+            this.material.needsUpdate = true;
+        }
+    }
+
+    /**
+     * 设置颜色
+     */
+    private setColor(color: THREE.Color): void {
+        if (this.material) {
+            this.material.color = color;
+        }
+        if (this.spriteMaterial) {
+            this.spriteMaterial.color = color;
         }
     }
 
@@ -308,7 +563,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     /**
      * 清理资源
      */
-    private dispose(): void {
+    protected disposeInternal(): void {
         if (this.geometry) {
             this.geometry.dispose();
         }
@@ -321,6 +576,11 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         if (this.texture) {
             this.texture.dispose();
         }
+        if (this.hoverTexture) {
+            this.hoverTexture.dispose();
+        }
+
+        super.disposeInternal();
     }
 
     /**
@@ -351,7 +611,6 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 设置透明度
      */
     public setOpacity(opacity: number): void {
-        this.options.opacity = opacity;
         if (this.material) {
             this.material.opacity = opacity;
         }

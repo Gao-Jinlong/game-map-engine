@@ -109,7 +109,7 @@ class EventTarget extends Disposable implements IEventTarget {
         return propagate;
     }
 
-    disposeInternal() {
+    protected disposeInternal() {
         this.listeners_?.clear();
     }
 

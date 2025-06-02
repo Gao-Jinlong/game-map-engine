@@ -36,8 +36,15 @@ const ImageLayerExample: React.FC = () => {
                 new Marker({
                     position: [0, 100, 0],
                     iconUrl: "/assets/demacia.png",
+                    hoverIconUrl: "/assets/demacia-hover.png", // 悬停时的纹理
                     size: 200,
+                    hoverSize: 240, // 悬停时的大小
                     color: 0xff0000,
+                    hoverColor: 0x00ff00, // 悬停时的颜色
+                    opacity: 1.0,
+                    hoverOpacity: 0.9, // 悬停时的透明度
+                    animationDuration: 400, // 动画持续时间
+                    animationEasing: "easeInOut", // 动画缓动函数
                     onClick: (marker) => {
                         console.log(
                             "Marker 被点击了！位置:",
@@ -48,10 +55,10 @@ const ImageLayerExample: React.FC = () => {
                         if (isHovering) {
                             console.log("鼠标悬停在 Marker 上");
                             audio.play();
-                            marker.setOpacity(0.7);
+                            // 现在悬停效果由内置动画系统处理，不需要手动设置
                         } else {
                             console.log("鼠标离开 Marker");
-                            marker.setOpacity(1.0);
+                            // 离开效果也由内置动画系统处理
                         }
                     },
                 }),
