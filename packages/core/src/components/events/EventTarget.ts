@@ -1,12 +1,9 @@
 import Disposable from "@core/components/Disposable";
 import { BaseEvent } from "./BaseEvent";
-import { Map as MapInstance } from "@core/Map";
 import { PointerEvent } from "./PointEvent";
 import { PointerEventTypeEnum } from "./EventType";
+import { IEventTarget, Listener } from "./interface";
 
-export type Listener<E extends BaseEvent = BaseEvent> = (
-    event: E
-) => void | boolean;
 /**
  * @classdesc
  * A simplified implementation of the W3C DOM Level 2 EventTarget interface.
@@ -22,7 +19,7 @@ export type Listener<E extends BaseEvent = BaseEvent> = (
  *    more listeners after this one will be called. Same as when the listener
  *    returns false.
  */
-class EventTarget extends Disposable {
+class EventTarget extends Disposable implements IEventTarget {
     /**
      * 事件作用目标
      */

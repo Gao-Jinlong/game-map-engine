@@ -1,12 +1,9 @@
 import { BaseComponent } from "@core/addons/BaseComponent";
 import { ISystem } from "./ISystem";
-
-export type ComponentId = number;
+import { ComponentId, IComponent } from "./IComponent";
 
 export interface IComponentManager extends ISystem {
-    add(component: BaseComponent): void;
-    remove(component: BaseComponent): void;
-    getComponent<T extends BaseComponent>(
-        componentId: ComponentId
-    ): T | undefined;
+    add(component: IComponent): void;
+    remove(component: IComponent): void;
+    getComponent<T extends IComponent>(componentId: ComponentId): T | undefined;
 }

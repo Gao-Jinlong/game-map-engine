@@ -1,10 +1,9 @@
 import { IMap } from "@core/interfaces";
-import { IEventCapture } from "@core/systems/Intercation";
+import { IEventCapture, IInteraction } from "@core/systems/Intercation";
 import { Vector2 } from "three";
 import { BaseEvent, PointerEvent, PointerEventTypeEnum } from "../../events";
 import Disposable from "@core/components/Disposable";
 import { MapKeyboardEvent } from "@core/components/events/KeyboardEvent";
-import Interaction from "@core/systems/Intercation/Interaction";
 import * as eventUtils from "@core/utils/eventUtils";
 
 /**
@@ -27,7 +26,7 @@ export enum EventType {
 export class EventCaptureSystem extends Disposable implements IEventCapture {
     private container: HTMLElement;
     private destroyHandlers: (() => void)[] = [];
-    private interactionService?: Interaction;
+    private interactionService?: IInteraction;
     constructor(public context: IMap) {
         super();
         this.container = this.context.container;

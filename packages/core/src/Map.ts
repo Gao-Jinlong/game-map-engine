@@ -6,7 +6,7 @@ import { toDefaulted } from "es-toolkit/compat";
 import { SystemManager } from "./systems/SystemManager";
 import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
-import { IMap, IMapOptions, IMapState } from "@core/interfaces";
+import { IComponent, IMap, IMapOptions, IMapState } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
 import { MarkerSystem } from "./systems/MarkerSystem";
@@ -17,13 +17,14 @@ import { LifeCycleType } from "./components/events/EventType";
 import {
     EventCaptureSystem,
     IEventCapture,
+    IInteraction,
     Interaction,
 } from "./systems/Intercation";
 
 class Map extends EventTarget implements IMap {
     // 暂时将 service 注册到 Map 上，后续可以通过 ServiceManager 集中管理注册
     eventCaptureService: IEventCapture;
-    interactionService: Interaction;
+    interactionService: IInteraction;
 
     crsSystem: CrsSystem;
     container: HTMLElement;
@@ -104,7 +105,7 @@ class Map extends EventTarget implements IMap {
         super.disposeInternal();
     }
 
-    addComponent(component: BaseComponent): void {
+    addComponent(component: IComponent): void {
         this.systemManager.getSystem(ComponentManager).add(component);
     }
 

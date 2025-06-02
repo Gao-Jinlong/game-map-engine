@@ -60,11 +60,9 @@ export class MarkerSystem implements ISystem {
             return null;
         }
 
+        const objects = Array.from(this.objects.values());
         this.raycaster.setFromCamera(point, camera);
-        const intersects = this.raycaster.intersectObjects(
-            Array.from(this.objects.values())
-        );
-        console.log("🚀 ~ MarkerSystem ~ intersects:", intersects);
+        const intersects = this.raycaster.intersectObjects(objects);
 
         if (intersects.length > 0) {
             const intersectedObject = intersects[0].object;

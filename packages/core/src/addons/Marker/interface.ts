@@ -1,4 +1,8 @@
-import { IBaseComponentOptions, Vector3Tuple } from "@core/interfaces";
+import {
+    IBaseComponentOptions,
+    IComponent,
+    Vector3Tuple,
+} from "@core/interfaces";
 
 export interface IMarkerOptions extends IBaseComponentOptions {
     /** 标记物位置 */
@@ -24,3 +28,5 @@ export interface IMarkerOptions extends IBaseComponentOptions {
     /** 鼠标悬停事件回调 */
     onHover: (marker: any, isHovering: boolean) => void;
 }
+
+export interface IMarker extends IComponent {}

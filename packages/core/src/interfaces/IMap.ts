@@ -1,4 +1,4 @@
-import { IEventCapture, Interaction } from "@core/systems/Intercation";
+import { IEventCapture, IInteraction } from "@core/systems/Intercation";
 import { SystemManager } from "../systems/SystemManager";
 import { ICoord, ICoordTuple } from "./ICoord";
 import { ICrsSystem } from "./ICrsSystem";
@@ -13,7 +13,7 @@ export interface IMap extends EventTarget {
     /**
      * pointer 交互 Service
      */
-    interactionService: Interaction;
+    interactionService: IInteraction;
 
     /**
      * 系统管理器

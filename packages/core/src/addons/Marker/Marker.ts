@@ -1,5 +1,5 @@
 import { BaseComponent } from "../BaseComponent";
-import { IMarkerOptions } from "./interface";
+import { IMarker, IMarkerOptions } from "./interface";
 import * as THREE from "three";
 import { toDefaulted, uniqueId } from "es-toolkit/compat";
 
@@ -25,7 +25,7 @@ export const defaultTexture = (() => {
  * popup 弹窗
  * 层级渲染不被其他物体遮挡
  */
-export class Marker extends BaseComponent<IMarkerOptions> {
+export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     private mesh?: THREE.Mesh;
     private geometry?: THREE.PlaneGeometry;
     private material?: THREE.MeshBasicMaterial;

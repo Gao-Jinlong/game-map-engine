@@ -1,15 +1,14 @@
-import { ComponentId, IComponentManager } from "@core/interfaces";
+import { ComponentId, IComponent, IComponentManager } from "@core/interfaces";
 import { SceneSystem } from "./SceneSystem";
 import { CameraSystem } from "./CameraSystem";
-import { BaseComponent } from "@core/addons/BaseComponent";
 import { isComponentId } from "@core/utils";
 import { IMap } from "@core/interfaces";
 import { Marker } from "@core/addons/Marker/Marker";
 import { MarkerSystem } from "./MarkerSystem";
 
 export class ComponentManager implements IComponentManager {
-    private components: Map<ComponentId, BaseComponent> = new Map();
-    private componentNameMap: Map<string, BaseComponent> = new Map();
+    private components: Map<ComponentId, IComponent> = new Map();
+    private componentNameMap: Map<string, IComponent> = new Map();
     public context?: IMap;
     private sceneSystem?: SceneSystem;
     private cameraSystem?: CameraSystem;
@@ -29,7 +28,7 @@ export class ComponentManager implements IComponentManager {
         this.markerSystem = this.context.systemManager.getSystem(MarkerSystem);
     }
 
-    add(component: BaseComponent): void {
+    add(component: IComponent): void {
         if (component.name) {
             this.componentNameMap.set(component.name, component);
         }
@@ -39,16 +38,16 @@ export class ComponentManager implements IComponentManager {
         component.sceneSystem = this.sceneSystem;
         component.cameraSystem = this.cameraSystem;
 
+        component.onAdd?.();
+
         // 如果是 Marker 组件，同时注册到 MarkerSystem
         if (component instanceof Marker) {
             this.markerSystem?.addComponent(component);
         }
-
-        component.onAdd?.();
     }
 
-    remove(componentOrId: BaseComponent | ComponentId): void {
-        let component: BaseComponent | undefined;
+    remove(componentOrId: IComponent | ComponentId): void {
+        let component: IComponent | undefined;
         if (isComponentId(componentOrId)) {
             component = this.components.get(componentOrId);
         } else {
@@ -69,7 +68,7 @@ export class ComponentManager implements IComponentManager {
         }
     }
 
-    getComponent<T extends BaseComponent>(
+    getComponent<T extends IComponent>(
         componentId: ComponentId
     ): T | undefined {
         return this.components.get(componentId) as T | undefined;

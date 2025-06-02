@@ -1,6 +1,7 @@
 import type { PhaseMap } from "./InteractEvent";
 import type Interaction from "../../systems/Intercation/Interaction";
 import { Interactable } from "./Interactable";
+import { IInteraction } from "@core/systems/Intercation";
 
 export type OrBoolean<T> = {
     [P in keyof T]: T[P] | boolean;
@@ -120,7 +121,7 @@ export type ActionChecker = (
     defaultAction: string,
     interactable: Interactable,
     element: Element,
-    interaction: Interaction
+    interaction: IInteraction
 ) => ActionProps;
 
 export type OriginFunction = (target: Element) => Rect;

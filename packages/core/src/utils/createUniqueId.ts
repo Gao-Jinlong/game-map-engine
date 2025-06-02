@@ -1,4 +1,4 @@
-import { ComponentId } from "@core/interfaces/IComponentManager";
+import { ComponentId } from "@core/interfaces";
 
 let index = 0;
 

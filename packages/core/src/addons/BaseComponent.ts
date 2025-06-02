@@ -1,15 +1,17 @@
 import {
+    ComponentId,
     IBaseComponentOptions,
     ICameraSystem,
+    IComponent,
     IMap,
     ISceneSystem,
 } from "@core/interfaces";
 import { createUniqueId } from "../utils";
-import { ComponentId } from "@core/interfaces/IComponentManager";
 
 export abstract class BaseComponent<
     OPTIONS extends IBaseComponentOptions = IBaseComponentOptions
-> {
+> implements IComponent
+{
     public readonly __component_id__: ComponentId;
     private _options: OPTIONS;
     public sceneSystem?: ISceneSystem;

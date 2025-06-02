@@ -9,32 +9,27 @@
         ".": {
             "source": "./src/index.ts",
             "import": "./dist/esm/index.js",
-            "require": "./dist/cjs/index.js",
-            "types": "./dist/esm/src/index.d.ts"
+            "require": "./dist/cjs/index.js"
         },
         "./layers": {
             "source": "./src/layers.ts",
             "import": "./dist/esm/layers.js",
-            "require": "./dist/cjs/layers.js",
-            "types": "./dist/esm/src/layers.d.ts"
+            "require": "./dist/cjs/layers.js"
         },
         "./marker": {
             "source": "./src/marker.ts",
             "import": "./dist/esm/marker.js",
-            "require": "./dist/cjs/marker.js",
-            "types": "./dist/esm/src/marker.d.ts"
+            "require": "./dist/cjs/marker.js"
         },
         "./events": {
             "source": "./src/events.ts",
             "import": "./dist/esm/events.js",
-            "require": "./dist/cjs/events.js",
-            "types": "./dist/esm/src/events.d.ts"
+            "require": "./dist/cjs/events.js"
         },
         "./project": {
             "source": "./src/project.ts",
             "import": "./dist/esm/project.js",
-            "require": "./dist/cjs/project.js",
-            "types": "./dist/esm/src/project.d.ts"
+            "require": "./dist/cjs/project.js"
         }
     },
     "scripts": {

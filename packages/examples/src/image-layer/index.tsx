@@ -3,6 +3,11 @@ import { Map } from "@gme/core";
 import { ImageLayer } from "@gme/core/layers";
 import { PointerEventTypeEnum } from "@core/events";
 import { Marker } from "@core/marker";
+import { Howl } from "howler";
+
+const audio = new Howl({
+    src: ["/assets/audio/sfx-ui-hover-regions-01.mp3"],
+});
 
 const ImageLayerExample: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -38,18 +43,11 @@ const ImageLayerExample: React.FC = () => {
                             "Marker 被点击了！位置:",
                             marker.getPosition(),
                         );
-
-                        // 点击时改变颜色和大小（示例效果）
-                        marker.setScale(new THREE.Vector3(1.5, 1.5, 1.5));
-
-                        // 500ms 后恢复原始大小
-                        setTimeout(() => {
-                            marker.setScale(new THREE.Vector3(1, 1, 1));
-                        }, 500);
                     },
                     onHover: (marker, isHovering) => {
                         if (isHovering) {
                             console.log("鼠标悬停在 Marker 上");
+                            audio.play();
                             marker.setOpacity(0.7);
                         } else {
                             console.log("鼠标离开 Marker");
