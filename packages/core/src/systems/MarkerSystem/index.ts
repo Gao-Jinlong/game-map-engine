@@ -8,6 +8,7 @@ import {
 import { Object3D, Raycaster, Vector2 } from "three";
 import { CameraSystem } from "../CameraSystem";
 import { Marker } from "@core/addons/Marker/Marker";
+import { IMarker } from "@core/marker";
 
 /**
  * 标记系统
@@ -16,7 +17,7 @@ import { Marker } from "@core/addons/Marker/Marker";
  */
 export class MarkerSystem implements ISystem {
     public context?: IMap;
-    public components: Map<ComponentId, Marker> = new Map();
+    public components: Map<ComponentId, IMarker> = new Map();
     private objects: Map<ComponentId, Object3D> = new Map();
     private raycaster: Raycaster = new Raycaster();
     private cameraSystem?: ICameraSystem;
@@ -54,7 +55,7 @@ export class MarkerSystem implements ISystem {
      */
     getMarkerByPoint(
         point: Vector2
-    ): { marker: Marker; object: Object3D } | null {
+    ): { marker: IMarker; object: Object3D } | null {
         const camera = this.cameraSystem?.camera;
         if (!camera) {
             return null;
@@ -84,7 +85,7 @@ export class MarkerSystem implements ISystem {
     /**
      * 获取所有可交互的 Marker
      */
-    getInteractiveMarkers(): Marker[] {
+    getInteractiveMarkers(): IMarker[] {
         return Array.from(this.components.values()).filter(
             (marker) => marker.options.interactive
         );
@@ -105,7 +106,7 @@ export class MarkerSystem implements ISystem {
     /**
      * 处理 Marker 悬停事件
      */
-    handleMarkerHover(point: Vector2): Marker | null {
+    handleMarkerHover(point: Vector2): IMarker | null {
         const result = this.getMarkerByPoint(point);
         if (result && result.marker.options.interactive) {
             return result.marker;

@@ -9,11 +9,15 @@ export interface IBaseComponentOptions {
     name?: string;
 }
 
-export interface IComponent extends IBaseComponentOptions, IEventTarget {
+export interface IComponent<
+    OPTIONS extends IBaseComponentOptions = IBaseComponentOptions
+> extends IBaseComponentOptions,
+        IEventTarget {
     __component_id__: ComponentId;
     context?: IMap;
     sceneSystem?: ISceneSystem;
     cameraSystem?: ICameraSystem;
+    options: OPTIONS;
 
     onAdd?(): void;
     onUpdate?(): void;

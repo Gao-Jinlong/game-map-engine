@@ -2,6 +2,7 @@ import { BaseComponent } from "../BaseComponent";
 import { IMarker, IMarkerOptions } from "./interface";
 import * as THREE from "three";
 import { toDefaulted, uniqueId } from "es-toolkit/compat";
+import gsap from "gsap";
 
 export const defaultTexture = (() => {
     const canvas = document.createElement("canvas");
@@ -60,6 +61,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     private loader?: THREE.TextureLoader;
     private sprite?: THREE.Sprite;
     private spriteMaterial?: THREE.SpriteMaterial;
+    private hoverMaterial?: THREE.SpriteMaterial;
 
     private position: THREE.Vector3;
     private rotation: THREE.Vector3;
@@ -147,6 +149,13 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
                     console.warn("Failed to load hover texture:", error);
                 }
             );
+
+            this.hoverMaterial = new THREE.SpriteMaterial({
+                map: this.hoverTexture,
+                transparent: true,
+                alphaTest: 0.1,
+                opacity: this.options.hoverOpacity ?? this.originalOpacity,
+            });
         }
     }
 
@@ -174,7 +183,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         billboard: boolean,
         opacity: number
     ): void {
-        this.loader = new THREE.TextureLoader();
+        this.loader = this.loader || new THREE.TextureLoader();
         this.texture = this.loader.load(
             iconUrl,
             (texture) => {
@@ -485,24 +494,45 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      */
     private startHoverAnimation(): void {
         const targetOpacity = this.options.hoverOpacity ?? this.originalOpacity;
+
         const targetSize = this.options.hoverSize ?? this.originalSize * 1.2;
         const targetColor = this.options.hoverColor
             ? new THREE.Color(this.options.hoverColor)
             : undefined;
 
-        this.startAnimation(
-            {
-                opacity: targetOpacity,
-                scale: targetSize,
-                color: targetColor,
-            },
-            () => {
-                // 切换到悬停纹理
-                if (this.hoverTexture && this.isHovering) {
-                    this.switchTexture(this.hoverTexture);
-                }
-            }
-        );
+        if (this.sprite && this.hoverMaterial) {
+            this.sprite.material = this.hoverMaterial;
+
+            this.sprite.scale.set(this.originalSize, this.originalSize, 2);
+
+            gsap.to(this.sprite, {
+                _scale: targetSize,
+                duration: 0.15,
+                ease: "power2.easeOut",
+                onUpdate: () => {
+                    console.log("update", this.sprite?._scale);
+                    this.sprite!.scale.set(
+                        this.sprite!._scale,
+                        this.sprite!._scale,
+                        1
+                    );
+                },
+            });
+        }
+
+        // this.startAnimation(
+        //     {
+        //         opacity: targetOpacity,
+        //         scale: targetSize,
+        //         color: targetColor,
+        //     },
+        //     () => {
+        //         // 切换到悬停纹理
+        //         if (this.hoverTexture && this.isHovering) {
+        //             this.switchTexture(this.hoverTexture);
+        //         }
+        //     }
+        // );
     }
 
     /**
@@ -514,11 +544,28 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             this.switchTexture(this.texture);
         }
 
-        this.startAnimation({
-            opacity: this.originalOpacity,
-            scale: this.originalSize,
-            color: this.originalColor,
-        });
+        if (this.sprite && this.spriteMaterial) {
+            this.sprite.material = this.spriteMaterial;
+
+            gsap.to(this.sprite, {
+                _scale: this.originalSize,
+                duration: 0.15,
+                ease: "power2.easeOut",
+                onUpdate: () => {
+                    this.sprite!.scale.set(
+                        this.sprite!._scale,
+                        this.sprite!._scale,
+                        1
+                    );
+                },
+            });
+        }
+
+        // this.startAnimation({
+        //     opacity: this.originalOpacity,
+        //     scale: this.originalSize,
+        //     color: this.originalColor,
+        // });
     }
 
     /**

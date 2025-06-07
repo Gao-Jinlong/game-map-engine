@@ -13,7 +13,7 @@ export abstract class BaseComponent<
         OPTIONS extends IBaseComponentOptions = IBaseComponentOptions
     >
     extends EventTarget
-    implements IComponent
+    implements IComponent<OPTIONS>
 {
     public readonly __component_id__: ComponentId;
     private _options: OPTIONS;
