@@ -38,14 +38,8 @@ const ImageLayerExample: React.FC = () => {
                     iconUrl: "/assets/demacia.png",
                     hoverIconUrl: "/assets/demacia-hover.png", // 悬停时的纹理
                     size: 200,
-                    hoverSize: 240, // 悬停时的大小
-                    hoverScale: [2, 2, 1], // 悬停时的缩放
                     color: 0xff0000,
-                    hoverColor: 0x00ff00, // 悬停时的颜色
                     opacity: 1.0,
-                    hoverOpacity: 0.9, // 悬停时的透明度
-                    animationDuration: 400, // 动画持续时间
-                    animationEasing: "easeInOut", // 动画缓动函数
                     onClick: (marker) => {
                         console.log(
                             "Marker 被点击了！位置:",

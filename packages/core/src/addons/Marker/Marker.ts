@@ -3,6 +3,7 @@ import { IMarker, IMarkerOptions } from "./interface";
 import * as THREE from "three";
 import { toDefaulted, uniqueId } from "es-toolkit/compat";
 import gsap from "gsap";
+import { IVariant } from "@core/interfaces/Animation";
 
 export const defaultTexture = (() => {
     const canvas = document.createElement("canvas");
@@ -17,32 +18,6 @@ export const defaultTexture = (() => {
     }
     return new THREE.CanvasTexture(canvas);
 })();
-
-// 缓动函数
-const easingFunctions = {
-    linear: (t: number) => t,
-    easeInOut: (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
-    easeIn: (t: number) => t * t,
-    easeOut: (t: number) => t * (2 - t),
-};
-
-// 动画状态接口
-interface AnimationState {
-    startTime: number;
-    duration: number;
-    startValues: {
-        opacity: number;
-        scale: number;
-        color?: THREE.Color;
-    };
-    targetValues: {
-        opacity: number;
-        scale: number;
-        color?: THREE.Color;
-    };
-    easing: (t: number) => number;
-    onComplete?: () => void;
-}
 
 /**
  * TODO
@@ -69,12 +44,8 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
 
     // 悬停状态和动画相关
     private isHovering: boolean = false;
-    private currentAnimation?: AnimationState;
-    private animationFrameId?: number;
-    private originalScale: [number, number, number];
-    private originalOpacity: number;
-    private originalColor: THREE.Color;
-    private hoverScale: [number, number, number];
+    private currentVariant?: IVariant;
+    private variants = new Map<string, IVariant>();
 
     constructor(options: Partial<IMarkerOptions>) {
         // 创建一个完整的选项对象，确保所有必需的属性都有值
@@ -83,7 +54,18 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             rotation: [0, 0, 0],
             scale: [1, 1, 1],
             size: 1,
-            hoverScale: [1.2, 1.2, 1],
+            variants: [
+                {
+                    name: "normal",
+                    scale: 1 * 200,
+                    opacity: 1,
+                },
+                {
+                    name: "hover",
+                    scale: 1.2 * 200, // TODO 目前地图中的比例尺未统一，这里临时写死大小，后续需要修改为相对大小
+                    opacity: 1,
+                },
+            ],
             color: 0xffffff,
             interactive: true,
             opacity: 1,
@@ -100,12 +82,10 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         this.position = new THREE.Vector3(...completeOptions.position);
         this.rotation = new THREE.Vector3(...completeOptions.rotation);
         this.scale = new THREE.Vector3(...completeOptions.scale);
-        this.hoverScale = completeOptions.hoverScale;
 
-        // 保存原始值
-        this.originalScale = completeOptions.scale;
-        this.originalOpacity = completeOptions.opacity;
-        this.originalColor = new THREE.Color(completeOptions.color);
+        completeOptions.variants.forEach((variant) => {
+            this.variants.set(variant.name, variant);
+        });
     }
 
     onAdd(): void {
@@ -118,14 +98,12 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     onUpdate?(): void {
         if (this.mesh || this.sprite) {
             this.updateTransform();
-            this.updateAnimation();
         }
     }
 
     onRemove?(): void {
         this.removeFromScene();
         this.dispose();
-        this.stopAnimation();
     }
 
     onResize?(): void {
@@ -341,72 +319,6 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     }
 
     /**
-     * 更新动画
-     */
-    private updateAnimation(): void {
-        if (!this.currentAnimation) return;
-
-        const now = performance.now();
-        const elapsed = now - this.currentAnimation.startTime;
-        const progress = Math.min(elapsed / this.currentAnimation.duration, 1);
-        const easedProgress = this.currentAnimation.easing(progress);
-
-        // 插值计算当前值
-        const currentOpacity = this.lerp(
-            this.currentAnimation.startValues.opacity,
-            this.currentAnimation.targetValues.opacity,
-            easedProgress
-        );
-
-        const currentScale = this.lerp(
-            this.currentAnimation.startValues.scale,
-            this.currentAnimation.targetValues.scale,
-            easedProgress
-        );
-
-        // 应用动画值
-        this.setOpacity(currentOpacity);
-        this.updateMarkerSize(currentScale);
-
-        // 如果有颜色动画
-        if (
-            this.currentAnimation.startValues.color &&
-            this.currentAnimation.targetValues.color
-        ) {
-            const currentColor = new THREE.Color().lerpColors(
-                this.currentAnimation.startValues.color,
-                this.currentAnimation.targetValues.color,
-                easedProgress
-            );
-            this.setColor(currentColor);
-        }
-
-        // 动画完成
-        if (progress >= 1) {
-            this.currentAnimation.onComplete?.();
-            this.currentAnimation = undefined;
-        }
-    }
-
-    /**
-     * 线性插值
-     */
-    private lerp(start: number, end: number, t: number): number {
-        return start + (end - start) * t;
-    }
-
-    /**
-     * 停止动画
-     */
-    private stopAnimation(): void {
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = undefined;
-        }
-        this.currentAnimation = undefined;
-    }
-
-    /**
      * 设置交互事件
      */
     private setupInteraction(): void {
@@ -451,54 +363,17 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 开始悬停动画
      */
     private startHoverAnimation(): void {
-        const self = this;
-        const targetOpacity = this.options.hoverOpacity ?? this.originalOpacity;
-        const targetScale = this.hoverScale;
-
-        const targetColor = this.options.hoverColor
-            ? new THREE.Color(this.options.hoverColor)
-            : undefined;
-
         if (this.sprite && this.hoverMaterial) {
             this.sprite.material = this.hoverMaterial;
 
-            gsap.to(self, {
-                x: targetScale[0],
-                y: targetScale[1],
-                z: targetScale[2],
-                duration: 0.15,
-                ease: "power2.easeOut",
-                onUpdate: () => {
-                    self.sprite!.scale.set(+self.x, +self.y, 1);
-                    console.log(
-                        "🚀 ~ Marker ~ startHoverAnimation ~ +self.x, +self.y:",
-                        +self.x,
-                        +self.y
-                    );
-                },
-            });
+            this.switchVariant("hover");
         }
-
-        // this.startAnimation(
-        //     {
-        //         opacity: targetOpacity,
-        //         scale: targetSize,
-        //         color: targetColor,
-        //     },
-        //     () => {
-        //         // 切换到悬停纹理
-        //         if (this.hoverTexture && this.isHovering) {
-        //             this.switchTexture(this.hoverTexture);
-        //         }
-        //     }
-        // );
     }
 
     /**
      * 结束悬停动画
      */
     private endHoverAnimation(): void {
-        const self = this;
         // 先切换回原始纹理
         if (this.texture) {
             this.switchTexture(this.texture);
@@ -507,19 +382,31 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         if (this.sprite && this.spriteMaterial) {
             this.sprite.material = this.spriteMaterial;
 
-            gsap.to(this, {
-                x: this.originalScale[0],
-                y: this.originalScale[1],
-                z: this.originalScale[2],
+            this.switchVariant("normal");
+        }
+    }
+    private switchVariant(variantName: string): void {
+        const variant = this.variants.get(variantName);
+
+        if (!variant?.scale) return;
+
+        if (this.sprite) {
+            gsap.to(this.scale, {
+                x: variant.scale,
+                y: variant.scale,
+                z: variant.scale,
                 duration: 0.15,
                 ease: "power2.easeOut",
                 onUpdate: () => {
-                    self.sprite!.scale.set(self.x, self.y, self.z);
+                    this.sprite!.scale.set(
+                        this.scale.x,
+                        this.scale.y,
+                        this.scale.z
+                    );
                 },
             });
         }
     }
-
     /**
      * 切换纹理
      */
