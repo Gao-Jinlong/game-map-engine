@@ -33,7 +33,7 @@ export class MarkerSystem implements ISystem {
         this.cameraSystem = this.context?.systemManager.getSystem(CameraSystem);
     }
 
-    addComponent(component: Marker) {
+    addComponent(component: IMarker) {
         this.components.set(component.__component_id__, component);
 
         const object = component.getObject3D();
@@ -49,6 +49,12 @@ export class MarkerSystem implements ISystem {
 
     resize?: ((state: IMapState) => void) | undefined;
     destroy?: (() => void) | undefined;
+
+    update(time: number, frame: XRFrame) {
+        this.components.forEach((component) => {
+            component.onUpdate?.(time, frame);
+        });
+    }
 
     /**
      * 根据屏幕坐标检测点击的 Marker

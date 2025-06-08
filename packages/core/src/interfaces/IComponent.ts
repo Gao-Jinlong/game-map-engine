@@ -20,7 +20,7 @@ export interface IComponent<
     options: OPTIONS;
 
     onAdd?(): void;
-    onUpdate?(): void;
+    onUpdate?(time: number, frame: XRFrame): void;
     onRemove?(): void;
     onResize?(): void;
 }

@@ -17,8 +17,8 @@ export interface IMarkerOptions extends IBaseComponentOptions {
     hoverIconUrl?: string;
     /** 标记物大小（默认为1） */
     size: number;
-    /** 悬停时的标记物大小（可选，如果不提供则使用默认size） */
-    hoverSize?: number;
+    /** 悬停时的缩放（可选，如果不提供则使用默认size） */
+    hoverScale: Vector3Tuple;
     /** 标记物颜色（当没有iconUrl时使用，默认为白色） */
     color: number;
     /** 悬停时的颜色（可选） */
@@ -44,4 +44,6 @@ export interface IMarkerOptions extends IBaseComponentOptions {
 export interface IMarker extends IComponent<IMarkerOptions> {
     handleClick(): void;
     handleHover(isHovering: boolean): void;
+    /** 获取标记物对象（用于射线检测等） */
+    getObject3D(): THREE.Object3D | undefined;
 }

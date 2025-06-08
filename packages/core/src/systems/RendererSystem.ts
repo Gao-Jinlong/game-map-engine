@@ -3,6 +3,7 @@ import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
 import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
 import { BaseEvent, LifeCycleType } from "@core/events";
+import { MarkerSystem } from "./MarkerSystem";
 
 export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;
@@ -46,7 +47,7 @@ export class RendererSystem implements IRendererSystem {
         this.renderer.render(this.scene!, this.camera!);
     }
 
-    animate() {
+    animate(time: number, frame: XRFrame) {
         this.context?.dispatchEvent(
             new BaseEvent(this.context, LifeCycleType.PRE_FRAME)
         );

@@ -71,9 +71,10 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     private isHovering: boolean = false;
     private currentAnimation?: AnimationState;
     private animationFrameId?: number;
-    private originalSize: number;
+    private originalScale: [number, number, number];
     private originalOpacity: number;
     private originalColor: THREE.Color;
+    private hoverScale: [number, number, number];
 
     constructor(options: Partial<IMarkerOptions>) {
         // 创建一个完整的选项对象，确保所有必需的属性都有值
@@ -82,6 +83,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             rotation: [0, 0, 0],
             scale: [1, 1, 1],
             size: 1,
+            hoverScale: [1.2, 1.2, 1],
             color: 0xffffff,
             interactive: true,
             opacity: 1,
@@ -96,11 +98,12 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         super(completeOptions);
 
         this.position = new THREE.Vector3(...completeOptions.position);
-        this.rotation = new THREE.Vector3(...completeOptions.rotation!);
-        this.scale = new THREE.Vector3(...completeOptions.scale!);
+        this.rotation = new THREE.Vector3(...completeOptions.rotation);
+        this.scale = new THREE.Vector3(...completeOptions.scale);
+        this.hoverScale = completeOptions.hoverScale;
 
         // 保存原始值
-        this.originalSize = completeOptions.size;
+        this.originalScale = completeOptions.scale;
         this.originalOpacity = completeOptions.opacity;
         this.originalColor = new THREE.Color(completeOptions.color);
     }
@@ -393,51 +396,6 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     }
 
     /**
-     * 开始动画
-     */
-    private startAnimation(
-        targetValues: {
-            opacity?: number;
-            scale?: number;
-            color?: THREE.Color;
-        },
-        onComplete?: () => void
-    ): void {
-        this.stopAnimation();
-
-        const object = this.mesh || this.sprite;
-        if (!object) return;
-
-        const material = this.material || this.spriteMaterial;
-        if (!material) return;
-
-        const currentScale = this.sprite
-            ? this.sprite.scale.x
-            : this.mesh
-            ? Math.max(this.mesh.scale.x, this.mesh.scale.y)
-            : this.originalSize;
-
-        this.currentAnimation = {
-            startTime: performance.now(),
-            duration: this.options.animationDuration || 300,
-            startValues: {
-                opacity: material.opacity,
-                scale: currentScale,
-                color: material.color ? material.color.clone() : undefined,
-            },
-            targetValues: {
-                opacity: targetValues.opacity ?? material.opacity,
-                scale: targetValues.scale ?? currentScale,
-                color: targetValues.color,
-            },
-            easing: easingFunctions[
-                this.options.animationEasing || "easeInOut"
-            ],
-            onComplete,
-        };
-    }
-
-    /**
      * 停止动画
      */
     private stopAnimation(): void {
@@ -493,9 +451,10 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 开始悬停动画
      */
     private startHoverAnimation(): void {
+        const self = this;
         const targetOpacity = this.options.hoverOpacity ?? this.originalOpacity;
+        const targetScale = this.hoverScale;
 
-        const targetSize = this.options.hoverSize ?? this.originalSize * 1.2;
         const targetColor = this.options.hoverColor
             ? new THREE.Color(this.options.hoverColor)
             : undefined;
@@ -503,18 +462,18 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         if (this.sprite && this.hoverMaterial) {
             this.sprite.material = this.hoverMaterial;
 
-            this.sprite.scale.set(this.originalSize, this.originalSize, 2);
-
-            gsap.to(this.sprite, {
-                _scale: targetSize,
+            gsap.to(self, {
+                x: targetScale[0],
+                y: targetScale[1],
+                z: targetScale[2],
                 duration: 0.15,
                 ease: "power2.easeOut",
                 onUpdate: () => {
-                    console.log("update", this.sprite?._scale);
-                    this.sprite!.scale.set(
-                        this.sprite!._scale,
-                        this.sprite!._scale,
-                        1
+                    self.sprite!.scale.set(+self.x, +self.y, 1);
+                    console.log(
+                        "🚀 ~ Marker ~ startHoverAnimation ~ +self.x, +self.y:",
+                        +self.x,
+                        +self.y
                     );
                 },
             });
@@ -539,6 +498,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 结束悬停动画
      */
     private endHoverAnimation(): void {
+        const self = this;
         // 先切换回原始纹理
         if (this.texture) {
             this.switchTexture(this.texture);
@@ -547,25 +507,17 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         if (this.sprite && this.spriteMaterial) {
             this.sprite.material = this.spriteMaterial;
 
-            gsap.to(this.sprite, {
-                _scale: this.originalSize,
+            gsap.to(this, {
+                x: this.originalScale[0],
+                y: this.originalScale[1],
+                z: this.originalScale[2],
                 duration: 0.15,
                 ease: "power2.easeOut",
                 onUpdate: () => {
-                    this.sprite!.scale.set(
-                        this.sprite!._scale,
-                        this.sprite!._scale,
-                        1
-                    );
+                    self.sprite!.scale.set(self.x, self.y, self.z);
                 },
             });
         }
-
-        // this.startAnimation({
-        //     opacity: this.originalOpacity,
-        //     scale: this.originalSize,
-        //     color: this.originalColor,
-        // });
     }
 
     /**

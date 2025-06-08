@@ -39,6 +39,7 @@ const ImageLayerExample: React.FC = () => {
                     hoverIconUrl: "/assets/demacia-hover.png", // 悬停时的纹理
                     size: 200,
                     hoverSize: 240, // 悬停时的大小
+                    hoverScale: [2, 2, 1], // 悬停时的缩放
                     color: 0xff0000,
                     hoverColor: 0x00ff00, // 悬停时的颜色
                     opacity: 1.0,
