@@ -16,22 +16,20 @@ export abstract class BaseComponent<
     implements IComponent<OPTIONS>
 {
     public readonly __component_id__: ComponentId;
-    private _options: OPTIONS;
+    protected _options: OPTIONS | undefined;
     public sceneSystem?: ISceneSystem;
     public cameraSystem?: ICameraSystem;
     public context?: IMap;
 
-    constructor(options: OPTIONS) {
+    constructor() {
         super();
         this.__component_id__ = createUniqueId();
-
-        this._options = options;
     }
     get options() {
         return this._options;
     }
     get name() {
-        return this._options.name;
+        return this._options?.name;
     }
 
     abstract onAdd?(): void;

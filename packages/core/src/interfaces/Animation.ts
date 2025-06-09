@@ -9,4 +9,5 @@ export interface IVariant extends gsap.TweenVars {
     opacity?: number;
     scale?: number;
     color?: number;
+    iconUrl?: string;
 }

@@ -14,8 +14,6 @@ export interface IMarkerOptions extends IBaseComponentOptions {
     scale: Vector3Tuple;
     /** 图标URL（可选，如果不提供则使用默认样式） */
     iconUrl: string;
-    /** 悬停时的图标URL（可选，如果不提供则不切换纹理） */
-    hoverIconUrl?: string;
     /** 标记物大小（默认为1） */
     size: number;
     /** 标记物颜色（当没有iconUrl时使用，默认为白色） */
@@ -34,6 +32,7 @@ export interface IMarkerOptions extends IBaseComponentOptions {
 }
 
 export interface IMarker extends IComponent<IMarkerOptions> {
+    interactive: boolean;
     handleClick(): void;
     handleHover(isHovering: boolean): void;
     /** 获取标记物对象（用于射线检测等） */

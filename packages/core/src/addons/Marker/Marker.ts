@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { toDefaulted, uniqueId } from "es-toolkit/compat";
 import gsap from "gsap";
 import { IVariant } from "@core/interfaces/Animation";
+import { merge } from "es-toolkit";
 
 export const defaultTexture = (() => {
     const canvas = document.createElement("canvas");
@@ -19,6 +20,19 @@ export const defaultTexture = (() => {
     return new THREE.CanvasTexture(canvas);
 })();
 
+const defaultVariants: Record<string, IVariant> = {
+    normal: {
+        name: "normal",
+        size: 200,
+        opacity: 1,
+    },
+    hover: {
+        name: "hover",
+        size: 200 * 1.2,
+        opacity: 1,
+    },
+};
+
 /**
  * TODO
  * 固定大小，不随地图缩放
@@ -28,6 +42,7 @@ export const defaultTexture = (() => {
  * 层级渲染不被其他物体遮挡
  */
 export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
+    protected _options: IMarkerOptions;
     private mesh?: THREE.Mesh;
     private geometry?: THREE.PlaneGeometry;
     private material?: THREE.MeshBasicMaterial;
@@ -45,9 +60,11 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
     // 悬停状态和动画相关
     private isHovering: boolean = false;
     private currentVariant?: IVariant;
-    private variants = new Map<string, IVariant>();
+    private variants?: Map<string, IVariant>;
 
     constructor(options: Partial<IMarkerOptions>) {
+        super();
+
         // 创建一个完整的选项对象，确保所有必需的属性都有值
         const completeOptions: IMarkerOptions = toDefaulted(options, {
             position: [0, 0, 0],
@@ -77,15 +94,29 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             onHover: () => {},
             onClick: () => {},
         });
-        super(completeOptions);
+        this._options = completeOptions;
 
         this.position = new THREE.Vector3(...completeOptions.position);
         this.rotation = new THREE.Vector3(...completeOptions.rotation);
         this.scale = new THREE.Vector3(...completeOptions.scale);
 
-        completeOptions.variants.forEach((variant) => {
-            this.variants.set(variant.name, variant);
-        });
+        if (completeOptions.variants) {
+            this.initVariants(completeOptions.variants);
+        }
+    }
+    get interactive(): boolean {
+        return this.options?.interactive ?? true;
+    }
+
+    private initVariants(variants: IVariant[]): void {
+        this.variants = new Map(
+            variants.map((variant) => [
+                variant.name,
+                merge(defaultVariants[variant.name], variant),
+            ])
+        );
+
+        this.currentVariant = this.variants.get("normal");
     }
 
     onAdd(): void {
@@ -115,13 +146,14 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 预加载悬停纹理
      */
     private preloadHoverTexture(): void {
-        if (
-            this.options.hoverIconUrl &&
-            this.options.hoverIconUrl !== this.options.iconUrl
-        ) {
+        if (!this.options) return;
+
+        const variant = this.variants?.get("hover");
+
+        if (variant?.iconUrl) {
             this.loader = this.loader || new THREE.TextureLoader();
             this.hoverTexture = this.loader.load(
-                this.options.hoverIconUrl,
+                variant.iconUrl,
                 (texture) => {
                     console.log("Hover texture loaded successfully");
                 },
@@ -134,8 +166,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             this.hoverMaterial = new THREE.SpriteMaterial({
                 map: this.hoverTexture,
                 transparent: true,
-                alphaTest: 0.1,
-                opacity: this.options.hoverOpacity ?? this.originalOpacity,
+                opacity: variant.opacity,
             });
         }
     }
@@ -144,15 +175,20 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 创建标记物
      */
     private createMarker(): void {
-        const { iconUrl, size, color, billboard, opacity } = this.options;
+        const variant = this.variants?.get("normal");
+        if (!variant || !this.options) return;
+
+        const { billboard } = this.options;
+        const { iconUrl, size, opacity } = variant;
 
         if (iconUrl) {
             // 使用图片纹理创建标记
-            this.createTexturedMarker(iconUrl, size!, billboard!, opacity!);
-        } else {
-            // 使用默认几何体创建标记
-            this.createDefaultMarker(size!, color!, billboard!, opacity!);
+            this.createTexturedMarker(iconUrl, size, billboard, opacity!);
         }
+        // else {
+        //     // 使用默认几何体创建标记
+        //     this.createDefaultMarker(size!, color!, billboard!, opacity!);
+        // }
     }
 
     /**
@@ -195,7 +231,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             this.sprite.userData = {
                 componentId: this.__component_id__,
                 type: "marker",
-                interactive: this.options.interactive,
+                interactive: this.interactive,
                 markerInstance: this,
             };
         } else {
@@ -322,7 +358,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      * 设置交互事件
      */
     private setupInteraction(): void {
-        if (!this.options.interactive) {
+        if (!this.interactive) {
             return;
         }
 
@@ -345,6 +381,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
      */
     public handleHover(isHovering: boolean): void {
         if (this.isHovering === isHovering) return;
+        if (!this.options || !this.interactive) return;
 
         this.isHovering = isHovering;
 
@@ -386,15 +423,13 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
         }
     }
     private switchVariant(variantName: string): void {
-        const variant = this.variants.get(variantName);
-
-        if (!variant?.scale) return;
+        const variant = this.variants?.get(variantName);
 
         if (this.sprite) {
             gsap.to(this.scale, {
-                x: variant.scale,
-                y: variant.scale,
-                z: variant.scale,
+                x: variant?.size,
+                y: variant?.size,
+                z: 1,
                 duration: 0.15,
                 ease: "power2.easeOut",
                 onUpdate: () => {

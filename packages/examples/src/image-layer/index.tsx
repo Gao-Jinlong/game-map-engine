@@ -18,7 +18,7 @@ const ImageLayerExample: React.FC = () => {
             // 初始化地图引擎
             mapRef.current = new Map({
                 container: containerRef.current,
-                center: [116.404, 39.915, 0],
+                center: [0, 0, 0],
                 zoom: 11,
                 background: 0x87ceeb, // 天空蓝背景
             });
@@ -31,12 +31,24 @@ const ImageLayerExample: React.FC = () => {
                 }),
             );
 
+            // TODO 标记的 size 应该使用像素大小表示
             mapRef.current.addComponent(
                 // TODO 类型 fix
                 new Marker({
                     position: [0, 100, 0],
-                    iconUrl: "/assets/demacia.png",
-                    hoverIconUrl: "/assets/demacia-hover.png", // 悬停时的纹理
+                    variants: [
+                        {
+                            name: "normal",
+                            opacity: 1,
+                            size: 200,
+                            iconUrl: "/assets/demacia.png",
+                        },
+                        {
+                            name: "hover",
+                            size: 200 * 1.2,
+                            iconUrl: "/assets/demacia-hover.png",
+                        },
+                    ],
                     size: 200,
                     color: 0xff0000,
                     opacity: 1.0,

@@ -8,11 +8,11 @@ export interface IImageLayerOptions extends IBaseComponentOptions {
     /**
      * 图片宽度
      */
-    width: number;
+    width?: number;
     /**
      * 图片高度
      */
-    height: number;
+    height?: number;
     /**
      * 图片平面高度
      */

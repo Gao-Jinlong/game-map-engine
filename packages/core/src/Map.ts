@@ -59,7 +59,6 @@ class Map extends EventTarget implements IMap {
         this.state = {
             width: Math.floor(this.container.clientWidth),
             height: Math.floor(this.container.clientHeight - 1),
-            depth: 100,
         };
 
         this.eventCaptureService = new EventCaptureSystem(this);
@@ -78,6 +77,9 @@ class Map extends EventTarget implements IMap {
 
         this.init();
         this.dispatchEvent(new BaseEvent(this, LifeCycleType.ON_READY));
+    }
+    get world() {
+        return this.options.world;
     }
 
     init(): void {

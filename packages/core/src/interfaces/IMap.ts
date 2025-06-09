@@ -27,6 +27,7 @@ export interface IMap extends EventTarget {
     stats: Stats;
     container: HTMLElement;
     options: Required<IMapOptions>;
+    world: IMapWorld;
     state: IMapState;
 }
 export interface IMapOptions {
@@ -47,5 +48,4 @@ export interface IMapWorld {
 export interface IMapState {
     width: number;
     height: number;
-    depth: number;
 }

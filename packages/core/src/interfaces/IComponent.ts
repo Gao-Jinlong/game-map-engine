@@ -17,7 +17,7 @@ export interface IComponent<
     context?: IMap;
     sceneSystem?: ISceneSystem;
     cameraSystem?: ICameraSystem;
-    options: OPTIONS;
+    options: OPTIONS | undefined;
 
     onAdd?(): void;
     onUpdate?(time: number, frame: XRFrame): void;

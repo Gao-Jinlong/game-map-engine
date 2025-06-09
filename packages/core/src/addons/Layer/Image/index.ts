@@ -13,11 +13,12 @@ export class ImageLayer extends BaseComponent<IImageLayerOptions> {
     aoMap?: THREE.Texture;
     aoMapIntensity?: number;
     mask?: THREE.Texture;
+    _options: IImageLayerOptions;
     constructor(options: Partial<IImageLayerOptions>) {
+        super();
+
         const finalOptions = toDefaulted(options, {
             src: "",
-            width: 7500,
-            height: 7500,
             widthSegments: 256,
             heightSegments: 256,
             displacementScale: 700,
@@ -27,7 +28,8 @@ export class ImageLayer extends BaseComponent<IImageLayerOptions> {
             elevation: 0,
             maskSrc: "",
         });
-        super(finalOptions);
+
+        this._options = finalOptions;
 
         this.displacementScale = finalOptions.displacementScale;
         this.aoMapIntensity =
@@ -39,12 +41,11 @@ export class ImageLayer extends BaseComponent<IImageLayerOptions> {
         if (!this.context) {
             throw new Error("TerrainComponent must be added to a Map");
         }
+        const world = this.context.world;
+        const { width, height } = this.options;
 
-        const world = this.context.options.world;
-        if (world) {
-            this.options.width = world.width;
-            this.options.height = world.height;
-        }
+        this.options.width = width ?? world.width;
+        this.options.height = height ?? world.height;
 
         this.loadTexture();
         this.createPlane();
