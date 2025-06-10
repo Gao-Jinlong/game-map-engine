@@ -31,7 +31,8 @@ export interface IMarkerOptions extends IBaseComponentOptions {
     onHover: (marker: any, isHovering: boolean) => void;
 }
 
-export interface IMarker extends IComponent<IMarkerOptions> {
+export interface IMarker extends IComponent {
+    options: IMarkerOptions;
     interactive: boolean;
     handleClick(): void;
     handleHover(isHovering: boolean): void;

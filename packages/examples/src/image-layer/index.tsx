@@ -19,6 +19,7 @@ const ImageLayerExample: React.FC = () => {
             mapRef.current = new Map({
                 container: containerRef.current,
                 center: [0, 0, 0],
+                bounds: [0, 0, 0, 7500, 7500, 1000],
                 zoom: 11,
                 background: 0x87ceeb, // 天空蓝背景
             });
@@ -28,6 +29,7 @@ const ImageLayerExample: React.FC = () => {
                     src: "/assets/terrain_z1.jpg",
                     displacementSrc: "/assets/depth_z1.jpg",
                     displacementScale: 700,
+                    bounds: [0, 0, 0, 7500, 7500, 1000],
                 }),
             );
 

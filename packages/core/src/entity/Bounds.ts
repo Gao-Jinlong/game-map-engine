@@ -42,4 +42,13 @@ export class Bounds implements IBounds {
     get min() {
         return this._min;
     }
+    get rangeX() {
+        return this.maxX - this.minX;
+    }
+    get rangeY() {
+        return this.maxY - this.minY;
+    }
+    get rangeZ() {
+        return this.maxZ - this.minZ;
+    }
 }

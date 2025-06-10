@@ -3,17 +3,17 @@ import { BaseComponent } from "@core/addons/BaseComponent";
 import { IBaseComponentOptions } from "@core/interfaces";
 
 export class Axis extends BaseComponent {
-    onUpdate?(): void {
-        throw new Error("Method not implemented.");
-    }
-    onResize?(): void {
-        throw new Error("Method not implemented.");
-    }
+    #options: IBaseComponentOptions;
+
     private axesHelper?: THREE.AxesHelper;
     private gridHelper?: THREE.GridHelper;
 
     constructor(options: Partial<IBaseComponentOptions>) {
-        super(options);
+        super();
+        this.#options = options;
+    }
+    get options(): IBaseComponentOptions {
+        return this.#options;
     }
 
     onAdd() {
@@ -33,7 +33,12 @@ export class Axis extends BaseComponent {
     update() {
         // 可以在这里添加更新逻辑
     }
-
+    onUpdate?(): void {
+        throw new Error("Method not implemented.");
+    }
+    onResize?(): void {
+        throw new Error("Method not implemented.");
+    }
     onRemove() {
         if (this.axesHelper) {
             this.sceneSystem?.scene?.remove(this.axesHelper);

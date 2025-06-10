@@ -4,10 +4,13 @@ import { ITerrainLayerOptions } from "./type";
 import { toDefaulted } from "es-toolkit/compat";
 import { ImprovedNoise } from "three/examples/jsm/math/ImprovedNoise";
 
-export class TerrainLayer extends BaseComponent<ITerrainLayerOptions> {
+export class TerrainLayer extends BaseComponent {
+    #options: ITerrainLayerOptions;
     geometry?: THREE.PlaneGeometry;
     material?: THREE.MeshBasicMaterial;
     constructor(options: Partial<ITerrainLayerOptions>) {
+        super();
+
         const finalOptions = toDefaulted(options, {
             color: 0x000000,
             depth: 100,
@@ -16,21 +19,24 @@ export class TerrainLayer extends BaseComponent<ITerrainLayerOptions> {
             widthSegments: 256,
             heightSegments: 256,
         });
-
-        super(finalOptions);
+        this.#options = finalOptions;
 
         console.log("TerrainComponent", this.options);
+    }
+    get options(): ITerrainLayerOptions {
+        return this.#options;
     }
     onAdd(): void {
         if (!this.context) {
             throw new Error("TerrainComponent must be added to a Map");
         }
 
-        const world = this.context.options.world;
-        if (world) {
-            this.options.width = world.width;
-            this.options.height = world.height;
-            this.options.depth = world.depth;
+        const bounds = this.context.bounds;
+        throw new Error("更新 bounds 实现");
+        if (bounds) {
+            this.options.width = bounds.rangeX;
+            this.options.height = bounds.rangeY;
+            this.options.depth = bounds.rangeZ;
         }
 
         this.createTerrain();

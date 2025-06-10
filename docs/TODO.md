@@ -41,3 +41,5 @@ Marker 的大小应该使用像素作为单位如 size: 50 或者 size: [50, 50]
 这个映射关系应该通过 camera / view (待定) 来计算
 
 通过 camera 距离远点的距离来计算 zoom，然后根据 zoom 计算出像素和米之间的转换关系
+
+Layer 的基础信息应该包含 extent 和 tileSize，通过 extent 和 tileSize 计算出应该加载的瓦片数量

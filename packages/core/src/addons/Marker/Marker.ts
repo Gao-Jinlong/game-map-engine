@@ -41,8 +41,8 @@ const defaultVariants: Record<string, IVariant> = {
  * popup 弹窗
  * 层级渲染不被其他物体遮挡
  */
-export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
-    protected _options: IMarkerOptions;
+export class Marker extends BaseComponent implements IMarker {
+    #options: IMarkerOptions;
     private mesh?: THREE.Mesh;
     private geometry?: THREE.PlaneGeometry;
     private material?: THREE.MeshBasicMaterial;
@@ -94,7 +94,7 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             onHover: () => {},
             onClick: () => {},
         });
-        this._options = completeOptions;
+        this.#options = completeOptions;
 
         this.position = new THREE.Vector3(...completeOptions.position);
         this.rotation = new THREE.Vector3(...completeOptions.rotation);
@@ -104,8 +104,11 @@ export class Marker extends BaseComponent<IMarkerOptions> implements IMarker {
             this.initVariants(completeOptions.variants);
         }
     }
+    get options(): IMarkerOptions {
+        return this.#options;
+    }
     get interactive(): boolean {
-        return this.options?.interactive ?? true;
+        return this.#options.interactive ?? true;
     }
 
     private initVariants(variants: IVariant[]): void {

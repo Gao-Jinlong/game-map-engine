@@ -2,8 +2,10 @@ import * as THREE from "three";
 import { BaseComponent } from "../../BaseComponent";
 import { IImageLayerOptions } from "./type";
 import { toDefaulted } from "es-toolkit/compat";
+import { IBounds } from "@core/interfaces";
+import { Bounds } from "@core/entity/Bounds";
 
-export class ImageLayer extends BaseComponent<IImageLayerOptions> {
+export class ImageLayer extends BaseComponent {
     geometry?: THREE.PlaneGeometry;
     material?: THREE.Material;
     loader?: THREE.TextureLoader;
@@ -13,7 +15,8 @@ export class ImageLayer extends BaseComponent<IImageLayerOptions> {
     aoMap?: THREE.Texture;
     aoMapIntensity?: number;
     mask?: THREE.Texture;
-    _options: IImageLayerOptions;
+    bounds: IBounds;
+    #options: IImageLayerOptions;
     constructor(options: Partial<IImageLayerOptions>) {
         super();
 
@@ -27,25 +30,28 @@ export class ImageLayer extends BaseComponent<IImageLayerOptions> {
             aoSrc: "",
             elevation: 0,
             maskSrc: "",
+            bounds: [0, 0, 0, 0, 0, 0],
         });
 
-        this._options = finalOptions;
+        this.bounds = new Bounds(finalOptions.bounds);
+
+        this.#options = finalOptions;
 
         this.displacementScale = finalOptions.displacementScale;
         this.aoMapIntensity =
-            this.options.aoIntensity ?? -this.options.aoIntensity;
+            this.#options.aoIntensity ?? -this.#options.aoIntensity;
 
         console.log("TerrainComponent", this.options);
+    }
+    get options() {
+        return this.#options;
     }
     onAdd(): void {
         if (!this.context) {
             throw new Error("TerrainComponent must be added to a Map");
         }
-        const world = this.context.world;
-        const { width, height } = this.options;
-
-        this.options.width = width ?? world.width;
-        this.options.height = height ?? world.height;
+        const bounds = this.context.bounds;
+        this.bounds = this.bounds ?? bounds;
 
         this.loadTexture();
         this.createPlane();
@@ -87,11 +93,12 @@ export class ImageLayer extends BaseComponent<IImageLayerOptions> {
         }
     }
     createPlane(): void {
-        const { width, height, widthSegments, heightSegments } = this.options;
+        const { widthSegments, heightSegments } = this.options;
+        const bounds = this.bounds;
 
         this.geometry = new THREE.PlaneGeometry(
-            width,
-            height,
+            bounds.rangeX,
+            bounds.rangeY,
             widthSegments - 1,
             heightSegments - 1
         );

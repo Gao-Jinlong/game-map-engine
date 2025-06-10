@@ -1,18 +1,11 @@
-import { IBaseComponentOptions } from "@core/interfaces";
+import { IBaseComponentOptions, IBoundsTuple } from "@core/interfaces";
 
 export interface IImageLayerOptions extends IBaseComponentOptions {
     /**
      * 图片路径
      */
     src: string;
-    /**
-     * 图片宽度
-     */
-    width?: number;
-    /**
-     * 图片高度
-     */
-    height?: number;
+    bounds: IBoundsTuple;
     /**
      * 图片平面高度
      */

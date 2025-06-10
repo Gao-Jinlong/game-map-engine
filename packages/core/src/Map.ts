@@ -6,7 +6,13 @@ import { toDefaulted } from "es-toolkit/compat";
 import { SystemManager } from "./systems/SystemManager";
 import Stats from "three/examples/jsm/libs/stats.module";
 import * as THREE from "three";
-import { IComponent, IMap, IMapOptions, IMapState } from "@core/interfaces";
+import {
+    IBounds,
+    IComponent,
+    IMap,
+    IMapOptions,
+    IMapState,
+} from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
 import { MarkerSystem } from "./systems/MarkerSystem";
@@ -20,6 +26,7 @@ import {
     IInteraction,
     Interaction,
 } from "./systems/Intercation";
+import { Bounds } from "./entity/Bounds";
 
 class Map extends EventTarget implements IMap {
     // 暂时将 service 注册到 Map 上，后续可以通过 ServiceManager 集中管理注册
@@ -32,7 +39,7 @@ class Map extends EventTarget implements IMap {
     state: IMapState;
     systemManager: SystemManager;
     stats: Stats;
-
+    bounds: IBounds;
     private destroyHandlers: (() => void)[] = [];
     constructor(options: IMapOptions) {
         super();
@@ -41,6 +48,7 @@ class Map extends EventTarget implements IMap {
             console.warn("container is required");
         }
 
+        // TODO 实现 projection , 用于计算世界坐标和像素坐标之间的转换，涉及 zoom , bounds, state.width, state.height
         this.options = toDefaulted(options, {
             container: document.body,
             background: 0x000000,
@@ -49,12 +57,9 @@ class Map extends EventTarget implements IMap {
             zoom: 1,
             pitch: 0,
             roll: 0,
-            world: {
-                width: 7500,
-                height: 7500,
-                depth: 1000,
-            },
+            bounds: [0, 0, 0, 7500, 7500, 1000],
         });
+        this.bounds = new Bounds(this.options.bounds);
         this.container = this.options.container;
         this.state = {
             width: Math.floor(this.container.clientWidth),
@@ -78,10 +83,6 @@ class Map extends EventTarget implements IMap {
         this.init();
         this.dispatchEvent(new BaseEvent(this, LifeCycleType.ON_READY));
     }
-    get world() {
-        return this.options.world;
-    }
-
     init(): void {
         this.eventCaptureService.init();
         this.crsSystem.init();

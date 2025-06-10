@@ -33,6 +33,9 @@ export interface IBounds {
     maxX: number;
     maxY: number;
     maxZ: number;
+    rangeX: number;
+    rangeY: number;
+    rangeZ: number;
     min: IPosition;
     max: IPosition;
     clone(): IBounds;
