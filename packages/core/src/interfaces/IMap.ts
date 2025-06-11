@@ -1,6 +1,13 @@
 import { IEventCapture, IInteraction } from "@core/systems/Intercation";
 import { SystemManager } from "../systems/SystemManager";
-import { IBounds, IBoundsTuple, ICoord, ICoordTuple } from "./ICoord";
+import {
+    IBounds,
+    IBoundsTuple,
+    ICoord,
+    ICoordTuple,
+    IPosition,
+    IPositionTuple,
+} from "./ICoord";
 import { ICrsSystem } from "./ICrsSystem";
 import { EventTarget } from "@core/components/events/EventTarget";
 
@@ -29,6 +36,8 @@ export interface IMap extends EventTarget {
     options: Required<IMapOptions>;
     bounds: IBounds;
     state: IMapState;
+    project(coord: ICoordTuple | ICoord, zoom: number): IPosition;
+    unproject(position: IPositionTuple | IPosition, zoom: number): ICoord;
 }
 export interface IMapOptions {
     container?: HTMLElement;

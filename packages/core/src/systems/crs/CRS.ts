@@ -2,12 +2,13 @@ import { ICoord, IPosition } from "@core/interfaces/ICoord";
 import { IProjection } from "../projection";
 import { ITransformation } from "../projection/Transformation";
 import { Bounds } from "@core/entity/Bounds";
+import { ICRS } from "./interface";
 
 /**
  * 坐标参考系统
  * 分离坐标的投影（projection）和仿射变换（transformation），更好的解耦复用变换逻辑
  */
-export abstract class CRS {
+export abstract class CRS implements ICRS {
     private projection: IProjection;
     private transformation: ITransformation;
     private infinite: boolean = false;
@@ -23,22 +24,22 @@ export abstract class CRS {
         return this.transformation.transform(projectedPoint, scale);
     }
 
+    // positionToCoord(position: IPosition, zoom: number) {
+    //     const scale = this.scale(zoom);
+    //     const untransformedPoint = this.transformation.untransform(
+    //         position,
+    //         scale
+    //     );
+
+    //     return this.projection.unproject(untransformedPoint);
+    // }
+
+    coordToPosition(coord: ICoord, zoom: number) {
+        return this.projection.project(coord, zoom);
+    }
+
     positionToCoord(position: IPosition, zoom: number) {
-        const scale = this.scale(zoom);
-        const untransformedPoint = this.transformation.untransform(
-            position,
-            scale
-        );
-
-        return this.projection.unproject(untransformedPoint);
-    }
-
-    project(coord: ICoord) {
-        return this.projection.project(coord);
-    }
-
-    unproject(point: IPosition) {
-        return this.projection.unproject(point);
+        return this.projection.unproject(position, zoom);
     }
 
     scale(zoom: number) {

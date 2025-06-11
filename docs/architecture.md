@@ -276,95 +276,81 @@ classDiagram
 -   Scene 场景组件，实现场景接口。
 -   ComponentManager 管理系统组件，管理各个组件的注册、注销、获取，组件用于扩展系统的能力，不应影响引擎的核心功能。
 
-### 事件系统
+### 事件模型
 
-基础事件系统负责捕获交互事件，并转换为引擎事件，然后派发引擎事件给各个子系统
+#### 交互系统
 
-交互事件系统负责管理交互事件，并提供交互服务
+基础事件系统负责捕获交互事件，并归一化为引擎事件对象（如 PointerEvent）
 
-```mermaid
-classDiagram
-namespace EventSystem {
-    class EventTarget
-    class BaseEvent
-    class PointerEvent
-}
-class EventTarget{
-    事件目标，所有可以触发事件的对象需要继承这个类
+归一化的交互事件对象分为两类：
 
-    addEventListener(event: string, callback: Function) 注册事件
-    removeEventListener(event: string, callback: Function) 注销事件
-    dispatchEvent(event: string, data: any) 派发事件
-}
-class BaseEvent{
-    基础事件对象，所有事件对象需要继承这个类
+- 指针事件 PointerEvent
+- 键盘事件 KeyboardEvent
 
-    type: string 事件类型
-    target: EventTarget 事件目标
-    propagationStopped: boolean 是否停止冒泡
-    defaultPrevented: boolean 是否阻止默认行为
+对于指针事件归一化后将 PointerEvent 派发到 InteractionService 进行复杂交互的处理，如拖拽、双击、手势等。  
+对于键盘事件归一化后将 KeyboardEvent 派发到 KeybindingService 进行快捷键的处理。(TODO: 未实现)
 
-    stopPropagation() 停止冒泡
-    preventDefault() 阻止默认行为
-}
-class PointerEvent {
-    指针事件对象，所有指针事件需要继承这个类
-
-    pointer: Vector2 指针坐标
-}
-PointerEvent ..|> BaseEvent
-
-namespace Interaction {
-    class InteractionService
-}
-class InteractionService {
-    交互服务，管理交互事件
-
-    init(context: IMapContext)
-    update()
-    render()
-}
-```
+**事件系统流程图**
 
 ```mermaid
 graph TD
-    A[用户交互] --> B[PointerEvent]
-    B --> C[Interaction]
+    A[用户交互] -->A1{PointerEvent, KeyboardEvent}
+    A1 --> B[PointerEvent]
+    A1 --> C[KeyboardEvent]
 
-    subgraph Interaction处理
-        C --> D{判断交互类型}
-        D -->|拖拽| E[Drag]
-        D -->|调整大小| F[Resize]
-        D -->|手势| G[Gesture]
+    subgraph InteractionService
+        subgraph Interaction处理
+            B --> D{判断交互类型}
+            D -->|拖拽| E1[Drag]
+            D -->|调整大小| E2[Resize]
+            D -->|手势| E3[Gesture]
+            D -->|双击| E4[DoubleClick]
+            D -->|...| E5[其他]
 
-        E --> H[事件阶段]
-        F --> H
-        G --> H
+            E1 --> H[事件阶段]
+            E2 --> H
+            E3 --> H
+            E4 --> H
+            E5 --> H
 
-        H -->|开始| I[Start Phase]
-        H -->|移动| J[Move Phase]
-        H -->|结束| K[End Phase]
+            H -->|开始| I[Start Phase]
+            H -->|移动| J[Move Phase]
+            H -->|结束| K[End Phase]
+            
+        end
+
+        subgraph 事件处理
+            I --> L[InteractEvent]
+            J --> L
+            K --> L
+
+            L --> M[Scope.fire]
+            M --> N[Eventable]
+            N --> O[事件监听器]
+        end
+
+        subgraph 响应处理
+            O --> P[更新元素状态]
+            O --> Q[触发回调]
+            O --> R[应用修饰器]
+        end
     end
 
-    subgraph 事件处理
-        I --> L[InteractEvent]
-        J --> L
-        K --> L
-
-        L --> M[Scope.fire]
-        M --> N[Eventable]
-        N --> O[事件监听器]
+    subgraph KeybindingService
+        C --> KD[KeybindingService]
+        KD --> KE[...]
     end
-
-    subgraph 响应处理
-        O --> P[更新元素状态]
-        O --> Q[触发回调]
-        O --> R[应用修饰器]
-    end
-
 ```
 
-#### 事件处理模型
+#### 事件系统
+
+**生命周期模型**
+
+TODO: 考虑通过 tapable 库支持生命周期，以支持异步生命周期钩子
+
+**发布订阅模型**
+
+TODO: 待完善
 
 -   事件系统通过 EventManager 管理，实现引擎的生命周期 hook。
 -   事件注册到 container 上，通过 dispatch 在引擎内派发
@@ -372,59 +358,20 @@ graph TD
 -   实现 pickup 功能，传入事件坐标和其他判定条件，返回通过 Raycaster 检测到的对象
 -   地形系统中实现屏幕坐标和世界坐标计算
 
-#### 事件模型考虑兼容 dom 的事件模型
+### 投影系统
 
-https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget
+Map 通过 CRS 系统管理投影，实现世界坐标和像素坐标之间的转换。
 
-#### EventManager 分发模型
+CRS 由两部分组成：
 
-```mermaid
-    flowchart LR
-    Map[Map] --初始化--> EventManager[EventManager]
-    EventManager --dispatch 派发事件--> Subscriber[Subscriber （其他系统或组件）]
-    Subscriber --> haveSub{是否有订阅事件}
-    haveSub -->|是| Callback[Callback 回调函数]
-    haveSub -->|否| End[结束]
-    Callback --> bubble{是否冒泡}
-    bubble -->|是| hasParent{是否有父级}
-    bubble -->|否| End[结束]
-    hasParent -->|是| Parent[Parent 父级]
-    hasParent -->|否| End[结束]
-    Parent --> haveSub
-    End
-```
+-   projection 用于表达非线性投影算法，如墨卡托投影、高斯克吕格投影等
+-   transform 用于表达线性坐标系转换，如经纬度坐标系和像素坐标系之间的转换
 
-#### 交互事件模型
+CRS 系统通过 projection 和 transform 实现世界坐标和像素坐标之间的转换。
 
-大部分交互事件是需要命中点坐标的，因此需要借助 TerrainSystem 完成屏幕坐标到世界坐标的转换，因此这个交互模型分为两个阶段
-第一阶段是 Map 捕获事件，通过 EventManager 派发事件，事件中携带屏幕坐标
-第二阶段是用户主动调用 Map 的 getCoordinateByPoint(暂定接口) 获取命中点坐标，Map 负责调用 TerrainSystem 的接口完成坐标转换
+分解为 projection 和 transform 两部分可以灵活的组合投影算法和坐标系转换。  
 
-这里的时序图为上文事件分发模型的一种具体场景，上问的订阅者在这里为具体的 Component
-
-```mermaid
-sequenceDiagram
-    participant EventManager
-    participant Component
-    participant Callback
-    participant Map
-    participant TerrainSystem
-
-    EventManager->>Component: dispatch 派发事件
-    Component->>Callback: 触发用户注册回调
-    Callback->>Callback: 判断是否需要命中点坐标
-    alt 需要坐标
-        Callback->>Map: 请求坐标
-        Map->>TerrainSystem: getCoordinateByPoint
-        TerrainSystem-->>Map: 返回坐标
-        Map-->>Callback: 返回坐标
-    end
-    Callback->>Callback: 回调结束
-```
-
-#### 生命周期模型
-
-TODO: 考虑通过 tapable 库支持生命周期，以支持异步生命周期钩子
+如：EPSG:4326 和 上海 2000 都是墨卡托投影计算，但是上海 2000 将地图原点设置在了上海，而 EPSG:4326 将地图原点设置在了赤道。只需要通过使用不同的 transform 进行平移即可实现这两个不同的坐标系。
 
 ### 组件系统
 

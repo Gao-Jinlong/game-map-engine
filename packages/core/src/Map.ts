@@ -9,9 +9,13 @@ import * as THREE from "three";
 import {
     IBounds,
     IComponent,
+    ICoord,
+    ICoordTuple,
     IMap,
     IMapOptions,
     IMapState,
+    IPosition,
+    IPositionTuple,
 } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
 import { TerrainSystem } from "./systems/TerrainSystem";
@@ -124,6 +128,14 @@ class Map extends EventTarget implements IMap {
      */
     remove(component: BaseComponent): void {
         this.systemManager.getSystem(ComponentManager).remove(component);
+    }
+
+    project(coord: ICoordTuple | ICoord, zoom: number): IPosition {
+        return this.crsSystem.coordToPosition(coord, zoom);
+    }
+
+    unproject(position: IPositionTuple | IPosition, zoom: number): ICoord {
+        return this.crsSystem.positionToCoord(position, zoom);
     }
 
     private onResize(

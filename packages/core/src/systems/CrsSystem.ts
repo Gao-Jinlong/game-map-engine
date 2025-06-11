@@ -34,15 +34,21 @@ export class CrsSystem implements ICrsSystem {
     get options() {
         return this._options;
     }
-    public project(coordLike: ICoordTuple | ICoord): IPosition {
+    public coordToPosition(
+        coordLike: ICoordTuple | ICoord,
+        zoom: number
+    ): IPosition {
         const coord = isCoord(coordLike) ? coordLike : new Coord(...coordLike);
-        return this.crs!.project(coord);
+        return this.crs!.coordToPosition(coord, zoom);
     }
-    public unproject(positionLike: IPosition | IPositionTuple): ICoord {
+    public positionToCoord(
+        positionLike: IPosition | IPositionTuple,
+        zoom: number
+    ): ICoord {
         const position = isPosition(positionLike)
             ? positionLike
             : new Position(...positionLike);
-        return this.crs!.unproject(position);
+        return this.crs!.positionToCoord(position, zoom);
     }
     resize?: ((state: IMapState) => void) | undefined;
     destroy?: (() => void) | undefined;
