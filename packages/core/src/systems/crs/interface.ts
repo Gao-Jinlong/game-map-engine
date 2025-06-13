@@ -1,6 +1,6 @@
 import { ICoord, IPosition } from "@core/interfaces/ICoord";
 
 export interface ICRS {
-    coordToPosition(coord: ICoord, zoom: number): IPosition;
-    positionToCoord(position: IPosition, zoom: number): ICoord;
+    coordToPoint(coord: ICoord, zoom: number): IPosition;
+    pointToCoord(position: IPosition, zoom: number): ICoord;
 }

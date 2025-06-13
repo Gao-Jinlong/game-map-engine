@@ -22,6 +22,7 @@ export class CrsSystem implements ICrsSystem {
     private _options?: ICrsOptions;
     constructor(public context: IMap) {
         // TODO: 屏幕坐标与空间坐标的转换计算
+        this.crs = new Cartesian();
     }
     init(options?: Partial<ICrsOptions>): void {
         const finalOptions = toDefaulted(options ?? {}, {
@@ -34,21 +35,21 @@ export class CrsSystem implements ICrsSystem {
     get options() {
         return this._options;
     }
-    public coordToPosition(
+    public coordToPoint(
         coordLike: ICoordTuple | ICoord,
         zoom: number
     ): IPosition {
         const coord = isCoord(coordLike) ? coordLike : new Coord(...coordLike);
-        return this.crs!.coordToPosition(coord, zoom);
+        return this.crs!.coordToPoint(coord, zoom);
     }
-    public positionToCoord(
+    public pointToCoord(
         positionLike: IPosition | IPositionTuple,
         zoom: number
     ): ICoord {
         const position = isPosition(positionLike)
             ? positionLike
             : new Position(...positionLike);
-        return this.crs!.positionToCoord(position, zoom);
+        return this.crs!.pointToCoord(position, zoom);
     }
     resize?: ((state: IMapState) => void) | undefined;
     destroy?: (() => void) | undefined;

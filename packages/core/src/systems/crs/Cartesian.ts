@@ -12,6 +12,8 @@ export interface ICartesianOptions {
  * 笛卡尔坐标系
  */
 export class Cartesian extends CRS {
+    infinite: boolean = true;
+
     private _options: ICartesianOptions;
     constructor(options?: Partial<ICartesianOptions>) {
         const finalOptions = toDefaulted(options ?? {}, {
@@ -27,7 +29,7 @@ export class Cartesian extends CRS {
 
         super(
             new Simple({ bounds: new Bounds(finalOptions.bounds) }),
-            new Transformation(1, 0, -1, 0)
+            new Transformation(1, 0, 1, 0, 1, 0)
         );
 
         this._options = finalOptions;

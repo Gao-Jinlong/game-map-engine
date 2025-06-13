@@ -9,43 +9,32 @@ import { ICRS } from "./interface";
  * 分离坐标的投影（projection）和仿射变换（transformation），更好的解耦复用变换逻辑
  */
 export abstract class CRS implements ICRS {
+    public infinite: boolean = false;
+
     private projection: IProjection;
     private transformation: ITransformation;
-    private infinite: boolean = false;
 
     constructor(projection: IProjection, transformation: ITransformation) {
         this.projection = projection;
         this.transformation = transformation;
     }
     coordToPoint(coord: ICoord, zoom: number) {
-        const projectedPoint = this.projection.project(coord),
-            scale = this.scale(zoom);
+        const projectedPoint = this.projection.project(coord);
+        const scale = this.scale(zoom);
 
         return this.transformation.transform(projectedPoint, scale);
     }
 
-    // positionToCoord(position: IPosition, zoom: number) {
-    //     const scale = this.scale(zoom);
-    //     const untransformedPoint = this.transformation.untransform(
-    //         position,
-    //         scale
-    //     );
+    pointToCoord(point: IPosition, zoom: number) {
+        const scale = this.scale(zoom),
+            untransformedPoint = this.transformation.untransform(point, scale);
 
-    //     return this.projection.unproject(untransformedPoint);
-    // }
-
-    coordToPosition(coord: ICoord, zoom: number) {
-        return this.projection.project(coord, zoom);
-    }
-
-    positionToCoord(position: IPosition, zoom: number) {
-        return this.projection.unproject(position, zoom);
+        return this.projection.unproject(untransformedPoint);
     }
 
     scale(zoom: number) {
-        return 2 ** zoom;
+        return 256 * 2 ** zoom;
     }
-
     zoom(scale: number) {
         return Math.log(scale) / Math.LN2;
     }

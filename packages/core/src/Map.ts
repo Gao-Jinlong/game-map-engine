@@ -23,7 +23,10 @@ import { MarkerSystem } from "./systems/MarkerSystem";
 import { BaseComponent } from "./addons/BaseComponent";
 import { BaseEvent, EventTarget } from "./events";
 import { ResizeEvent } from "./components/events/ResizeEvent";
-import { LifeCycleType } from "./components/events/EventType";
+import {
+    LifeCycleType,
+    PointerEventTypeEnum,
+} from "./components/events/EventType";
 import {
     EventCaptureSystem,
     IEventCapture,
@@ -86,6 +89,13 @@ class Map extends EventTarget implements IMap {
 
         this.init();
         this.dispatchEvent(new BaseEvent(this, LifeCycleType.ON_READY));
+
+        this.devTest();
+    }
+    private devTest(): void {
+        this.addEventListener(PointerEventTypeEnum.TAP, (event) => {
+            console.log("🚀 ~ Map ~ this.addEventListener ~ event:", event);
+        });
     }
     init(): void {
         this.eventCaptureService.init();
@@ -131,11 +141,11 @@ class Map extends EventTarget implements IMap {
     }
 
     project(coord: ICoordTuple | ICoord, zoom: number): IPosition {
-        return this.crsSystem.coordToPosition(coord, zoom);
+        return this.crsSystem.coordToPoint(coord, zoom);
     }
 
     unproject(position: IPositionTuple | IPosition, zoom: number): ICoord {
-        return this.crsSystem.positionToCoord(position, zoom);
+        return this.crsSystem.pointToCoord(position, zoom);
     }
 
     private onResize(
