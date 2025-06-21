@@ -29,7 +29,7 @@ export interface IMap extends EventTarget {
 
     // stateService: IStateService;
     /**
-     * 地图状态
+     * 引擎性能监控
      */
     stats: Stats;
     container: HTMLElement;

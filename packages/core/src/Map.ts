@@ -94,7 +94,10 @@ class Map extends EventTarget implements IMap {
     }
     private devTest(): void {
         this.addEventListener(PointerEventTypeEnum.TAP, (event) => {
-            console.log("🚀 ~ Map ~ this.addEventListener ~ event:", event);
+            const x = event.clientX - this.container.offsetLeft;
+            const y = event.clientY - this.container.offsetTop;
+
+            const point = this.project(point);
         });
     }
     init(): void {

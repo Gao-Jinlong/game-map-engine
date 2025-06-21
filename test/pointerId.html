@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <canvas
+            id="inking-surface"
+            width="1280"
+            height="1280"
+            style="border: 1px solid red"
+        ></canvas>
+        <script>
+            const colorBlue = "blue";
+            const colorGreen = "green";
+            const colorYellow = "yellow";
+            const colors = [colorBlue, colorGreen, colorYellow];
+
+            const pointerToColorMap = new Map();
+            let colorAssignmentIndex = 0;
+
+            const canvas = document.querySelector("#inking-surface");
+
+            // Listen for a pointerdown event and map the persistentDeviceId to a color
+            // if it exists and has not been mapped yet
+            canvas.addEventListener("pointerdown", (e) => {
+                console.log("🚀 ~ canvas.addEventListener ~ e:", e.pointerId);
+                if (
+                    e.persistentDeviceId &&
+                    !pointerToColorMap.has(e.persistentDeviceId)
+                ) {
+                    pointerToColorMap.set(
+                        e.persistentDeviceId,
+                        colors[colorAssignmentIndex]
+                    );
+
+                    // Bump the color assignment index and loop back over if needed
+                    colorAssignmentIndex =
+                        (colorAssignmentIndex + 1) % colors.length;
+                }
+            });
+
+            // Listen for a `pointermove` and get the color assigned to this pointer
+            // if persistentDeviceId exists and the pointer has been color mapped
+            canvas.addEventListener("pointermove", (e) => {
+                if (
+                    e.persistentDeviceId &&
+                    pointerToColorMap.has(e.persistentDeviceId)
+                ) {
+                    const pointerColor = pointerToColorMap.get(
+                        e.persistentDeviceId
+                    );
+
+                    // Do some inking on the <canvas>
+                    const ctx = canvas.getContext("2d");
+                    ctx.fillStyle = pointerColor;
+                    ctx.fillRect(e.clientX, e.clientY, 10, 10);
+                }
+            });
+            canvas.addEventListener("pointerup", (e) => {
+                const pointerColor = pointerToColorMap.get(
+                    e.persistentDeviceId
+                );
+                const ctx = canvas.getContext("2d");
+                ctx.fillStyle = pointerColor;
+                ctx.fillRect(e.clientX, e.clientY, 10, 10);
+                pointerToColorMap.delete(e.persistentDeviceId);
+            });
+        </script>
+    </body>
+</html>

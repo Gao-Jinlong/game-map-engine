@@ -22,7 +22,6 @@ export class CrsSystem implements ICrsSystem {
     private _options?: ICrsOptions;
     constructor(public context: IMap) {
         // TODO: 屏幕坐标与空间坐标的转换计算
-        this.crs = new Cartesian();
     }
     init(options?: Partial<ICrsOptions>): void {
         const finalOptions = toDefaulted(options ?? {}, {
