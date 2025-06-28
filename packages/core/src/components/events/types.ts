@@ -1,7 +1,7 @@
 import type { PhaseMap } from "./InteractEvent";
-import type Interaction from "../../systems/Intercation/Interaction";
+import type Interaction from "../../systems/intercation/Interaction";
 import { Interactable } from "./Interactable";
-import { IInteraction } from "@core/systems/Intercation";
+import { IInteraction } from "@core/systems/intercation";
 
 export type OrBoolean<T> = {
     [P in keyof T]: T[P] | boolean;
@@ -137,12 +137,13 @@ export type RectChecker = (element: Element) => Rect;
 
 /**
  * 指针事件类型
+ * @deprecated
  */
 export type PointerEventType = MouseEvent | TouchEvent;
 /**
  * 指针事件类型
  */
-export type PointerType = MouseEvent | Touch;
+export type IPointerEvent = MouseEvent | Touch;
 
 export type EventTypes = string | ListenerMap | Array<string | ListenerMap>;
 

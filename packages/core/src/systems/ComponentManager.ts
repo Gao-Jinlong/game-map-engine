@@ -4,7 +4,7 @@ import { CameraSystem } from "./CameraSystem";
 import { isComponentId } from "@core/utils";
 import { IMap } from "@core/interfaces";
 import { Marker } from "@core/addons/Marker/Marker";
-import { MarkerSystem } from "./MarkerSystem";
+import { MarkerSystem } from "./markerSystem";
 
 export class ComponentManager implements IComponentManager {
     private components: Map<ComponentId, IComponent> = new Map();

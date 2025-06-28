@@ -3,7 +3,7 @@ import { Interactable } from "../../components/events/Interactable";
 import { EventTarget, PointerEvent } from "@core/events";
 import { IInteraction } from "./interface";
 import Disposable from "@core/components/Disposable";
-import { MarkerSystem } from "../MarkerSystem";
+import { MarkerSystem } from "../markerSystem";
 import { Vector2 } from "three";
 
 /**

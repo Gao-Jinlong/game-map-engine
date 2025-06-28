@@ -18,8 +18,8 @@ import {
     IPositionTuple,
 } from "@core/interfaces";
 import { CrsSystem } from "./systems/CrsSystem";
-import { TerrainSystem } from "./systems/TerrainSystem";
-import { MarkerSystem } from "./systems/MarkerSystem";
+import { TerrainSystem } from "./systems/terrainSystem";
+import { MarkerSystem } from "./systems/markerSystem";
 import { BaseComponent } from "./addons/BaseComponent";
 import { BaseEvent, EventTarget } from "./events";
 import { ResizeEvent } from "./components/events/ResizeEvent";
@@ -32,8 +32,9 @@ import {
     IEventCapture,
     IInteraction,
     Interaction,
-} from "./systems/Intercation";
+} from "./systems/intercation";
 import { Bounds } from "./entity/Bounds";
+import { DOM } from "./utils/dom";
 
 class Map extends EventTarget implements IMap {
     // 暂时将 service 注册到 Map 上，后续可以通过 ServiceManager 集中管理注册
@@ -94,10 +95,8 @@ class Map extends EventTarget implements IMap {
     }
     private devTest(): void {
         this.addEventListener(PointerEventTypeEnum.TAP, (event) => {
-            const x = event.clientX - this.container.offsetLeft;
-            const y = event.clientY - this.container.offsetTop;
-
-            const point = this.project(point);
+            const point = DOM.mousePos(this.container, event);
+            console.log("🚀 ~ Map ~ this.addEventListener ~ point:", point);
         });
     }
     init(): void {

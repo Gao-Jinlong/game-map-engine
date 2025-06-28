@@ -1,8 +1,11 @@
 import { BaseEvent } from "../BaseEvent";
-import type { PointerEventType, PointerType, Point } from "../types";
+import type { PointerEventType, IPointerEvent } from "../types";
 import { EventTarget } from "../EventTarget";
-import { IInteraction } from "@core/systems/Intercation";
+import { IInteraction } from "@core/systems/intercation";
 import { PointerEventTypeEnum } from "../EventType";
+import { IMap } from "@core/interfaces";
+import { DOM } from "@core/utils/dom";
+import { Point } from "@core/entity/Point";
 
 /**
  * TODO 重构 PointerEvent 类，不需要实现复杂的交互机制，只实现当前的简单需求即可
@@ -17,10 +20,7 @@ export class PointerEvent<T extends string = any> extends BaseEvent {
      */
     public double: boolean = false;
 
-    public pageX!: number;
-    public pageY!: number;
-    public clientX!: number;
-    public clientY!: number;
+    public point!: Point;
     // public eventable!: any;
     // declare pointerId: number;
 
@@ -28,17 +28,19 @@ export class PointerEvent<T extends string = any> extends BaseEvent {
      * 当前事件与上一个事件的时间差
      */
     private deltaTime: number = 0;
+    private map: IMap;
 
     constructor(
         type: T,
-        eventSource: PointerEventType,
+        eventSource: IPointerEvent,
         interaction: IInteraction,
-        eventTarget: EventTarget
+        eventTarget: EventTarget,
+        map: IMap
     ) {
         super(eventTarget, type);
         this.type = type;
-
-        this.handleEvent(eventSource);
+        this.map = map;
+        this.point = DOM.mousePos(this.map.container, eventSource);
 
         if (type === PointerEventTypeEnum.TAP) {
             const previousEvent = interaction.previousTapEvent;
@@ -63,21 +65,5 @@ export class PointerEvent<T extends string = any> extends BaseEvent {
     }
     preventDefault() {
         this.originalEvent.preventDefault();
-    }
-
-    handleEvent(eventSource: PointerEventType) {
-        if (eventSource instanceof MouseEvent) {
-            this.originalEvent = eventSource;
-            this.pageX = eventSource.pageX;
-            this.pageY = eventSource.pageY;
-            this.clientX = eventSource.clientX;
-            this.clientY = eventSource.clientY;
-        } else if (eventSource instanceof TouchEvent) {
-            this.originalEvent = eventSource;
-            this.pageX = eventSource.touches[0].pageX;
-            this.pageY = eventSource.touches[0].pageY;
-            this.clientX = eventSource.touches[0].clientX;
-            this.clientY = eventSource.touches[0].clientY;
-        }
     }
 }

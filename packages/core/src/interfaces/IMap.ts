@@ -1,4 +1,4 @@
-import { IEventCapture, IInteraction } from "@core/systems/Intercation";
+import { IEventCapture, IInteraction } from "@core/systems/intercation";
 import { SystemManager } from "../systems/SystemManager";
 import {
     IBounds,

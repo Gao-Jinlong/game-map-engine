@@ -3,7 +3,7 @@ import { CameraSystem } from "./CameraSystem";
 import { SceneSystem } from "./SceneSystem";
 import { IMap, IMapState, IRendererSystem } from "@core/interfaces";
 import { BaseEvent, LifeCycleType } from "@core/events";
-import { MarkerSystem } from "./MarkerSystem";
+import { MarkerSystem } from "./markerSystem";
 
 export class RendererSystem implements IRendererSystem {
     public renderer: THREE.WebGLRenderer;

@@ -1,5 +1,5 @@
 import { IMap } from "@core/interfaces";
-import { IEventCapture, IInteraction } from "@core/systems/Intercation";
+import { IEventCapture, IInteraction } from "@core/systems/intercation";
 import { Vector2 } from "three";
 import { BaseEvent, PointerEvent, PointerEventTypeEnum } from "../../events";
 import Disposable from "@core/components/Disposable";
@@ -68,6 +68,7 @@ export class EventCaptureSystem extends Disposable implements IEventCapture {
                 pointEventType,
                 event,
                 this.interactionService!,
+                this.context,
                 this.context
             );
 
