@@ -35,6 +35,8 @@ import {
 } from "./systems/intercation";
 import { Bounds } from "./entity/Bounds";
 import { DOM } from "./utils/dom";
+import { Point } from "./entity/Point";
+import { Coord } from "./entity";
 
 class Map extends EventTarget implements IMap {
     // 暂时将 service 注册到 Map 上，后续可以通过 ServiceManager 集中管理注册
@@ -146,8 +148,8 @@ class Map extends EventTarget implements IMap {
         return this.crsSystem.coordToPoint(coord, zoom);
     }
 
-    unproject(position: IPositionTuple | IPosition, zoom: number): ICoord {
-        return this.crsSystem.pointToCoord(position, zoom);
+    unproject(position: Point): Coord {
+        return this.crsSystem.pointToCoord(position /*, this.terrain */);
     }
 
     private onResize(

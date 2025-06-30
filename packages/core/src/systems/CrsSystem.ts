@@ -10,6 +10,9 @@ import {
     IPositionTuple,
 } from "@core/interfaces/ICoord";
 import { Coord, isCoord, Position, isPosition } from "@core/entity";
+import { ITerrain } from "@core/layers";
+import { Point } from "@core/entity/Point";
+import { Raycaster } from "three";
 
 export interface ICrsOptions {
     crs: CRS;
@@ -20,8 +23,9 @@ export interface ICrsOptions {
 export class CrsSystem implements ICrsSystem {
     crs?: CRS;
     private _options?: ICrsOptions;
+    private rayCaster: Raycaster;
     constructor(public context: IMap) {
-        // TODO: 屏幕坐标与空间坐标的转换计算
+        this.rayCaster = new Raycaster();
     }
     init(options?: Partial<ICrsOptions>): void {
         const finalOptions = toDefaulted(options ?? {}, {
@@ -34,21 +38,23 @@ export class CrsSystem implements ICrsSystem {
     get options() {
         return this._options;
     }
-    public coordToPoint(
-        coordLike: ICoordTuple | ICoord,
-        zoom: number
-    ): IPosition {
+    public coordToPoint(coordLike: Coord, zoom: number): IPosition {
         const coord = isCoord(coordLike) ? coordLike : new Coord(...coordLike);
         return this.crs!.coordToPoint(coord, zoom);
     }
-    public pointToCoord(
-        positionLike: IPosition | IPositionTuple,
-        zoom: number
-    ): ICoord {
-        const position = isPosition(positionLike)
-            ? positionLike
-            : new Position(...positionLike);
-        return this.crs!.pointToCoord(position, zoom);
+    public pointToCoord(point: Point, terrain?: ITerrain): Coord {
+        if (terrain) {
+            const coordinate = terrain.pointToCoord(point);
+            if (coordinate != null) {
+                return coordinate;
+            }
+        }
+
+        return this.screenPointToCoordAtZ(point);
+    }
+
+    private screenPointToCoordAtZ(p: Point, mercatorZ?: number): Coord {
+        this.context.systemManager.getSystem();
     }
     resize?: ((state: IMapState) => void) | undefined;
     destroy?: (() => void) | undefined;

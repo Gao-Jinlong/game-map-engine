@@ -1,5 +1,5 @@
-import { PointerEventType } from "@core/components/events/types";
+import { IPointerEvent } from "@core/components/events/types";
 
-export function isPointerEvent(event: unknown): event is PointerEventType {
+export function isPointerEvent(event: unknown): event is IPointerEvent {
     return event instanceof MouseEvent || event instanceof TouchEvent;
 }

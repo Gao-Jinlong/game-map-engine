@@ -3,7 +3,7 @@ import type { PointerEventType, IPointerEvent } from "../types";
 import { EventTarget } from "../EventTarget";
 import { IInteraction } from "@core/systems/intercation";
 import { PointerEventTypeEnum } from "../EventType";
-import { IMap } from "@core/interfaces";
+import { ICoord, IMap } from "@core/interfaces";
 import { DOM } from "@core/utils/dom";
 import { Point } from "@core/entity/Point";
 
@@ -21,6 +21,7 @@ export class PointerEvent<T extends string = any> extends BaseEvent {
     public double: boolean = false;
 
     public point!: Point;
+    public lnglat!: ICoord;
     // public eventable!: any;
     // declare pointerId: number;
 
@@ -41,6 +42,7 @@ export class PointerEvent<T extends string = any> extends BaseEvent {
         this.type = type;
         this.map = map;
         this.point = DOM.mousePos(this.map.container, eventSource);
+        this.lnglat = this.map.unproject(this.point);
 
         if (type === PointerEventTypeEnum.TAP) {
             const previousEvent = interaction.previousTapEvent;

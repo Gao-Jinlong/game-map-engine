@@ -10,6 +10,9 @@ import {
 } from "./ICoord";
 import { ICrsSystem } from "./ICrsSystem";
 import { EventTarget } from "@core/components/events/EventTarget";
+import { IPointerEvent } from "@core/components/events/types";
+import { Point } from "@core/entity/Point";
+import { Coord } from "@core/entity";
 
 export interface IMap extends EventTarget {
     crsSystem: ICrsSystem;
@@ -37,7 +40,7 @@ export interface IMap extends EventTarget {
     bounds: IBounds;
     state: IMapState;
     project(coord: ICoordTuple | ICoord, zoom: number): IPosition;
-    unproject(position: IPositionTuple | IPosition, zoom: number): ICoord;
+    unproject(position: Point): Coord;
 }
 export interface IMapOptions {
     container?: HTMLElement;
