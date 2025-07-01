@@ -37,19 +37,21 @@ import { Bounds } from "./entity/Bounds";
 import { DOM } from "./utils/dom";
 import { Point } from "./entity/Point";
 import { Coord } from "./entity";
+import { ICrsSystem } from "./interfaces/ICrsSystem";
 
 class Map extends EventTarget implements IMap {
     // 暂时将 service 注册到 Map 上，后续可以通过 ServiceManager 集中管理注册
     eventCaptureService: IEventCapture;
     interactionService: IInteraction;
 
-    crsSystem: CrsSystem;
+    crsSystem: ICrsSystem;
     container: HTMLElement;
     options: Required<IMapOptions>;
     state: IMapState;
     systemManager: SystemManager;
     stats: Stats;
     bounds: IBounds;
+    readonly seaLevel: THREE.Plane;
     private destroyHandlers: (() => void)[] = [];
     constructor(options: IMapOptions) {
         super();
@@ -57,6 +59,7 @@ class Map extends EventTarget implements IMap {
         if (!options.container) {
             console.warn("container is required");
         }
+        this.seaLevel = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
         // TODO 实现 projection , 用于计算世界坐标和像素坐标之间的转换，涉及 zoom , bounds, state.width, state.height
         this.options = toDefaulted(options, {
@@ -103,8 +106,8 @@ class Map extends EventTarget implements IMap {
     }
     init(): void {
         this.eventCaptureService.init();
-        this.crsSystem.init();
         this.systemManager.init();
+        this.crsSystem.init();
 
         this.container.appendChild(this.stats.dom);
 
@@ -144,12 +147,12 @@ class Map extends EventTarget implements IMap {
         this.systemManager.getSystem(ComponentManager).remove(component);
     }
 
-    project(coord: ICoordTuple | ICoord, zoom: number): IPosition {
+    project(coord: Coord): IPosition {
         return this.crsSystem.coordToPoint(coord, zoom);
     }
 
     unproject(position: Point): Coord {
-        return this.crsSystem.pointToCoord(position /*, this.terrain */);
+        return this.crsSystem.pointToCoord(position);
     }
 
     private onResize(

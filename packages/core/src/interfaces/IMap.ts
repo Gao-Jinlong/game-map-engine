@@ -13,6 +13,7 @@ import { EventTarget } from "@core/components/events/EventTarget";
 import { IPointerEvent } from "@core/components/events/types";
 import { Point } from "@core/entity/Point";
 import { Coord } from "@core/entity";
+import { Plane } from "three";
 
 export interface IMap extends EventTarget {
     crsSystem: ICrsSystem;
@@ -36,6 +37,10 @@ export interface IMap extends EventTarget {
      */
     stats: Stats;
     container: HTMLElement;
+    /**
+     * 海平面
+     */
+    readonly seaLevel: Plane;
     options: Required<IMapOptions>;
     bounds: IBounds;
     state: IMapState;
